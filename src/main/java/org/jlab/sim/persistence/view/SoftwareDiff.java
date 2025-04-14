@@ -29,4 +29,20 @@ public class SoftwareDiff {
   public boolean hasChanges() {
     return removeList.size() > 0 || addList.size() > 0 || updateList.size() > 0;
   }
+
+  public int getMatchCount() {
+    return matchList.size();
+  }
+
+  public int getAddCount() {
+    return addList.size();
+  }
+
+  public int getRemoveCount() {
+    return removeList.size();
+  }
+
+  public int getUpdateCount() {
+    return updateList.size();
+  }
 }

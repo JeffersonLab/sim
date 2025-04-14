@@ -17,6 +17,17 @@
             td:nth-child(2) {
                 width: 70px;
             }
+            td:nth-child(6) {
+                width: 70px;
+            }
+            .add-row,
+            .remote {
+                background-color: #d6ff9c;
+            }
+            .remove-row,
+            .local {
+                background-color: #ff9094;
+            }
         </style>
     </jsp:attribute>
     <jsp:attribute name="scripts">
@@ -42,18 +53,74 @@
                         <th>Description</th>
                         <th>Maintainers</th>
                         <th>Home URL</th>
+                        <th>
+                            <button ${diff.hasChanges() ? '' : 'disabled="disabled"'}
+                                    id="apply-all-button" type="button">Apply All
+                            </button>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
+                <c:choose>
+                <c:when test="${error ne null}">
+                    Error: <c:out value="${error}"/>
+                </c:when>
+                <c:when test="${fn:length(remoteList) > 0}">
+                <div>Found ${fn:length(remoteList)} remote records, ${fn:length(localList)} local
+                    records</div>
+                <div> (${diff.matchCount}
+                    Matched, ${diff.addCount} Add, ${diff.removeCount} Remove, ${diff.updateCount}
+                    Update)
+                </div>
                     <c:forEach var="software" items="${diff.addList}">
-                        <tr class="add-list">
+                        <tr class="add-row">
                             <td><c:out value="${software.name}"/></td>
                             <td><c:out value="${software.type}"/></td>
                             <td><c:out value="${software.description}"/></td>
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
                             <td><c:out value="${software.homeUrl}"/></td>
+                            <td>
+                                <button class="add" type="button">Add</button>
+                            </td>
                         </tr>
                     </c:forEach>
+                    <c:forEach var="software" items="${diff.updateList}">
+                        <tr>
+                            <td><c:out value="${software.name}"/></td>
+                            <td><c:out value="${software.type}"/></td>
+                            <td><c:out value="${software.description}"/></td>
+                            <td><c:out value="${software.maintainerUsernameCsv}"/></td>
+                            <td><c:out value="${software.homeUrl}"/></td>
+                            <td>
+                                <button class="update" type="button">Update</button>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    <c:forEach var="software" items="${diff.removeList}">
+                        <tr class="remove-row">
+                            <td><c:out value="${software.name}"/></td>
+                            <td><c:out value="${software.type}"/></td>
+                            <td><c:out value="${software.description}"/></td>
+                            <td><c:out value="${software.maintainerUsernameCsv}"/></td>
+                            <td><c:out value="${software.homeUrl}"/></td>
+                            <td>
+                                <button class="remove" type="button">Remove</button>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    <c:forEach var="software" items="${diff.matchList}">
+                        <tr>
+                            <td><c:out value="${software.name}"/></td>
+                            <td><c:out value="${software.type}"/></td>
+                            <td><c:out value="${software.description}"/></td>
+                            <td><c:out value="${software.maintainerUsernameCsv}"/></td>
+                            <td><c:out value="${software.homeUrl}"/></td>
+                            <td></td>
+                        </tr>
+                    </c:forEach>
+                </c:when>
+                    <c:otherwise>No Results Found</c:otherwise>
+                </c:choose>
                 </tbody>
             </table>
         </section>
