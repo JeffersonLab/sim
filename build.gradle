@@ -29,7 +29,7 @@ dependencies {
                     'org.hibernate:hibernate-envers:5.3.28.Final'
 }
 war {
-    archiveFileName = 'arm.war'
+    archiveFileName = 'sim.war'
     filesMatching('WEB-INF/web.xml') {
         filter {
             String line -> line.replaceAll("@VERSION@", project.version)

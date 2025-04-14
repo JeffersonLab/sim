@@ -19,30 +19,30 @@ services:
       file: deps.yaml
       service: mailhog
 
-  arm:
-    hostname: arm
-    container_name: arm
+  sim:
+    hostname: sim
+    container_name: sim
     ports:
       - "8443:8443"
       - "8080:8080"
       - "9990:9990"
     environment:
       KEYCLOAK_REALM: 'test-realm'
-      KEYCLOAK_RESOURCE: 'arm'
+      KEYCLOAK_RESOURCE: 'sim'
       KEYCLOAK_SECRET: 'yHi6W2raPmLvPXoxqMA7VWbLAA2WN0eB'
       KEYCLOAK_FRONTEND_SERVER_URL: 'http://localhost:8081'
       KEYCLOAK_BACKEND_SERVER_URL: 'http://keycloak:8080'
-      ORACLE_DATASOURCE: 'arm'
+      ORACLE_DATASOURCE: 'sim'
       ORACLE_SERVER: 'oracle:1521'
-      ORACLE_USER: 'ARM_OWNER'
+      ORACLE_USER: 'SIM_OWNER'
       ORACLE_PASS: 'password'
       ORACLE_SERVICE: 'xepdb1'
       PUPPET_SHOW_SERVER_URL: 'http://puppet:3000'
-      BACKEND_SERVER_URL: 'http://arm:8080'
+      BACKEND_SERVER_URL: 'http://sim:8080'
       FRONTEND_SERVER_URL: 'https://localhost:8443'
       TZ: 'America/New_York'
-      DEMO_FEEDBACK_SENDER_ADDRESS: 'arm@example.com'
+      DEMO_FEEDBACK_SENDER_ADDRESS: 'sim@example.com'
       DEMO_FEEDBACK_TO_ADDRESS_CSV: 'recipient1@example.com,recipient2@example.com'
       DEMO_CONTENT_CONTACT: 'bob@example.com'
       DEMO_TECHNICAL_CONTACT: 'larry@example.com'
-      DEMO_DOC_CSV: 'https://github.com/JeffersonLab/arm|ARM Home'
+      DEMO_DOC_CSV: 'https://github.com/JeffersonLab/sim|SIM Home'

@@ -1,4 +1,4 @@
-package org.jlab.arm.presentation.controller;
+package org.jlab.sim.presentation.controller;
 
 import java.io.IOException;
 import javax.servlet.ServletException;

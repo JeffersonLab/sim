@@ -1,18 +1,18 @@
-# arm [![CI](https://github.com/JeffersonLab/arm/actions/workflows/ci.yaml/badge.svg)](https://github.com/JeffersonLab/arm/actions/workflows/ci.yaml) [![Docker](https://img.shields.io/docker/v/jeffersonlab/arm?sort=semver&label=DockerHub)](https://hub.docker.com/r/jeffersonlab/arm)
+# sim [![CI](https://github.com/JeffersonLab/sim/actions/workflows/ci.yaml/badge.svg)](https://github.com/JeffersonLab/sim/actions/workflows/ci.yaml) [![Docker](https://img.shields.io/docker/v/jeffersonlab/sim?sort=semver&label=DockerHub)](https://hub.docker.com/r/jeffersonlab/sim)
 A [Java EE 8](https://en.wikipedia.org/wiki/Jakarta_EE) web application, relying on the [Smoothness](https://github.com/JeffersonLab/smoothness) web lib.
 
-![Screenshot](https://github.com/JeffersonLab/arm/raw/main/Screenshot.png?raw=true "Screenshot")
+![Screenshot](https://github.com/JeffersonLab/sim/raw/main/Screenshot.png?raw=true "Screenshot")
 
 ---
-- [Overview](https://github.com/JeffersonLab/arm#overview)
-- [Quick Start with Compose](https://github.com/JeffersonLab/arm#quick-start-with-compose)
-- [Install](https://github.com/JeffersonLab/arm#install)
-- [Configure](https://github.com/JeffersonLab/arm#configure)
-- [Build](https://github.com/JeffersonLab/smoothenss-arm#build)
-- [Develop](https://github.com/JeffersonLab/arm#develop)
-- [Release](https://github.com/JeffersonLab/arm#release)
-- [Deploy](https://github.com/JeffersonLab/arm#deploy)
-- [See Also](https://github.com/JeffersonLab/arm#see-also)
+- [Overview](https://github.com/JeffersonLab/sim#overview)
+- [Quick Start with Compose](https://github.com/JeffersonLab/sim#quick-start-with-compose)
+- [Install](https://github.com/JeffersonLab/sim#install)
+- [Configure](https://github.com/JeffersonLab/sim#configure)
+- [Build](https://github.com/JeffersonLab/smoothenss-sim#build)
+- [Develop](https://github.com/JeffersonLab/sim#develop)
+- [Release](https://github.com/JeffersonLab/sim#release)
+- [Deploy](https://github.com/JeffersonLab/sim#deploy)
+- [See Also](https://github.com/JeffersonLab/sim#see-also)
 ---
 
 ## Overview
@@ -21,8 +21,8 @@ A web app for managing a registry of apps at JLab.
 ## Quick Start with Compose
 1. Grab project
 ```
-git clone https://github.com/JeffersonLab/arm
-cd arm
+git clone https://github.com/JeffersonLab/sim
+cd sim
 ```
 2. Launch [Compose](https://github.com/docker/compose)
 ```
@@ -30,7 +30,7 @@ docker compose up
 ```
 3. Navigate to page
 ```
-http://localhost:8080/arm
+http://localhost:8080/sim
 ```
 
 **Note**: Login with demo username "tbrown" and password "password".
@@ -41,16 +41,16 @@ See: [Docker Compose Strategy](https://gist.github.com/slominskir/a7da801e8259f5
 This application requires a Java 11+ JVM and standard library to run, plus a Java EE 8+ application server (developed with Wildfly).
 
 
-1. Install service [dependencies](https://github.com/JeffersonLab/arm/blob/main/deps.yaml)
+1. Install service [dependencies](https://github.com/JeffersonLab/sim/blob/main/deps.yaml)
 2. Download [Wildfly 26.1.3](https://www.wildfly.org/downloads/)
-3. [Configure](https://github.com/JeffersonLab/arm#configure) Wildfly and start it
-4. Download [arm.war](https://github.com/JeffersonLab/arm/releases) and deploy it to Wildfly
-5. Navigate your web browser to [localhost:8080/arm](http://localhost:8080/arm)
+3. [Configure](https://github.com/JeffersonLab/sim#configure) Wildfly and start it
+4. Download [sim.war](https://github.com/JeffersonLab/sim/releases) and deploy it to Wildfly
+5. Navigate your web browser to [localhost:8080/sim](http://localhost:8080/sim)
 
 ## Configure
 
 ### Configtime
-Wildfly must be pre-configured before the first deployment of the app. The [wildfly bash scripts](https://github.com/JeffersonLab/wildfly#configure) can be used to accomplish this. See the [Dockerfile](https://github.com/JeffersonLab/arm/blob/main/Dockerfile) for an example.
+Wildfly must be pre-configured before the first deployment of the app. The [wildfly bash scripts](https://github.com/JeffersonLab/wildfly#configure) can be used to accomplish this. See the [Dockerfile](https://github.com/JeffersonLab/sim/blob/main/Dockerfile) for an example.
 
 ### Runtime
 Uses the [Smoothness Environment Variables](https://github.com/JeffersonLab/smoothness#environment-variables).
@@ -59,8 +59,8 @@ Uses the [Smoothness Environment Variables](https://github.com/JeffersonLab/smoo
 This project is built with [Java 17](https://adoptium.net/) (compiled to Java 11 bytecode), and uses the [Gradle 7](https://gradle.org/) build tool to automatically download dependencies and build the project from source:
 
 ```
-git clone https://github.com/JeffersonLab/arm
-cd arm
+git clone https://github.com/JeffersonLab/sim
+cd sim
 gradlew build
 ```
 **Note**: If you do not already have Gradle installed, it will be installed automatically by the wrapper script included in the source
@@ -85,7 +85,7 @@ The [server](https://github.com/JeffersonLab/wildfly/blob/main/scripts/server-se
 
 ## Release
 1. Bump the version number in the VERSION file and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).
-2. The [CD](https://github.com/JeffersonLab/arm/blob/main/.github/workflows/cd.yaml) GitHub Action should run automatically invoking:
+2. The [CD](https://github.com/JeffersonLab/sim/blob/main/.github/workflows/cd.yaml) GitHub Action should run automatically invoking:
     - The [Create release](https://github.com/JeffersonLab/java-workflows/blob/main/.github/workflows/gh-release.yaml) GitHub Action to tag the source and create release notes summarizing any pull requests.   Edit the release notes to add any missing details.  A war file artifact is attached to the release.
     - The [Publish docker image](https://github.com/JeffersonLab/container-workflows/blob/main/.github/workflows/docker-publish.yaml) GitHub Action to create a new demo Docker image.
     - The [Deploy to JLab](https://github.com/JeffersonLab/general-workflows/blob/main/.github/workflows/jlab-deploy-app.yaml) GitHub Action to deploy to the JLab test environment.
@@ -93,10 +93,10 @@ The [server](https://github.com/JeffersonLab/wildfly/blob/main/scripts/server-se
 ## Deploy
 The deploy to JLab's acctest is handled automatically via the release workflow.
 
-At JLab this app is found internally at [acctest.acc.jlab.org/arm](https://acctest.acc.jlab.org/arm).  However, the server is a proxy for `wildflytest5.acc.jlab.org`.   A [deploy script](https://github.com/JeffersonLab/wildfly/blob/main/scripts/deploy.sh) is provided on each server to automate wget and deploy.  Example:
+At JLab this app is found internally at [acctest.acc.jlab.org/sim](https://acctest.acc.jlab.org/sim).  However, the server is a proxy for `wildflytest5.acc.jlab.org`.   A [deploy script](https://github.com/JeffersonLab/wildfly/blob/main/scripts/deploy.sh) is provided on each server to automate wget and deploy.  Example:
 
 ```
-/root/setup/deploy.sh arm v1.2.3
+/root/setup/deploy.sh sim v1.2.3
 ```
 
 **JLab Internal Docs**:  [InstallGuideWildflyRHEL9](https://accwiki.acc.jlab.org/do/view/SysAdmin/InstallGuideWildflyRHEL9)
