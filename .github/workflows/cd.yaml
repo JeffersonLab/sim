@@ -9,7 +9,7 @@ jobs:
   release:
     uses: jeffersonlab/java-workflows/.github/workflows/gh-release.yaml@v2
     with:
-      files: build/libs/template.war
+      files: build/libs/arm.war
     secrets: inherit
 
   docker_publish:

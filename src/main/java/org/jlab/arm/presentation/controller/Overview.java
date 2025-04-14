@@ -1,4 +1,4 @@
-package org.jlab.cnm.presentation.controller;
+package org.jlab.arm.presentation.controller;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author ryans
  */
 @WebServlet(
-    name = "ContextRootController",
-    urlPatterns = {""})
-public class ContextRootController extends HttpServlet {
+    name = "Overview",
+    urlPatterns = {"/overview"})
+public class Overview extends HttpServlet {
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -26,9 +26,6 @@ public class ContextRootController extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-
-    // Using welcome-file in web.xml is less-good way of doing this as instead of redirect, it's a
-    // forward.
-    response.sendRedirect(request.getContextPath() + "/overview");
+    request.getRequestDispatcher("/WEB-INF/views/overview.jsp").forward(request, response);
   }
 }

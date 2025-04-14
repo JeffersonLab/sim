@@ -5,15 +5,15 @@
    http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
     <context-param>
         <param-name>appName</param-name>
-        <param-value>Template APP</param-value>
+        <param-value>Application Registry Manager</param-value>
     </context-param>
     <context-param>
         <param-name>appShortName</param-name>
-        <param-value>TEMPLATE</param-value>
+        <param-value>ARM</param-value>
     </context-param>
     <context-param>
         <param-name>appSpecificEnvPrefix</param-name>
-        <param-value>TEMPLATE</param-value>
+        <param-value>ARM</param-value>
     </context-param>
     <context-param>
         <param-name>releaseNumber</param-name>
@@ -69,14 +69,14 @@
             <url-pattern>/setup/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
-            <role-name>template-admin</role-name>
+            <role-name>arm-admin</role-name>
         </auth-constraint>
     </security-constraint>
     <login-config>
         <auth-method>OIDC</auth-method>
     </login-config>
     <security-role>
-        <role-name>template-admin</role-name>
+        <role-name>arm-admin</role-name>
     </security-role>
     <distributable/>
 </web-app>

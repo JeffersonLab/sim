@@ -2,7 +2,7 @@ plugins {
     id 'war'
     id "com.diffplug.spotless" version "6.25.0"
 }
-description = 'Smoothness Template demo app'
+description = 'Application Registry Manager app'
 group 'org.jlab'
 version new File("${projectDir}/VERSION").text.trim()
 ext.releaseDate = new Date().format('MMM dd yyyy')
@@ -29,7 +29,7 @@ dependencies {
                     'org.hibernate:hibernate-envers:5.3.28.Final'
 }
 war {
-    archiveFileName = 'template.war'
+    archiveFileName = 'arm.war'
     filesMatching('WEB-INF/web.xml') {
         filter {
             String line -> line.replaceAll("@VERSION@", project.version)
