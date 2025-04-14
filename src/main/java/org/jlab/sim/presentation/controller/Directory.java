@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author ryans
  */
 @WebServlet(
-    name = "Overview",
-    urlPatterns = {"/overview"})
-public class Overview extends HttpServlet {
+    name = "Directory",
+    urlPatterns = {"/directory"})
+public class Directory extends HttpServlet {
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -26,6 +26,6 @@ public class Overview extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    request.getRequestDispatcher("/WEB-INF/views/overview.jsp").forward(request, response);
+    request.getRequestDispatcher("/WEB-INF/views/directory.jsp").forward(request, response);
   }
 }

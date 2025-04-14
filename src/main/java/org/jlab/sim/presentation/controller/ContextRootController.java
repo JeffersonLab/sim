@@ -29,6 +29,6 @@ public class ContextRootController extends HttpServlet {
 
     // Using welcome-file in web.xml is less-good way of doing this as instead of redirect, it's a
     // forward.
-    response.sendRedirect(request.getContextPath() + "/overview");
+    response.sendRedirect(request.getContextPath() + "/directory");
   }
 }

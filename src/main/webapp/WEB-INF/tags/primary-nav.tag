@@ -4,8 +4,8 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness"%>
 <ul>
-    <li${'/overview' eq currentPath ? ' class="current-primary"' : ''}>
-        <a href="${pageContext.request.contextPath}/overview">Overview</a>
+    <li${'/directory' eq currentPath ? ' class="current-primary"' : ''}>
+        <a href="${pageContext.request.contextPath}/directory">Directory</a>
     </li>
     <c:if test="${pageContext.request.isUserInRole('sim-admin')}">
         <li${fn:startsWith(currentPath, '/setup') ? ' class="current-primary"' : ''}>
