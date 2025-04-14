@@ -5,7 +5,7 @@
    http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd">
     <context-param>
         <param-name>appName</param-name>
-        <param-value>Application Registry Manager</param-value>
+        <param-value>Software Inventory Manager</param-value>
     </context-param>
     <context-param>
         <param-name>appShortName</param-name>
