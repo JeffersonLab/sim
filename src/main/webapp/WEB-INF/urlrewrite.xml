@@ -14,4 +14,8 @@
         <to>/resources/$2</to>
     </rule>
 
+    <rule>
+        <from>^/repositories/sync/(.*)$</from>
+        <to>/repositories/sync?repositoryId=${escape:${unescapePath:$1}}</to>
+    </rule>
 </urlrewrite>

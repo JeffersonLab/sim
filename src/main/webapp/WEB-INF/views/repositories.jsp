@@ -18,13 +18,27 @@
                     <tr>
                         <th>Name</th>
                         <th>Description</th>
+                        <th>Sync</th>
                     </tr>
                 </thead>
                 <tbody>
                     <c:forEach var="repo" items="${repoList}">
                         <tr>
-                            <td><a href="${repo.homeUrl}">${repo.name}</a></td>
-                            <td>${repo.description}</td>
+                            <td><a href="${repo.homeUrl}"><c:out value="${repo.name}"/></a></td>
+                            <td><c:out value="${repo.description}"/></td>
+                            <td>
+                                <!-- Use onclick to avoid https://bugs.webkit.org/show_bug.cgi?id=30103 -->
+                                <c:url value="/repositories/sync/${repo.repositoryId}"
+                                       var="url">
+                                </c:url>
+                                <form method="get"
+                                      action="${pageContext.request.contextPath}/repositories/sync/${repo.repositoryId}">
+                                    <button class="single-char-button" type="button"
+                                            onclick="window.location.href = '${url}';  return false;">
+                                        &rarr;
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                     </c:forEach>
                 </tbody>

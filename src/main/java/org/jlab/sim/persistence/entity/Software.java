@@ -55,6 +55,15 @@ public class Software implements Serializable {
   @Column(name = "MAINTAINER_USERNAME_CSV", nullable = false, length = 256)
   private String maintainerUsernameCsv;
 
+  public Software() {}
+
+  public Software(String name, String description, String maintainerUsernameCsv, String homeUrl) {
+    this.name = name;
+    this.description = description;
+    this.maintainerUsernameCsv = maintainerUsernameCsv;
+    this.homeUrl = homeUrl;
+  }
+
   public BigInteger getSoftwareId() {
     return softwareId;
   }

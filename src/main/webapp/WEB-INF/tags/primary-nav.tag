@@ -7,7 +7,7 @@
     <li${'/directory' eq currentPath ? ' class="current-primary"' : ''}>
         <a href="${pageContext.request.contextPath}/directory">Directory</a>
     </li>
-    <li${'/repositories' eq currentPath ? ' class="current-primary"' : ''}>
+    <li${fn:startsWith(currentPath, '/repositories') ? ' class="current-primary"' : ''}>
         <a href="${pageContext.request.contextPath}/repositories">Repositories</a>
     </li>
     <c:if test="${pageContext.request.isUserInRole('sim-admin')}">
