@@ -7,6 +7,7 @@ import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
+import org.jlab.sim.persistence.enumeration.SoftwareType;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.JPAService;
 import org.jsoup.Jsoup;
@@ -81,7 +82,8 @@ public class SyncService extends JPAService<Software> {
 
           maintainerUsernameCsv = maintainerUsernameCsv.replace("dir owner:", "");
 
-          Software software = new Software(name, description, maintainerUsernameCsv, homeUrl);
+          Software software =
+              new Software(name, SoftwareType.APP, description, maintainerUsernameCsv, homeUrl);
 
           softwareList.add(software);
         }
@@ -94,8 +96,48 @@ public class SyncService extends JPAService<Software> {
   }
 
   private List<Software> fetchCertified() throws UserFriendlyException {
-    List<Software> softwareList = null;
+    List<Software> softwareList = fetchCertifiedType("app", SoftwareType.APP);
 
+    softwareList.addAll(fetchCertifiedType("lib", SoftwareType.LIB));
+    softwareList.addAll(fetchCertifiedType("script", SoftwareType.SCRIPT));
+
+    return softwareList;
+  }
+
+  private List<Software> fetchCertifiedType(String param, SoftwareType type)
+      throws UserFriendlyException {
+    List<Software> softwareList = new ArrayList<>();
+
+    try {
+      String url = "https://devweb.acc.jlab.org/controls_web/cjs/CSD/csd_db.php?type=" + param;
+
+      Document doc = Jsoup.connect(url).get();
+
+      Elements elements = doc.select("table");
+
+      elements = elements.select("tr");
+
+      final String BASE_URL = "https://devweb.acc.jlab.org/controls_web/cjs/CSD/";
+
+      for (Element row : elements) {
+        Elements cells = row.select("td");
+
+        if (cells.size() == 2) {
+          Element a = cells.first().select("a").first();
+          String name = a.text();
+          Attributes attributes = a.attributes();
+          String homeUrl = BASE_URL + attributes.get("href");
+          String maintainerUsernameCsv = null;
+          String description = cells.get(1).text();
+
+          Software software = new Software(name, type, description, maintainerUsernameCsv, homeUrl);
+
+          softwareList.add(software);
+        }
+      }
+    } catch (IOException e) {
+      throw new UserFriendlyException("Could not fetch Certified Software", e);
+    }
     return softwareList;
   }
 

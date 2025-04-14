@@ -7,6 +7,17 @@
 <c:set var="title" value="Sync"/>
 <s:page title="${title}">
     <jsp:attribute name="stylesheets">
+        <style>
+            td {
+                word-break: break-word;
+            }
+            td:nth-child(1) {
+                width: 150px;
+            }
+            td:nth-child(2) {
+                width: 70px;
+            }
+        </style>
     </jsp:attribute>
     <jsp:attribute name="scripts">
     </jsp:attribute>        
@@ -27,6 +38,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Type</th>
                         <th>Description</th>
                         <th>Maintainers</th>
                         <th>Home URL</th>
@@ -36,6 +48,7 @@
                     <c:forEach var="software" items="${remoteList}">
                         <tr>
                             <td><c:out value="${software.name}"/></td>
+                            <td><c:out value="${software.type}"/></td>
                             <td><c:out value="${software.description}"/></td>
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
                             <td><c:out value="${software.homeUrl}"/></td>

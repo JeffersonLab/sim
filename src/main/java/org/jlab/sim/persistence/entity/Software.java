@@ -57,8 +57,14 @@ public class Software implements Serializable {
 
   public Software() {}
 
-  public Software(String name, String description, String maintainerUsernameCsv, String homeUrl) {
+  public Software(
+      String name,
+      SoftwareType type,
+      String description,
+      String maintainerUsernameCsv,
+      String homeUrl) {
     this.name = name;
+    this.type = type;
     this.description = description;
     this.maintainerUsernameCsv = maintainerUsernameCsv;
     this.homeUrl = homeUrl;
