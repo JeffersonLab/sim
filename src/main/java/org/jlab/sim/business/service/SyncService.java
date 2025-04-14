@@ -1,10 +1,19 @@
 package org.jlab.sim.business.service;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.enumeration.SoftwareType;
@@ -49,8 +58,52 @@ public class SyncService extends JPAService<Software> {
     return softwareList;
   }
 
-  private List<Software> fetchGitHub() {
-    List<Software> softwareList = null;
+  private List<Software> fetchGitHub() throws UserFriendlyException {
+    List<Software> softwareList = new ArrayList<>();
+
+    String url = "https://api.github.com/search/repositories?q=topic%3Aace+owner%3AJeffersonLab";
+
+    HttpResponse<String> response = null;
+
+    try {
+      HttpClient client = HttpClient.newHttpClient();
+      HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
+
+      response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    } catch (IOException | InterruptedException e) {
+      throw new UserFriendlyException("Could not connect to GitHub");
+    }
+
+    if (response != null && response.statusCode() == 200) {
+      String jsonString = response.body();
+
+      try (StringReader stringReader = new StringReader(jsonString);
+          JsonReader jsonReader = Json.createReader(stringReader)) {
+
+        JsonObject jsonObject = jsonReader.readObject();
+
+        JsonArray array = jsonObject.getJsonArray("items");
+
+        for (int i = 0; i < array.size(); i++) {
+          JsonObject item = array.getJsonObject(i);
+
+          String name = item.getString("name");
+          String homeUrl = item.getString("html_url");
+          String maintainerUsernameCsv = null;
+          String description = item.getString("description");
+
+          Software software =
+              new Software(name, SoftwareType.APP, description, maintainerUsernameCsv, homeUrl);
+
+          softwareList.add(software);
+        }
+
+      } catch (Exception e) {
+        throw new UserFriendlyException("Could not parse JSON", e);
+      }
+    } else {
+      throw new UserFriendlyException("Request failed with status code: " + response.statusCode());
+    }
 
     return softwareList;
   }
