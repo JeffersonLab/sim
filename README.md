@@ -8,7 +8,7 @@ A [Java EE 8](https://en.wikipedia.org/wiki/Jakarta_EE) web application, relying
 - [Quick Start with Compose](https://github.com/JeffersonLab/arm#quick-start-with-compose)
 - [Install](https://github.com/JeffersonLab/arm#install)
 - [Configure](https://github.com/JeffersonLab/arm#configure)
-- [Build](https://github.com/JeffersonLab/smoothenss-template#build)
+- [Build](https://github.com/JeffersonLab/smoothenss-arm#build)
 - [Develop](https://github.com/JeffersonLab/arm#develop)
 - [Release](https://github.com/JeffersonLab/arm#release)
 - [Deploy](https://github.com/JeffersonLab/arm#deploy)
@@ -44,8 +44,8 @@ This application requires a Java 11+ JVM and standard library to run, plus a Jav
 1. Install service [dependencies](https://github.com/JeffersonLab/arm/blob/main/deps.yaml)
 2. Download [Wildfly 26.1.3](https://www.wildfly.org/downloads/)
 3. [Configure](https://github.com/JeffersonLab/arm#configure) Wildfly and start it
-4. Download [template.war](https://github.com/JeffersonLab/arm/releases) and deploy it to Wildfly
-5. Navigate your web browser to [localhost:8080/template](http://localhost:8080/template)
+4. Download [arm.war](https://github.com/JeffersonLab/arm/releases) and deploy it to Wildfly
+5. Navigate your web browser to [localhost:8080/arm](http://localhost:8080/arm)
 
 ## Configure
 
@@ -93,7 +93,7 @@ The [server](https://github.com/JeffersonLab/wildfly/blob/main/scripts/server-se
 ## Deploy
 The deploy to JLab's acctest is handled automatically via the release workflow.
 
-At JLab this app is found internally at [acctest.acc.jlab.org/template](https://acctest.acc.jlab.org/template).  However, the server is a proxy for `wildflytest5.acc.jlab.org`.   A [deploy script](https://github.com/JeffersonLab/wildfly/blob/main/scripts/deploy.sh) is provided on each server to automate wget and deploy.  Example:
+At JLab this app is found internally at [acctest.acc.jlab.org/arm](https://acctest.acc.jlab.org/arm).  However, the server is a proxy for `wildflytest5.acc.jlab.org`.   A [deploy script](https://github.com/JeffersonLab/wildfly/blob/main/scripts/deploy.sh) is provided on each server to automate wget and deploy.  Example:
 
 ```
 /root/setup/deploy.sh arm v1.2.3
