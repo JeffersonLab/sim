@@ -28,6 +28,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Description</th>
+                        <th>Maintainers</th>
                         <th>Home URL</th>
                     </tr>
                 </thead>
@@ -36,6 +37,7 @@
                         <tr>
                             <td><c:out value="${software.name}"/></td>
                             <td><c:out value="${software.description}"/></td>
+                            <td><c:out value="${software.maintainerUsernameCsv}"/></td>
                             <td><c:out value="${software.homeUrl}"/></td>
                         </tr>
                     </c:forEach>

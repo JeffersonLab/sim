@@ -1,6 +1,7 @@
 package org.jlab.sim.business.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
@@ -9,6 +10,7 @@ import org.jlab.sim.persistence.entity.Software;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.JPAService;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -53,9 +55,7 @@ public class SyncService extends JPAService<Software> {
   }
 
   private List<Software> fetchCSUE() throws UserFriendlyException {
-    List<Software> softwareList = null;
-
-    System.err.println("Fetching CSUE");
+    List<Software> softwareList = new ArrayList<>();
 
     String url = "https://opweb.acc.jlab.org/CSUEApps/csueTools/csueAppsWeb.php";
 
@@ -64,22 +64,22 @@ public class SyncService extends JPAService<Software> {
 
       Elements elements = doc.select("table");
 
-      System.err.println("Found " + elements.size() + " tables");
-
       elements = elements.select("tr");
 
-      System.err.println("Found " + elements.size() + " tr");
+      final String BASE_URL = "https://opweb.acc.jlab.org/CSUEApps/csueTools/";
 
       for (Element row : elements) {
-        System.err.println("Looping");
         Elements cells = row.select("td");
 
         if (cells.size() == 5) {
-          Element a = cells.first();
+          Element a = cells.first().select("a").first();
           String name = a.text();
-          String homeUrl = a.attributes().get("href");
-          String maintainerUsernameCsv = cells.get(4).text();
-          String description = cells.get(5).text();
+          Attributes attributes = a.attributes();
+          String homeUrl = BASE_URL + attributes.get("href");
+          String maintainerUsernameCsv = cells.get(3).text();
+          String description = cells.get(4).text();
+
+          maintainerUsernameCsv = maintainerUsernameCsv.replace("dir owner:", "");
 
           Software software = new Software(name, description, maintainerUsernameCsv, homeUrl);
 
