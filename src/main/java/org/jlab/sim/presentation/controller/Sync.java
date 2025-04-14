@@ -10,9 +10,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jlab.sim.business.service.RepositoryService;
+import org.jlab.sim.business.service.SoftwareService;
 import org.jlab.sim.business.service.SyncService;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
+import org.jlab.sim.persistence.view.SoftwareDiff;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
@@ -26,6 +28,7 @@ public class Sync extends HttpServlet {
 
   @EJB RepositoryService repositoryService;
   @EJB SyncService syncService;
+  @EJB SoftwareService softwareService;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -41,7 +44,9 @@ public class Sync extends HttpServlet {
 
     String error = null;
     Repository repository = null;
+    List<Software> localList = null;
     List<Software> remoteList = null;
+    SoftwareDiff diff = null;
 
     try {
       BigInteger repositoryId = ParamConverter.convertBigInteger(request, "repositoryId");
@@ -49,11 +54,17 @@ public class Sync extends HttpServlet {
       repository = repositoryService.find(repositoryId);
 
       remoteList = syncService.fetch(repository);
+
+      localList = softwareService.findAll();
+
+      diff = syncService.diff(localList, remoteList);
     } catch (UserFriendlyException e) {
       e.printStackTrace();
       error = e.getMessage();
     }
 
+    request.setAttribute("diff", diff);
+    request.setAttribute("localList", localList);
     request.setAttribute("remoteList", remoteList);
     request.setAttribute("error", error);
     request.setAttribute("repository", repository);

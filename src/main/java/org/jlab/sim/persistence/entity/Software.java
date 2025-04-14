@@ -137,4 +137,18 @@ public class Software implements Serializable {
   public int hashCode() {
     return Objects.hashCode(softwareId);
   }
+
+  public boolean syncEquals(Software other) {
+    boolean equals =
+        Objects.equals(name, other.name)
+            && Objects.equals(getDescription(), other.getDescription())
+            && Objects.equals(getHomeUrl(), other.getHomeUrl());
+
+    // Only compare if other is non-empty.
+    if (other.maintainerUsernameCsv != null && !other.maintainerUsernameCsv.isBlank()) {
+      equals = equals && Objects.equals(maintainerUsernameCsv, other.maintainerUsernameCsv);
+    }
+
+    return equals;
+  }
 }

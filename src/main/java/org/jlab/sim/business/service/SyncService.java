@@ -6,8 +6,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import javax.json.Json;
@@ -17,6 +16,7 @@ import javax.json.JsonReader;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.enumeration.SoftwareType;
+import org.jlab.sim.persistence.view.SoftwareDiff;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.JPAService;
 import org.jsoup.Jsoup;
@@ -198,5 +198,41 @@ public class SyncService extends JPAService<Software> {
     List<Software> softwareList = null;
 
     return softwareList;
+  }
+
+  @PermitAll
+  public SoftwareDiff diff(List<Software> localList, List<Software> remoteList) {
+    SoftwareDiff diff = new SoftwareDiff();
+
+    Map<String, Software> remoteMap = new HashMap<String, Software>();
+
+    for (Software remote : remoteList) {
+      remoteMap.put(remote.getName(), remote);
+    }
+
+    LinkedHashMap<String, Software> addList = new LinkedHashMap<>(remoteMap);
+
+    for (Software local : localList) {
+      if (local.getName() == null) {
+        diff.removeList.add(local);
+      } else {
+        Software remote = remoteMap.get(local.getName());
+
+        if (remote == null) {
+          diff.removeList.add(local);
+        } else {
+          // addList.remove(local.getName());
+          if (local.syncEquals(remote)) {
+            diff.matchList.add(local);
+          } else {
+            diff.updateList.add(local);
+          }
+        }
+      }
+    }
+
+    diff.addList.addAll(addList.values());
+
+    return diff;
   }
 }

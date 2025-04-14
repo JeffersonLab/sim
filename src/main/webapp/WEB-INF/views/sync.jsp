@@ -45,8 +45,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <c:forEach var="software" items="${remoteList}">
-                        <tr>
+                    <c:forEach var="software" items="${diff.addList}">
+                        <tr class="add-list">
                             <td><c:out value="${software.name}"/></td>
                             <td><c:out value="${software.type}"/></td>
                             <td><c:out value="${software.description}"/></td>
