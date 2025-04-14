@@ -14,6 +14,8 @@ public class Software implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
+  @SequenceGenerator(name = "SoftwareId", sequenceName = "SOFTWARE_ID", allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SoftwareId")
   @Basic(optional = false)
   @NotNull
   @Column(name = "SOFTWARE_ID", nullable = false, precision = 22, scale = 0)
