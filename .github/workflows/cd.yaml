@@ -1,0 +1,31 @@
+name: CD
+
+on:
+  push:
+    paths:
+      - 'VERSION'
+
+jobs:
+  release:
+    uses: jeffersonlab/java-workflows/.github/workflows/gh-release.yaml@v2
+    with:
+      files: build/libs/template.war
+    secrets: inherit
+
+  docker_publish:
+    needs:
+      - release
+    uses: jeffersonlab/container-workflows/.github/workflows/docker-publish.yaml@v2
+    with:
+      semvertag: ${{ needs.release.outputs.semvertag }}
+    secrets: inherit
+
+  acctest_deploy:
+    needs:
+      - release
+    uses: jeffersonlab/general-workflows/.github/workflows/jlab-deploy-app.yaml@v2
+    with:
+      app: cnm
+      env: acctest
+      ver: ${{ needs.release.outputs.semver }}
+    secrets: inherit
