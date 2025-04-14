@@ -10,10 +10,10 @@ insert into SIM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) value
 insert into SIM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('SMOOTHNESS_VERSION', '4.11.0', 'STRING', 'Version of smoothness lib on CDN.  Only used if SMOOTHNESS_LOCATION=CDN', 'CDN', 3);
 
 -- REPO
-insert into SIM_OWNER.REPO (REPO_ID, NAME, DESCRIPTION, REPO_URL) values (SIM_OWNER.REPO_ID.nextval, 'GITHUB', 'Microsoft GitHub Cloud Hosted Dev Platform', 'https://github.com/jeffersonlab');
-insert into SIM_OWNER.REPO (REPO_ID, NAME, DESCRIPTION, REPO_URL) values (SIM_OWNER.REPO_ID.nextval, 'CERTIFIED', 'Certified Software', 'https://devweb.acc.jlab.org/controls_web/cjs/CSD/csd.php');
-insert into SIM_OWNER.REPO (REPO_ID, NAME, DESCRIPTION, REPO_URL) values (SIM_OWNER.REPO_ID.nextval, 'CSUE', 'Controls System UNIX Environment', 'https://opweb.acc.jlab.org/CSUEApps/csueTools/csueAppsWeb.php');
-insert into SIM_OWNER.REPO (REPO_ID, NAME, DESCRIPTION, REPO_URL) values (SIM_OWNER.REPO_ID.nextval, 'LLAPP', 'Low Level Apps', '');
+insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) values (SIM_OWNER.REPOSITORY_ID.nextval, 'GITHUB', 'Microsoft GitHub Cloud Hosted Dev Platform', 'https://github.com/jeffersonlab');
+insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) values (SIM_OWNER.REPOSITORY_ID.nextval, 'CERTIFIED', 'Certified Software', 'https://devweb.acc.jlab.org/controls_web/cjs/CSD/csd.php');
+insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) values (SIM_OWNER.REPOSITORY_ID.nextval, 'CSUE', 'Controls System UNIX Environment', 'https://opweb.acc.jlab.org/CSUEApps/csueTools/csueAppsWeb.php');
+insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) values (SIM_OWNER.REPOSITORY_ID.nextval, 'LLAPP', 'Low Level Apps', '');
 
 -- SOFTWARE
-insert into SIM_OWNER.SOFTWARE (SOFTWARE_ID, NAME, TYPE, DESCRIPTION, REPO_ID, SOFTWARE_URL, MAINTAINER_USERNAME_CSV) values (SIM_OWNER.SOFTWARE_ID.nextval, 'SIM', 'APP', 'Aggregates software info into a directory', 1, 'https://github.com/jeffersonlab/sim', 'ryans');
+insert into SIM_OWNER.SOFTWARE (SOFTWARE_ID, NAME, TYPE, DESCRIPTION, REPOSITORY_ID, HOME_URL, MAINTAINER_USERNAME_CSV) values (SIM_OWNER.SOFTWARE_ID.nextval, 'SIM', 'APP', 'Software Inventory Manager.  Aggregates software info into a phonebook-like directory', 1, 'https://github.com/jeffersonlab/sim', 'ryans');

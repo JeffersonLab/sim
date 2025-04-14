@@ -4,7 +4,7 @@
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness"%>
-<c:set var="title" value="Directory"/>
+<c:set var="title" value="Repositories"/>
 <s:page title="${title}">
     <jsp:attribute name="stylesheets">
     </jsp:attribute>
@@ -12,24 +12,19 @@
     </jsp:attribute>        
     <jsp:body>
         <section>
+            <h2><c:out value="${title}"/></h2>
             <table class="data-table">
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Type</th>
                         <th>Description</th>
-                        <th>Repo</th>
-                        <th>Maintainers</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <c:forEach var="software" items="${softwareList}">
+                    <c:forEach var="repo" items="${repoList}">
                         <tr>
-                            <td>${software.name}</td>
-                            <td>${software.type}</td>
-                            <td>${software.description}</td>
-                            <td>${software.repository.name}</td>
-                            <td>${software.maintainerUsernameCsv}</td>
+                            <td><a href="${repo.homeUrl}">${repo.name}</a></td>
+                            <td>${repo.description}</td>
                         </tr>
                     </c:forEach>
                 </tbody>
