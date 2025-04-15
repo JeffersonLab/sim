@@ -138,14 +138,21 @@ public class Software implements Serializable {
   }
 
   public boolean syncEquals(Software other) {
-    boolean equals =
-        Objects.equals(name, other.name)
-            && Objects.equals(getDescription(), other.getDescription())
-            && Objects.equals(getHomeUrl(), other.getHomeUrl());
+    boolean equals = Objects.equals(name, other.name);
+
+    // Only compare if other is non-empty.
+    if (other.description != null && !other.description.isBlank()) {
+      equals = equals && Objects.equals(description, other.description);
+    }
 
     // Only compare if other is non-empty.
     if (other.maintainerUsernameCsv != null && !other.maintainerUsernameCsv.isBlank()) {
       equals = equals && Objects.equals(maintainerUsernameCsv, other.maintainerUsernameCsv);
+    }
+
+    // Only compare if other is non-empty.
+    if (other.homeUrl != null && !other.homeUrl.isBlank()) {
+      equals = equals && Objects.equals(homeUrl, other.homeUrl);
     }
 
     return equals;

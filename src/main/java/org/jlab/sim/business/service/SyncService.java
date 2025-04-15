@@ -265,7 +265,7 @@ public class SyncService extends JPAService<Software> {
         if (remote == null) {
           diff.removeList.add(local);
         } else {
-          // addList.remove(local.getName());
+          addList.remove(local.getName());
           if (local.syncEquals(remote)) {
             diff.matchList.add(local);
           } else {
