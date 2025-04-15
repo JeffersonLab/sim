@@ -7,30 +7,10 @@
 <c:set var="title" value="Sync"/>
 <s:page title="${title}">
     <jsp:attribute name="stylesheets">
-        <style>
-            td {
-                word-break: break-word;
-            }
-            td:nth-child(1) {
-                width: 150px;
-            }
-            td:nth-child(2) {
-                width: 70px;
-            }
-            td:nth-child(6) {
-                width: 70px;
-            }
-            .add-row,
-            .remote {
-                background-color: #d6ff9c;
-            }
-            .remove-row,
-            .local {
-                background-color: #ff9094;
-            }
-        </style>
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/sync.css"/>
     </jsp:attribute>
     <jsp:attribute name="scripts">
+        <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/sync.js"></script>
     </jsp:attribute>        
     <jsp:body>
         <div class="banner-breadbox">
@@ -45,7 +25,7 @@
         </div>
         <section>
             <h2><c:out value="${title}"/></h2>
-            <table class="data-table">
+            <table id="sync-table" data-repo-id="${repository.repositoryId}" class="data-table">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -73,7 +53,12 @@
                     Update)
                 </div>
                     <c:forEach var="software" items="${diff.addList}">
-                        <tr class="add-row">
+                        <tr class="add-row"
+                            data-name="${fn:escapeXml(software.name)}"
+                            data-type="${fn:escapeXml(software.type)}"
+                            data-description="${fn:escapeXml(software.description)}"
+                            data-maintainer="${fn:escapeXml(software.maintainerUsernameCsv)}"
+                            data-url="${fn:escapeXml(software.homeUrl)}">
                             <td><c:out value="${software.name}"/></td>
                             <td><c:out value="${software.type}"/></td>
                             <td><c:out value="${software.description}"/></td>

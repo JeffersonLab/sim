@@ -2,6 +2,7 @@ package org.jlab.sim.presentation.controller.ajax;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
@@ -17,6 +18,7 @@ import org.jlab.sim.business.service.SoftwareService;
 import org.jlab.sim.persistence.enumeration.SoftwareType;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.util.ExceptionUtil;
+import org.jlab.smoothness.presentation.util.ParamConverter;
 
 @WebServlet(
     name = "AddSoftware",
@@ -35,13 +37,15 @@ public class AddSoftware extends HttpServlet {
     String error = null;
 
     try {
+      BigInteger repositoryId = ParamConverter.convertBigInteger(request, "repositoryId");
       String name = request.getParameter("name");
       String description = request.getParameter("description");
       String maintainerUsernameCsv = request.getParameter("maintainerUsernameCsv");
       String homeUrl = request.getParameter("homeUrl");
       SoftwareType type = convertSoftwareType(request, "type");
 
-      softwareService.addSoftware(name, type, description, maintainerUsernameCsv, homeUrl);
+      softwareService.addSoftware(
+          repositoryId, name, type, description, maintainerUsernameCsv, homeUrl);
     } catch (UserFriendlyException e) {
       stat = "fail";
       error = "Unable to add Software: " + e.getUserMessage();

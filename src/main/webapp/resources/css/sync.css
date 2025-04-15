@@ -1,0 +1,20 @@
+td {
+    word-break: break-word;
+}
+td:nth-child(1) {
+    width: 150px;
+}
+td:nth-child(2) {
+    width: 70px;
+}
+td:nth-child(6) {
+    width: 70px;
+}
+.add-row,
+.remote {
+    background-color: #d6ff9c;
+}
+.remove-row,
+.local {
+    background-color: #ff9094;
+}

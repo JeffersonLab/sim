@@ -29,15 +29,12 @@ public class Software implements Serializable {
 
   @Basic(optional = false)
   @NotNull
-  @Size(min = 1, max = 64)
   @Column(name = "TYPE", nullable = false, length = 64)
   @Enumerated(EnumType.STRING)
   private SoftwareType type;
 
-  @Basic(optional = false)
-  @NotNull
-  @Size(min = 1, max = 256)
-  @Column(name = "DESCRIPTION", nullable = false, length = 256)
+  @Size(max = 256)
+  @Column(name = "DESCRIPTION", nullable = true, length = 256)
   private String description;
 
   @NotNull
@@ -45,10 +42,8 @@ public class Software implements Serializable {
   @JoinColumn(name = "REPOSITORY_ID", referencedColumnName = "REPOSITORY_ID", nullable = false)
   private Repository repository;
 
-  @Basic(optional = false)
-  @NotNull
-  @Size(min = 1, max = 256)
-  @Column(name = "HOME_URL", nullable = false, length = 256)
+  @Size(max = 256)
+  @Column(name = "HOME_URL", nullable = true, length = 256)
   private String homeUrl;
 
   @Basic(optional = false)
@@ -60,11 +55,13 @@ public class Software implements Serializable {
   public Software() {}
 
   public Software(
+      Repository repository,
       String name,
       SoftwareType type,
       String description,
       String maintainerUsernameCsv,
       String homeUrl) {
+    this.repository = repository;
     this.name = name;
     this.type = type;
     this.description = description;

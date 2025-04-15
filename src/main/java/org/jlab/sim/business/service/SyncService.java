@@ -41,16 +41,16 @@ public class SyncService extends JPAService<Software> {
 
     switch (repository.getName()) {
       case "CSUE":
-        softwareList = fetchCSUE();
+        softwareList = fetchCSUE(repository);
         break;
       case "CERTIFIED":
-        softwareList = fetchCertified();
+        softwareList = fetchCertified(repository);
         break;
       case "GITHUB":
-        softwareList = fetchGitHub();
+        softwareList = fetchGitHub(repository);
         break;
       case "LLAPP":
-        softwareList = fetchLLAPP();
+        softwareList = fetchLLAPP(repository);
         break;
       default:
         throw new UserFriendlyException("Unknown Repository: " + repository.getName());
@@ -59,7 +59,7 @@ public class SyncService extends JPAService<Software> {
     return softwareList;
   }
 
-  private List<Software> fetchGitHub() throws UserFriendlyException {
+  private List<Software> fetchGitHub(Repository repository) throws UserFriendlyException {
     List<Software> softwareList = new ArrayList<>();
 
     String url = "https://api.github.com/search/repositories?q=topic%3Aace+owner%3AJeffersonLab";
@@ -94,7 +94,8 @@ public class SyncService extends JPAService<Software> {
           String description = item.getString("description");
 
           Software software =
-              new Software(name, SoftwareType.APP, description, maintainerUsernameCsv, homeUrl);
+              new Software(
+                  repository, name, SoftwareType.APP, description, maintainerUsernameCsv, homeUrl);
 
           softwareList.add(software);
         }
@@ -109,7 +110,7 @@ public class SyncService extends JPAService<Software> {
     return softwareList;
   }
 
-  private List<Software> fetchCSUE() throws UserFriendlyException {
+  private List<Software> fetchCSUE(Repository repository) throws UserFriendlyException {
     List<Software> softwareList = new ArrayList<>();
 
     String url = "https://opweb.acc.jlab.org/CSUEApps/csueTools/csueAppsWeb.php";
@@ -137,7 +138,8 @@ public class SyncService extends JPAService<Software> {
           maintainerUsernameCsv = maintainerUsernameCsv.replace("dir owner:", "");
 
           Software software =
-              new Software(name, SoftwareType.APP, description, maintainerUsernameCsv, homeUrl);
+              new Software(
+                  repository, name, SoftwareType.APP, description, maintainerUsernameCsv, homeUrl);
 
           softwareList.add(software);
         }
@@ -149,16 +151,16 @@ public class SyncService extends JPAService<Software> {
     return softwareList;
   }
 
-  private List<Software> fetchCertified() throws UserFriendlyException {
-    List<Software> softwareList = fetchCertifiedType("app", SoftwareType.APP);
+  private List<Software> fetchCertified(Repository repository) throws UserFriendlyException {
+    List<Software> softwareList = fetchCertifiedType(repository, "app", SoftwareType.APP);
 
-    softwareList.addAll(fetchCertifiedType("lib", SoftwareType.LIB));
-    softwareList.addAll(fetchCertifiedType("script", SoftwareType.SCRIPT));
+    softwareList.addAll(fetchCertifiedType(repository, "lib", SoftwareType.LIB));
+    softwareList.addAll(fetchCertifiedType(repository, "script", SoftwareType.SCRIPT));
 
     return softwareList;
   }
 
-  private List<Software> fetchCertifiedType(String param, SoftwareType type)
+  private List<Software> fetchCertifiedType(Repository repository, String param, SoftwareType type)
       throws UserFriendlyException {
     List<Software> softwareList = new ArrayList<>();
 
@@ -184,7 +186,8 @@ public class SyncService extends JPAService<Software> {
           String maintainerUsernameCsv = null;
           String description = cells.get(1).text();
 
-          Software software = new Software(name, type, description, maintainerUsernameCsv, homeUrl);
+          Software software =
+              new Software(repository, name, type, description, maintainerUsernameCsv, homeUrl);
 
           softwareList.add(software);
         }
@@ -195,7 +198,7 @@ public class SyncService extends JPAService<Software> {
     return softwareList;
   }
 
-  private List<Software> fetchLLAPP() throws UserFriendlyException {
+  private List<Software> fetchLLAPP(Repository repository) throws UserFriendlyException {
     List<Software> softwareList = new ArrayList<>();
 
     String url = "https://devweb.acc.jlab.org/llapp.php";
@@ -225,7 +228,7 @@ public class SyncService extends JPAService<Software> {
             String maintainerUsernameCsv = tokens[2];
 
             Software software =
-                new Software(name, SoftwareType.APP, null, maintainerUsernameCsv, null);
+                new Software(repository, name, SoftwareType.APP, null, maintainerUsernameCsv, null);
 
             softwareList.add(software);
 
