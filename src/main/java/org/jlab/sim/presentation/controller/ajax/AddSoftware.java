@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jlab.sim.business.service.SoftwareService;
 import org.jlab.sim.persistence.enumeration.SoftwareType;
+import org.jlab.sim.presentation.util.Parameter;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.util.ExceptionUtil;
 import org.jlab.smoothness.presentation.util.ParamConverter;
@@ -42,7 +43,7 @@ public class AddSoftware extends HttpServlet {
       String description = request.getParameter("description");
       String maintainerUsernameCsv = request.getParameter("maintainerUsernameCsv");
       String homeUrl = request.getParameter("homeUrl");
-      SoftwareType type = convertSoftwareType(request, "type");
+      SoftwareType type = Parameter.convertSoftwareType(request, "type");
 
       softwareService.addSoftware(
           repositoryId, name, type, description, maintainerUsernameCsv, homeUrl);
@@ -73,16 +74,5 @@ public class AddSoftware extends HttpServlet {
       }
       gen.writeEnd();
     }
-  }
-
-  private SoftwareType convertSoftwareType(HttpServletRequest request, String parameterName) {
-    String value = request.getParameter(parameterName);
-    SoftwareType result = null;
-
-    if (value != null) {
-      result = SoftwareType.valueOf(value);
-    }
-
-    return result;
   }
 }
