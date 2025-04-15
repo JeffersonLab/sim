@@ -2,7 +2,9 @@ package org.jlab.sim.presentation.controller;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ejb.EJB;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -47,6 +49,7 @@ public class Sync extends HttpServlet {
     List<Software> localList = null;
     List<Software> remoteList = null;
     SoftwareDiff diff = null;
+    Map<String, Software> remoteMap = new HashMap<>();
 
     try {
       BigInteger repositoryId = ParamConverter.convertBigInteger(request, "repositoryId");
@@ -55,9 +58,13 @@ public class Sync extends HttpServlet {
 
       remoteList = syncService.fetch(repository);
 
+      for (Software software : remoteList) {
+        remoteMap.put(software.getName(), software);
+      }
+
       localList = softwareService.filterList(null, null, repository, null, 0, Integer.MAX_VALUE);
 
-      diff = syncService.diff(localList, remoteList);
+      diff = syncService.diff(localList, remoteMap);
     } catch (UserFriendlyException e) {
       e.printStackTrace();
       error = e.getMessage();
@@ -66,6 +73,7 @@ public class Sync extends HttpServlet {
     request.setAttribute("diff", diff);
     request.setAttribute("localList", localList);
     request.setAttribute("remoteList", remoteList);
+    request.setAttribute("remoteMap", remoteMap);
     request.setAttribute("error", error);
     request.setAttribute("repository", repository);
 

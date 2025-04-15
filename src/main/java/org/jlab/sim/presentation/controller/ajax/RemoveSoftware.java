@@ -15,18 +15,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jlab.sim.business.service.SoftwareService;
-import org.jlab.sim.persistence.enumeration.SoftwareType;
-import org.jlab.sim.presentation.util.Parameter;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.util.ExceptionUtil;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 @WebServlet(
-    name = "EditSoftware",
-    urlPatterns = {"/ajax/edit-software"})
-public class EditSoftware extends HttpServlet {
+    name = "RemoveSoftware",
+    urlPatterns = {"/ajax/remove-software"})
+public class RemoveSoftware extends HttpServlet {
 
-  private static final Logger logger = Logger.getLogger(EditSoftware.class.getName());
+  private static final Logger logger = Logger.getLogger(RemoveSoftware.class.getName());
 
   @EJB SoftwareService softwareService;
 
@@ -40,25 +38,19 @@ public class EditSoftware extends HttpServlet {
 
     try {
       BigInteger softwareId = ParamConverter.convertBigInteger(request, "softwareId");
-      BigInteger repositoryId = ParamConverter.convertBigInteger(request, "repositoryId");
-      String description = request.getParameter("description");
-      String maintainerUsernameCsv = request.getParameter("maintainerUsernameCsv");
-      String homeUrl = request.getParameter("homeUrl");
-      SoftwareType type = Parameter.convertSoftwareType(request, "type");
 
-      // Since name is key in other repos, must delete and add new for name changes.
-      softwareService.editSoftware(
-          softwareId, repositoryId, type, description, maintainerUsernameCsv, homeUrl);
+      softwareService.removeSoftware(softwareId);
     } catch (UserFriendlyException e) {
       stat = "fail";
-      error = "Unable to edit Software: " + e.getUserMessage();
+      error = "Unable to remove Software: " + e.getUserMessage();
     } catch (EJBAccessException e) {
       stat = "fail";
-      error = "Unable to edit Software: Not authenticated / authorized (do you need to re-login?)";
+      error =
+          "Unable to remove Software: Not authenticated / authorized (do you need to re-login?)";
     } catch (RuntimeException e) {
       stat = "fail";
-      error = "Unable to edit Software";
-      logger.log(Level.SEVERE, "Unable to edit Software", e);
+      error = "Unable to remove Software";
+      logger.log(Level.SEVERE, "Unable to remove Software", e);
       Throwable rootCause = ExceptionUtil.getRootCause(e);
       if ("OracleDatabaseException".equals(rootCause.getClass().getSimpleName())) {
         error = "Oracle Database Exception - make sure name doesn't already exist: " + name;

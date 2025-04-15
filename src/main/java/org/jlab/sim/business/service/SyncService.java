@@ -246,14 +246,8 @@ public class SyncService extends JPAService<Software> {
   }
 
   @PermitAll
-  public SoftwareDiff diff(List<Software> localList, List<Software> remoteList) {
+  public SoftwareDiff diff(List<Software> localList, Map<String, Software> remoteMap) {
     SoftwareDiff diff = new SoftwareDiff();
-
-    Map<String, Software> remoteMap = new HashMap<String, Software>();
-
-    for (Software remote : remoteList) {
-      remoteMap.put(remote.getName(), remote);
-    }
 
     LinkedHashMap<String, Software> addList = new LinkedHashMap<>(remoteMap);
 

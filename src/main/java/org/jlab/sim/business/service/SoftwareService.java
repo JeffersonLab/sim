@@ -60,7 +60,6 @@ public class SoftwareService extends JPAService<Software> {
   public void editSoftware(
       BigInteger softwareId,
       BigInteger repoId,
-      String name,
       SoftwareType type,
       String description,
       String maintainerUsernameCsv,
@@ -88,21 +87,33 @@ public class SoftwareService extends JPAService<Software> {
       throw new UserFriendlyException("repo not found with id: " + repoId);
     }
 
-    if (name == null || name.isEmpty()) {
-      throw new UserFriendlyException("Name cannot be empty");
-    }
-
     if (type == null) {
       throw new UserFriendlyException("Type cannot be empty");
     }
 
-    software.setName(name);
     software.setType(type);
     software.setDescription(description);
     software.setMaintainerUsernameCsv(maintainerUsernameCsv);
     software.setHomeUrl(homeUrl);
 
     edit(software);
+  }
+
+  @PermitAll
+  public void removeSoftware(BigInteger softwareId) throws UserFriendlyException {
+    checkAuthenticated();
+
+    if (softwareId == null) {
+      throw new UserFriendlyException("softwareId cannot be empty");
+    }
+
+    Software software = find(softwareId);
+
+    if (software == null) {
+      throw new UserFriendlyException("software not found with id: " + softwareId);
+    }
+
+    remove(software);
   }
 
   @PermitAll

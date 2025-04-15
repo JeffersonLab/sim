@@ -70,10 +70,28 @@
                         </tr>
                     </c:forEach>
                     <c:forEach var="software" items="${diff.updateList}">
-                        <tr>
+                        <tr data-id = "${software.softwareId}"
+                            data-name="${fn:escapeXml(software.name)}"
+                            data-type="${fn:escapeXml(software.type)}"
+                            data-description="${fn:escapeXml(remoteMap[software.name].description)}"
+                            data-maintainer="${fn:escapeXml(software.maintainerUsernameCsv)}"
+                            data-url="${fn:escapeXml(software.homeUrl)}">
                             <td><c:out value="${software.name}"/></td>
                             <td><c:out value="${software.type}"/></td>
-                            <td><c:out value="${software.description}"/></td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${software.description eq remoteMap[software.name].description}">
+                                        <c:out value="${software.description}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div>
+                                            <div class="remote"><c:out
+                                                    value="${remoteMap[software.name].description}"/></div>
+                                            <span class="local"><c:out value="${software.description}"/></span>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
                             <td><c:out value="${software.homeUrl}"/></td>
                             <td>
@@ -82,7 +100,7 @@
                         </tr>
                     </c:forEach>
                     <c:forEach var="software" items="${diff.removeList}">
-                        <tr class="remove-row">
+                        <tr class="remove-row" data-id="${software.softwareId}">
                             <td><c:out value="${software.name}"/></td>
                             <td><c:out value="${software.type}"/></td>
                             <td><c:out value="${software.description}"/></td>

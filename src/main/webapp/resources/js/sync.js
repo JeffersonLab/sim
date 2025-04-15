@@ -56,8 +56,7 @@ jlab.addRow = function($tr, batch) {
     });
 };
 jlab.removeRow = function($tr, batch) {
-    var name = $tr.find("td:nth-child(2)").text(),
-        id = $tr.attr("data-id"),
+    var id = $tr.attr("data-id"),
         $button = $tr.find("button");
 
     $button
@@ -69,7 +68,7 @@ jlab.removeRow = function($tr, batch) {
         url: jlab.contextPath + "/ajax/remove-software",
         type: "POST",
         data: {
-            id: id
+            softwareId: id
         },
         dataType: "json"
     });
@@ -103,29 +102,13 @@ jlab.removeRow = function($tr, batch) {
     });
 };
 jlab.updateRow = function($tr, batch) {
-    var alarmId = $tr.attr("data-id"),
-        name = $tr.attr("data-name"),
-        actionId = $tr.attr("data-action-id"),
-        locationCsv = $tr.attr("data-location-id-csv"),
-        alias = $tr.attr("data-alias"),
-        device = $tr.attr("data-device"),
-        screenCommand = $tr.attr("data-screen-command"),
-        managedBy = $tr.attr("data-managed-by"),
-        maskedBy = $tr.attr("data-masked-by"),
-        pv = $tr.attr("data-pv"),
-        syncRuleId = $tr.attr("data-rule-id"),
-        syncElementName = $tr.attr("data-element-name"),
-        syncElementId = $tr.attr("data-element-id"),
+    var softwareId = $tr.attr("data-id"),
+        type = $tr.attr("data-type"),
+        description = $tr.attr("data-description"),
+        maintainerUsernameCsv = $tr.attr("data-maintainer"),
+        homeUrl = $tr.attr("data-url"),
+        repositoryId = $("#sync-table").attr("data-repo-id"),
         $button = $tr.find("button.update");
-
-    let locationId = locationCsv.split(','),
-        emptyLocationId = 'N';
-
-    if(locationId.length === 0) {
-        emptyLocationId = 'Y';
-    }
-
-    locationId = locationId.map(s => s.trim());
 
     $button
         .height($button.height())
@@ -136,20 +119,12 @@ jlab.updateRow = function($tr, batch) {
         url: jlab.contextPath + "/ajax/edit-software",
         type: "POST",
         data: {
-            alarmId: alarmId,
-            name: name,
-            actionId: actionId,
-            locationId: locationId, /*renamed 'locationId[]' by jQuery*/
-            'emptyLocationId[]': emptyLocationId,
-            alias: alias,
-            device: device,
-            screenCommand: screenCommand,
-            managedBy: managedBy,
-            maskedBy: maskedBy,
-            pv: pv,
-            syncRuleId: syncRuleId,
-            syncElementName: syncElementName,
-            syncElementId: syncElementId
+            softwareId: softwareId,
+            repositoryId: repositoryId,
+            type: type,
+            description: description,
+            maintainerUsernameCsv: maintainerUsernameCsv,
+            homeUrl: homeUrl
         },
         dataType: "json"
     });
@@ -174,7 +149,7 @@ jlab.updateRow = function($tr, batch) {
     });
 
     request.fail(function(xhr, textStatus) {
-        window.console && console.log('Unable to update alarm; Text Status: ' + textStatus + ', Ready State: ' + xhr.readyState + ', HTTP Status Code: ' + xhr.status);
+        window.console && console.log('Unable to update software; Text Status: ' + textStatus + ', Ready State: ' + xhr.readyState + ', HTTP Status Code: ' + xhr.status);
         alert('Unable to Save: Server unavailable or unresponsive');
     });
 
