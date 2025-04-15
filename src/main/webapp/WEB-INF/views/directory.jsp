@@ -83,7 +83,12 @@
             </s:filter-flyout-widget>
             <h2 class="page-header-title"><c:out value="${title}"/></h2>
             <div class="message-box"><c:out value="${selectionMessage}"/></div>
-            <table class="data-table">
+            <c:set var="readonly" value="${!pageContext.request.isUserInRole('sim-admin')}"/>
+            <c:if test="${not readonly}">
+                <s:editable-row-table-controls>
+                </s:editable-row-table-controls>
+            </c:if>
+            <table class="data-table ${readonly ? '' : 'uniselect-table editable-row-table'}">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -121,5 +126,35 @@
                     value="Next"${paginator.next ? '' : ' disabled="disabled"'}>Next
             </button>
         </section>
+        <s:editable-row-table-dialog>
+            <section>
+            <form id="row-form">
+                <ul class="key-value-list">
+                    <li>
+                        <div class="li-key">
+                            <label for="row-description">Description</label>
+                        </div>
+                        <div class="li-value">
+                            <input type="text" id="row-description"/>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label for="row-type">Type</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="row-type" required="required">
+                                <option value="">&nbsp;</option>
+                                <c:forEach items="${typeList}" var="type">
+                                    <option value="${type}">
+                                        <c:out value="${type}"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                </ul>
+            </form>
+            </section>
+        </s:editable-row-table-dialog>
     </jsp:body>         
 </s:page>
