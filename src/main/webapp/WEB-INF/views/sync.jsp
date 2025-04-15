@@ -34,7 +34,7 @@
                         <th>Maintainers</th>
                         <th>Home URL</th>
                         <th>
-                            <button ${diff.hasChanges() ? '' : 'disabled="disabled"'}
+                            <button ${diff.hasChanges() && pageContext.request.isUserInRole('sim-admin') ? '' : 'disabled="disabled"'}
                                     id="apply-all-button" type="button">Apply All
                             </button>
                         </th>
@@ -65,7 +65,7 @@
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
                             <td><c:out value="${software.homeUrl}"/></td>
                             <td>
-                                <button class="add" type="button">Add</button>
+                                <button class="add" type="button"${pageContext.request.isUserInRole('sim-admin') ? '' : ' disabled="disabled"'}>Add</button>
                             </td>
                         </tr>
                     </c:forEach>
@@ -77,7 +77,7 @@
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
                             <td><c:out value="${software.homeUrl}"/></td>
                             <td>
-                                <button class="update" type="button">Update</button>
+                                <button class="update" type="button"${pageContext.request.isUserInRole('sim-admin') ? '' : ' disabled="disabled"'}>Update</button>
                             </td>
                         </tr>
                     </c:forEach>
@@ -89,7 +89,7 @@
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
                             <td><c:out value="${software.homeUrl}"/></td>
                             <td>
-                                <button class="remove" type="button">Remove</button>
+                                <button class="remove" type="button"${pageContext.request.isUserInRole('sim-admin') ? '' : ' disabled="disabled"'}>Remove</button>
                             </td>
                         </tr>
                     </c:forEach>

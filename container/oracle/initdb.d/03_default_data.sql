@@ -16,4 +16,4 @@ insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) va
 insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) values (SIM_OWNER.REPOSITORY_ID.nextval, 'LLAPP', 'Low Level Apps', 'https://devweb.acc.jlab.org/llapp.php');
 
 -- SOFTWARE
-insert into SIM_OWNER.SOFTWARE (SOFTWARE_ID, NAME, TYPE, DESCRIPTION, REPOSITORY_ID, HOME_URL, MAINTAINER_USERNAME_CSV) values (SIM_OWNER.SOFTWARE_ID.nextval, 'SIM', 'APP', 'Software Inventory Manager.  Aggregates software info into a phonebook-like directory', 1, 'https://github.com/jeffersonlab/sim', 'ryans');
+insert into SIM_OWNER.SOFTWARE (SOFTWARE_ID, NAME, TYPE, DESCRIPTION, REPOSITORY_ID, HOME_URL, MAINTAINER_USERNAME_CSV) values (SIM_OWNER.SOFTWARE_ID.nextval, 'sim', 'APP', 'Software Inventory Manager.  Aggregates software info into a phonebook-like directory', 1, 'https://github.com/jeffersonlab/sim', 'ryans');

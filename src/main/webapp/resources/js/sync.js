@@ -36,7 +36,7 @@ jlab.addRow = function($tr, batch) {
                 if($tr !== undefined) {
                     jlab.addRow($tr, true);
                 } else {
-                    if(jlab.removeTr.length === 0 && jlab.updateTr.length === 0 && jlab.linkButton.length === 0) {
+                    if(jlab.removeTr.length === 0 && jlab.updateTr.length === 0) {
                         $("#apply-all-button").replaceWith("Done!");
                     }
                 }
@@ -83,7 +83,7 @@ jlab.removeRow = function($tr, batch) {
                 if($tr !== undefined) {
                     jlab.removeRow($tr, true);
                 } else {
-                    if(jlab.addTr.length === 0 && jlab.updateTr.length === 0 && jlab.linkButton.length === 0) {
+                    if(jlab.addTr.length === 0 && jlab.updateTr.length === 0) {
                         $("#apply-all-button").replaceWith("Done!");
                     }
                 }
@@ -163,7 +163,7 @@ jlab.updateRow = function($tr, batch) {
                 if($tr !== undefined) {
                     jlab.updateRow($tr, true);
                 } else {
-                    if(jlab.addTr.length === 0 && jlab.removeTr.length === 0 && jlab.linkButton.length === 0) {
+                    if(jlab.addTr.length === 0 && jlab.removeTr.length === 0) {
                         $("#apply-all-button").replaceWith("Done!");
                     }
                 }
@@ -254,9 +254,6 @@ $(document).on("click", "button.add", function() {
 });
 $(document).on("click", "button.remove", function() {
     jlab.removeRow($(this).closest("tr"));
-});
-$(document).on("click", "button.link", function() {
-    jlab.linkRow($(this).closest("tr"), $(this).attr("data-alarm-id"));
 });
 $(document).on("click", "button.update", function() {
     jlab.updateRow($(this).closest("tr"));
