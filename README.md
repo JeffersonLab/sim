@@ -16,7 +16,7 @@ A [Java EE 8](https://en.wikipedia.org/wiki/Jakarta_EE) web application, relying
 ---
 
 ## Overview
-A web app for managing a registry of apps at JLab.
+A web app for managing a registry of software for the Accelerator Controls Group (ACG) at JLab.
 
 ## Quick Start with Compose
 1. Grab project
