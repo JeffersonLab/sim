@@ -62,7 +62,8 @@ public class SyncService extends JPAService<Software> {
   private List<Software> fetchGitHub(Repository repository) throws UserFriendlyException {
     List<Software> softwareList = new ArrayList<>();
 
-    String url = "https://api.github.com/search/repositories?q=topic%3Aace+owner%3AJeffersonLab";
+    String url =
+        "https://api.github.com/search/repositories?per_page=100&q=topic%3Aace+owner%3AJeffersonLab";
 
     HttpResponse<String> response = null;
 
