@@ -1,5 +1,5 @@
 # sim [![CI](https://github.com/JeffersonLab/sim/actions/workflows/ci.yaml/badge.svg)](https://github.com/JeffersonLab/sim/actions/workflows/ci.yaml) [![Docker](https://img.shields.io/docker/v/jeffersonlab/sim?sort=semver&label=DockerHub)](https://hub.docker.com/r/jeffersonlab/sim)
-A [Java EE 8](https://en.wikipedia.org/wiki/Jakarta_EE) web application, relying on the [Smoothness](https://github.com/JeffersonLab/smoothness) web lib.
+A [Java EE 8](https://en.wikipedia.org/wiki/Jakarta_EE) web application for searching a software inventory spanning multiple repos, relying on the [Smoothness](https://github.com/JeffersonLab/smoothness) web lib.
 
 ![Screenshot](https://github.com/JeffersonLab/sim/raw/main/Screenshot.png?raw=true "Screenshot")
 
