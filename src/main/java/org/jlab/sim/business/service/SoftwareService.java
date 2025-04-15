@@ -57,6 +57,55 @@ public class SoftwareService extends JPAService<Software> {
   }
 
   @PermitAll
+  public void editSoftware(
+      BigInteger softwareId,
+      BigInteger repoId,
+      String name,
+      SoftwareType type,
+      String description,
+      String maintainerUsernameCsv,
+      String homeUrl)
+      throws UserFriendlyException {
+    checkAuthenticated();
+
+    if (softwareId == null) {
+      throw new UserFriendlyException("softwareId cannot be empty");
+    }
+
+    Software software = find(softwareId);
+
+    if (software == null) {
+      throw new UserFriendlyException("software not found with id: " + softwareId);
+    }
+
+    if (repoId == null) {
+      throw new UserFriendlyException("repoId cannot be empty");
+    }
+
+    Repository repo = repositoryService.find(repoId);
+
+    if (repo == null) {
+      throw new UserFriendlyException("repo not found with id: " + repoId);
+    }
+
+    if (name == null || name.isEmpty()) {
+      throw new UserFriendlyException("Name cannot be empty");
+    }
+
+    if (type == null) {
+      throw new UserFriendlyException("Type cannot be empty");
+    }
+
+    software.setName(name);
+    software.setType(type);
+    software.setDescription(description);
+    software.setMaintainerUsernameCsv(maintainerUsernameCsv);
+    software.setHomeUrl(homeUrl);
+
+    edit(software);
+  }
+
+  @PermitAll
   public List<Software> findAll(OrderDirective... directives) {
     return super.findAll(directives);
   }
