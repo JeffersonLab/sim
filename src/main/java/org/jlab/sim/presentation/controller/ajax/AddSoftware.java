@@ -21,9 +21,9 @@ import org.jlab.smoothness.business.util.ExceptionUtil;
 @WebServlet(
     name = "AddSoftware",
     urlPatterns = {"/ajax/add-software"})
-public class AddAlarm extends HttpServlet {
+public class AddSoftware extends HttpServlet {
 
-  private static final Logger logger = Logger.getLogger(AddAlarm.class.getName());
+  private static final Logger logger = Logger.getLogger(AddSoftware.class.getName());
 
   @EJB SoftwareService softwareService;
 

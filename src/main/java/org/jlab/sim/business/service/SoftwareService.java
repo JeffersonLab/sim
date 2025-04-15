@@ -1,5 +1,6 @@
 package org.jlab.sim.business.service;
 
+import java.util.List;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import org.jlab.sim.persistence.entity.Software;
@@ -34,5 +35,10 @@ public class SoftwareService extends JPAService<Software> {
     Software software = new Software(name, type, description, maintainerUsernameCsv, homeUrl);
 
     create(software);
+  }
+
+  @PermitAll
+  public List<Software> findAll(OrderDirective... directives) {
+    return super.findAll(directives);
   }
 }

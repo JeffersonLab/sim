@@ -51,6 +51,7 @@ public class SyncService extends JPAService<Software> {
         break;
       case "LLAPP":
         softwareList = fetchLLAPP();
+        break;
       default:
         throw new UserFriendlyException("Unknown Repository: " + repository.getName());
     }
@@ -195,7 +196,27 @@ public class SyncService extends JPAService<Software> {
   }
 
   private List<Software> fetchLLAPP() throws UserFriendlyException {
-    List<Software> softwareList = null;
+    List<Software> softwareList = new ArrayList<>();
+
+    String url = "https://devweb.acc.jlab.org/llapp.php";
+
+    HttpResponse<String> response = null;
+
+    try {
+      HttpClient client = HttpClient.newHttpClient();
+      HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
+
+      response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    } catch (IOException | InterruptedException e) {
+      throw new UserFriendlyException("Could not connect to llapp");
+    }
+
+    if (response != null && response.statusCode() == 200) {
+      String text = response.body();
+
+    } else {
+      throw new UserFriendlyException("Request failed with status code: " + response.statusCode());
+    }
 
     return softwareList;
   }
