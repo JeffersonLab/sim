@@ -46,10 +46,8 @@ public class Software implements Serializable {
   @Column(name = "HOME_URL", nullable = true, length = 256)
   private String homeUrl;
 
-  @Basic(optional = false)
-  @NotNull
-  @Size(min = 1, max = 256)
-  @Column(name = "MAINTAINER_USERNAME_CSV", nullable = false, length = 256)
+  @Size(max = 256)
+  @Column(name = "MAINTAINER_USERNAME_CSV", nullable = true, length = 256)
   private String maintainerUsernameCsv;
 
   public Software() {}

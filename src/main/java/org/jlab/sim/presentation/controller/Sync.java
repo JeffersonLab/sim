@@ -16,7 +16,6 @@ import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.view.SoftwareDiff;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
-import org.jlab.smoothness.business.service.JPAService;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 
 /**
@@ -56,7 +55,7 @@ public class Sync extends HttpServlet {
 
       remoteList = syncService.fetch(repository);
 
-      localList = softwareService.findAll(new JPAService.OrderDirective("name", true));
+      localList = softwareService.filterList(null, null, repository, null, 0, Integer.MAX_VALUE);
 
       diff = syncService.diff(localList, remoteList);
     } catch (UserFriendlyException e) {

@@ -36,10 +36,11 @@ public class AddSoftware extends HttpServlet {
 
     String stat = "ok";
     String error = null;
+    String name = null;
 
     try {
       BigInteger repositoryId = ParamConverter.convertBigInteger(request, "repositoryId");
-      String name = request.getParameter("name");
+      name = request.getParameter("name");
       String description = request.getParameter("description");
       String maintainerUsernameCsv = request.getParameter("maintainerUsernameCsv");
       String homeUrl = request.getParameter("homeUrl");
@@ -59,7 +60,7 @@ public class AddSoftware extends HttpServlet {
       logger.log(Level.SEVERE, "Unable to add Software", e);
       Throwable rootCause = ExceptionUtil.getRootCause(e);
       if ("OracleDatabaseException".equals(rootCause.getClass().getSimpleName())) {
-        error = "Oracle Database Exception - make sure name doesn't already exist!";
+        error = "Oracle Database Exception - make sure name doesn't already exist: " + name;
       }
     }
 

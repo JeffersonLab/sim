@@ -96,7 +96,16 @@
                 <tbody>
                     <c:forEach var="software" items="${softwareList}">
                         <tr>
-                            <td><c:out value="${software.name}"/></td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${not empty software.homeUrl}">
+                                        <a href="${software.homeUrl}"><c:out value="${software.name}"/></a>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:out value="${software.name}"/>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
                             <td><c:out value="${software.type}"/></td>
                             <td><c:out value="${software.description}"/></td>
                             <td><c:out value="${software.repository.name}"/></td>
