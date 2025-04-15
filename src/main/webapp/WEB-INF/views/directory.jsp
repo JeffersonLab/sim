@@ -9,6 +9,15 @@
     <jsp:attribute name="stylesheets">
     </jsp:attribute>
     <jsp:attribute name="scripts">
+        <script>
+            $(document).on("click", ".default-clear-panel", function () {
+                $("#software-name").val('');
+                $("#username").val('');
+                $("#repository-select").val('');
+                $("#type-select").val('');
+                return false;
+            });
+        </script>
     </jsp:attribute>        
     <jsp:body>
         <section>

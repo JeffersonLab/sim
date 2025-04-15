@@ -2,6 +2,8 @@ package org.jlab.sim.presentation.controller;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.ejb.EJB;
@@ -17,6 +19,7 @@ import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.enumeration.SoftwareType;
 import org.jlab.sim.presentation.util.Parameter;
 import org.jlab.smoothness.business.service.JPAService;
+import org.jlab.smoothness.presentation.util.Paginator;
 import org.jlab.smoothness.presentation.util.ParamConverter;
 import org.jlab.smoothness.presentation.util.ParamUtil;
 
@@ -51,18 +54,88 @@ public class Directory extends HttpServlet {
     int offset = ParamUtil.convertAndValidateNonNegativeInt(request, "offset", 0);
     int maxPerPage = 100;
 
-    List<Software> softwareList =
-        softwareService.findAll(new JPAService.OrderDirective("name", true));
-
-    List<SoftwareType> typeList = Arrays.asList(SoftwareType.values());
-
     List<Repository> repoList =
         repositoryService.findAll(new JPAService.OrderDirective("name", true));
 
+    List<SoftwareType> typeList = Arrays.asList(SoftwareType.values());
+
+    Repository repository = null;
+
+    if (repositoryId != null) {
+      repository = repositoryService.find(repositoryId);
+    }
+
+    List<Software> softwareList =
+        softwareService.filterList(softwareName, username, repository, type, offset, maxPerPage);
+
+    long totalRecords = softwareService.countList(softwareName, username, repository, type);
+
+    Paginator paginator = new Paginator(totalRecords, offset, maxPerPage);
+
+    String selectionMessage =
+        createSelectionMessage(paginator, softwareName, username, repository, type);
+
+    request.setAttribute("selectionMessage", selectionMessage);
     request.setAttribute("repoList", repoList);
     request.setAttribute("typeList", typeList);
     request.setAttribute("softwareList", softwareList);
+    request.setAttribute("paginator", paginator);
 
     request.getRequestDispatcher("/WEB-INF/views/directory.jsp").forward(request, response);
+  }
+
+  private String createSelectionMessage(
+      Paginator paginator,
+      String softwareName,
+      String username,
+      Repository repository,
+      SoftwareType type) {
+    DecimalFormat formatter = new DecimalFormat("###,###");
+
+    String selectionMessage = "All Software ";
+
+    List<String> filters = new ArrayList<>();
+
+    if (softwareName != null && !softwareName.isBlank()) {
+      filters.add("Name \"" + softwareName + "\"");
+    }
+
+    if (username != null && !username.isBlank()) {
+      filters.add("Username \"" + username + "\"");
+    }
+
+    if (repository != null) {
+      filters.add("Repository \"" + repository.getName() + "\"");
+    }
+
+    if (type != null) {
+      filters.add("Type \"" + type + "\"");
+    }
+
+    if (!filters.isEmpty()) {
+      selectionMessage = filters.get(0);
+
+      for (int i = 1; i < filters.size(); i++) {
+        String filter = filters.get(i);
+        selectionMessage += " and " + filter;
+      }
+    }
+
+    if (paginator.getTotalRecords() < paginator.getMaxPerPage() && paginator.getOffset() == 0) {
+      selectionMessage =
+          selectionMessage + " {" + formatter.format(paginator.getTotalRecords()) + "}";
+    } else {
+      selectionMessage =
+          selectionMessage
+              + " {"
+              + formatter.format(paginator.getStartNumber())
+              + " - "
+              + formatter.format(paginator.getEndNumber())
+              + " of "
+              + formatter.format(paginator.getTotalRecords())
+              + "}";
+    }
+
+    return selectionMessage;
   }
 }
