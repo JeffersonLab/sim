@@ -23,16 +23,7 @@
         </style>
     </jsp:attribute>
     <jsp:attribute name="scripts">
-        <script>
-            $(document).on("click", ".default-clear-panel", function () {
-                $("#software-name").val('');
-                $("#username").val('');
-                $("#repository-select").val('');
-                $("#type-select").val('');
-                $("#archived-select").val('');
-                return false;
-            });
-        </script>
+        <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/directory.js"></script>
     </jsp:attribute>        
     <jsp:body>
         <section>
@@ -130,7 +121,7 @@
                 </thead>
                 <tbody>
                     <c:forEach var="software" items="${softwareList}">
-                        <tr>
+                        <tr data-id="${software.softwareId}">
                             <td>
                                 <c:choose>
                                     <c:when test="${not empty software.homeUrl}">
@@ -163,6 +154,14 @@
             <section>
             <form id="row-form">
                 <ul class="key-value-list">
+                    <li>
+                        <div class="li-key">
+                            <label for="row-name">Name</label>
+                        </div>
+                        <div class="li-value">
+                            <input type="text" id="row-name"/>
+                        </div>
+                    </li>
                     <li>
                         <div class="li-key">
                             <label for="row-type">Type</label>
