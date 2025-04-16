@@ -22,7 +22,8 @@ jlab.addRow = function($tr, batch) {
             type: type,
             description: description,
             maintainerUsernameCsv: maintainerUsernameCsv,
-            homeUrl: homeUrl
+            homeUrl: homeUrl,
+            archived: 'N'
         },
         dataType: "json"
     });
@@ -124,7 +125,8 @@ jlab.updateRow = function($tr, batch) {
             type: type,
             description: description,
             maintainerUsernameCsv: maintainerUsernameCsv,
-            homeUrl: homeUrl
+            homeUrl: homeUrl,
+            archived: 'N'
         },
         dataType: "json"
     });
