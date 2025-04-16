@@ -165,14 +165,6 @@
                 <ul class="key-value-list">
                     <li>
                         <div class="li-key">
-                            <label for="row-description">Description</label>
-                        </div>
-                        <div class="li-value">
-                            <input type="text" id="row-description"/>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="li-key">
                             <label for="row-type">Type</label>
                         </div>
                         <div class="li-value">
@@ -182,6 +174,47 @@
                                     <option value="${type}">
                                         <c:out value="${type}"/></option>
                                 </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label for="row-description">Description</label>
+                        </div>
+                        <div class="li-value">
+                            <input type="text" id="row-description"/>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label for="row-repo">Repo</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="row-repo" required="required">
+                                <option value="">&nbsp;</option>
+                                <c:forEach items="${repoList}" var="repo">
+                                    <option value="${repo.repositoryId}">
+                                        <c:out value="${repo.name}"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label for="row-maintainers">Maintainers</label>
+                        </div>
+                        <div class="li-value">
+                            <input type="text" id="row-maintainers" placeholder="CSV of usernames"/>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label for="row-archived">Archived</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="row-archived" required="required">
+                                <option value="N">No</option>
+                                <option value="Y">Yes</option>
                             </select>
                         </div>
                     </li>
