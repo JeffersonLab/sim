@@ -16,6 +16,7 @@ import org.jlab.sim.business.service.SoftwareService;
 import org.jlab.sim.business.service.SyncService;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
+import org.jlab.sim.persistence.enumeration.Include;
 import org.jlab.sim.persistence.view.SoftwareDiff;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.presentation.util.ParamConverter;
@@ -63,7 +64,8 @@ public class Sync extends HttpServlet {
       }
 
       localList =
-          softwareService.filterList(null, null, repository, null, null, 0, Integer.MAX_VALUE);
+          softwareService.filterList(
+              null, null, repository, null, Include.YES, 0, Integer.MAX_VALUE);
 
       diff = syncService.diff(localList, remoteMap);
     } catch (UserFriendlyException e) {
