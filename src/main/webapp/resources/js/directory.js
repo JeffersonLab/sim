@@ -197,65 +197,19 @@ $(document).on("dialogclose", "#table-row-dialog", function() {
     $("#row-form")[0].reset();
 
     $("#row-name").removeAttr("disabled");
-    $("#row-action").removeAttr("disabled");
-    $("#row-alias").removeAttr("disabled");
-    $("#row-location").prop('disabled', false);
-
-    $("#row-screen-command").removeAttr("disabled");
-    $("#row-pv").removeAttr("disabled");
-
-    $("#remove-sync-button").addClass("hidden");
+    $("#row-repo").removeAttr("disabled");
 });
 $(document).on("click", "#open-edit-row-dialog-button", function() {
     var $selectedRow = $(".editable-row-table tr.selected-row");
-    $("#row-name").val($selectedRow.find("td:first-child a").text());
-    $("#row-action").val($selectedRow.attr("data-action-id"));
-    $("#row-alias").val($selectedRow.attr("data-alias"));
-    $("#row-device").val($selectedRow.attr("data-device"));
-    $("#row-screen-command").val($selectedRow.attr("data-screen-command"));
-    $("#row-managed-by").val($selectedRow.attr("data-managed-by"));
-    $("#row-masked-by").val($selectedRow.attr("data-masked-by"));
-    $("#row-pv").val($selectedRow.attr("data-pv"));
+    $("#row-name").val($selectedRow.attr("data-name"));
+    $("#row-type").val($selectedRow.attr("data-type"));
+    $("#row-description").val($selectedRow.attr("data-description"));
+    $("#row-maintainer").val($selectedRow.attr("data-maintainer-csv"));
+    $("#row-repo").val($selectedRow.attr("data-repo-id"));
+    $("#row-archived").val($selectedRow.attr("data-archived"));
 
-    let locationIdCsv = $selectedRow.attr("data-location-id-csv"),
-        locationIdArray = locationIdCsv.split(/[ ,]+/);
-    $('#row-location').val(locationIdArray).trigger('change');
-
-    let syncRuleId = $selectedRow.attr("data-sync-rule-id");
-
-    $("#row-sync-rule-id").val(syncRuleId);
-    $("#row-sync-element-id").val($selectedRow.attr("data-sync-element-id"));
-    $("#row-sync-element-name").val($selectedRow.attr("data-sync-element-name"));
-
-    if(syncRuleId) {
-        $("#remove-sync-button").removeClass("hidden");
-
-        $("#row-name").attr("disabled", "disabled");
-        $("#row-action").attr("disabled", "disabled");
-        $("#row-alias").attr("disabled", "disabled");
-        $("#row-location").prop('disabled', true);
-
-        let syncScreenCommand = $selectedRow.attr("data-sync-screen-command"),
-            syncPv = $selectedRow.attr("data-sync-pv");
-
-        if(syncScreenCommand === 'Y') {
-            $("#row-screen-command").attr("disabled", "disabled");
-        }
-
-        if(syncPv === 'Y') {
-            $("#row-pv").attr("disabled", "disabled");
-        }
-    } else {
-        $("#remove-sync-button").addClass("hidden");
-
-        $("#row-name").removeAttr("disabled");
-        $("#row-action").removeAttr("disabled");
-        $("#row-alias").removeAttr("disabled");
-        $("#row-location").prop('disabled', false);
-
-        $("#row-screen-command").removeAttr("disabled");
-        $("#row-pv").removeAttr("disabled");
-    }
+    $("#row-name").attr("disabled", "disabled");
+    $("#row-repo").attr("disabled", "disabled");
 });
 $(document).on("table-row-add", function() {
     jlab.addRow();

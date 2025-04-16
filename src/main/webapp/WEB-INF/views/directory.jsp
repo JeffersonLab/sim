@@ -121,7 +121,13 @@
                 </thead>
                 <tbody>
                     <c:forEach var="software" items="${softwareList}">
-                        <tr data-id="${software.softwareId}">
+                        <tr data-id="${software.softwareId}"
+                            data-archived="${software.archived}"
+                            data-name="${fn:escapeXml(software.name)}"
+                            data-type="${fn:escapeXml(software.type)}"
+                            data-description="${fn:escapeXml(software.description)}"
+                            data-repo-id="${software.repository.repositoryId}"
+                            data-maintainer-csv="${fn:escapeXml(software.maintainerUsernameCsv)}">
                             <td>
                                 <c:choose>
                                     <c:when test="${not empty software.homeUrl}">
