@@ -7,6 +7,20 @@
 <c:set var="title" value="Directory"/>
 <s:page title="${title}">
     <jsp:attribute name="stylesheets">
+        <style>
+            td:first-child {
+                width: 200px;
+            }
+            td:nth-child(2) {
+                width: 75px;
+            }
+            td:nth-child(3) {
+                word-break: break-word;
+            }
+            td:nth-child(5) {
+                word-break: break-word;
+            }
+        </style>
     </jsp:attribute>
     <jsp:attribute name="scripts">
         <script>
@@ -15,6 +29,7 @@
                 $("#username").val('');
                 $("#repository-select").val('');
                 $("#type-select").val('');
+                $("#archived-select").val('');
                 return false;
             });
         </script>
@@ -74,6 +89,21 @@
                                         </select>
                                     </div>
                                 </li>
+                                <li>
+                                    <div class="li-key">
+                                        <label for="archived-select">Include Archived</label>
+                                    </div>
+                                    <div class="li-value">
+                                        <select id="archived-select" name="archived">
+                                            <option value="">&nbsp;</option>
+                                            <c:forEach items="${includeList}" var="archived">
+                                                <option value="${archived}"${param.archived eq archived ? ' selected="selected"' : ''}>
+                                                    <c:out value="${archived}"/></option>
+                                            </c:forEach>
+                                        </select>
+                                        <div>(excluded by default)</div>
+                                    </div>
+                                </li>
                             </ul>
                         </fieldset>
                     </div>
@@ -110,6 +140,9 @@
                                         <c:out value="${software.name}"/>
                                     </c:otherwise>
                                 </c:choose>
+                                <c:if test="${software.archived}">
+                                    <span class="archived-symbol">🕸</span>
+                                </c:if>
                             </td>
                             <td><c:out value="${software.type}"/></td>
                             <td><c:out value="${software.description}"/></td>

@@ -1,3 +1,9 @@
 #page-header-logo {
     background: url("../img/logo32x32.png") 0 0;
 }
+.archived-symbol {
+    font-size: .83em;
+    font-style: normal;
+    vertical-align: super;
+    line-height: 1.0;
+}

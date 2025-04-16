@@ -16,6 +16,7 @@ import org.jlab.sim.business.service.RepositoryService;
 import org.jlab.sim.business.service.SoftwareService;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
+import org.jlab.sim.persistence.enumeration.Include;
 import org.jlab.sim.persistence.enumeration.SoftwareType;
 import org.jlab.sim.presentation.util.Parameter;
 import org.jlab.smoothness.business.service.JPAService;
@@ -50,6 +51,7 @@ public class Directory extends HttpServlet {
     String username = request.getParameter("username");
     SoftwareType type = Parameter.convertSoftwareType(request, "type");
     BigInteger repositoryId = ParamConverter.convertBigInteger(request, "repositoryId");
+    Include includeArchived = Parameter.convertInclude(request, "archived");
 
     int offset = ParamUtil.convertAndValidateNonNegativeInt(request, "offset", 0);
     int maxPerPage = 100;
@@ -59,6 +61,8 @@ public class Directory extends HttpServlet {
 
     List<SoftwareType> typeList = Arrays.asList(SoftwareType.values());
 
+    List<Include> includeList = Arrays.asList(Include.values());
+
     Repository repository = null;
 
     if (repositoryId != null) {
@@ -66,18 +70,22 @@ public class Directory extends HttpServlet {
     }
 
     List<Software> softwareList =
-        softwareService.filterList(softwareName, username, repository, type, offset, maxPerPage);
+        softwareService.filterList(
+            softwareName, username, repository, type, includeArchived, offset, maxPerPage);
 
-    long totalRecords = softwareService.countList(softwareName, username, repository, type);
+    long totalRecords =
+        softwareService.countList(softwareName, username, repository, type, includeArchived);
 
     Paginator paginator = new Paginator(totalRecords, offset, maxPerPage);
 
     String selectionMessage =
-        createSelectionMessage(paginator, softwareName, username, repository, type);
+        createSelectionMessage(
+            paginator, softwareName, username, repository, type, includeArchived);
 
     request.setAttribute("selectionMessage", selectionMessage);
     request.setAttribute("repoList", repoList);
     request.setAttribute("typeList", typeList);
+    request.setAttribute("includeList", includeList);
     request.setAttribute("softwareList", softwareList);
     request.setAttribute("paginator", paginator);
 
@@ -89,7 +97,8 @@ public class Directory extends HttpServlet {
       String softwareName,
       String username,
       Repository repository,
-      SoftwareType type) {
+      SoftwareType type,
+      Include includeArchived) {
     DecimalFormat formatter = new DecimalFormat("###,###");
 
     String selectionMessage = "All Software ";
@@ -110,6 +119,10 @@ public class Directory extends HttpServlet {
 
     if (type != null) {
       filters.add("Type \"" + type + "\"");
+    }
+
+    if (includeArchived != null) {
+      filters.add("Archived \"" + includeArchived + "\"");
     }
 
     if (!filters.isEmpty()) {

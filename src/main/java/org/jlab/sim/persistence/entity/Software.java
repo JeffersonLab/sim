@@ -7,6 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.jlab.sim.persistence.enumeration.SoftwareType;
+import org.jlab.smoothness.persistence.util.YnStringToBoolean;
 
 @Entity
 @Table(name = "SOFTWARE", schema = "SIM_OWNER")
@@ -49,6 +50,11 @@ public class Software implements Serializable {
   @Size(max = 256)
   @Column(name = "MAINTAINER_USERNAME_CSV", nullable = true, length = 256)
   private String maintainerUsernameCsv;
+
+  @Basic
+  @Column(name = "ARCHIVED_YN", nullable = false, length = 1)
+  @Convert(converter = YnStringToBoolean.class)
+  private boolean archived;
 
   public Software() {}
 
@@ -117,6 +123,14 @@ public class Software implements Serializable {
 
   public String getMaintainerUsernameCsv() {
     return maintainerUsernameCsv;
+  }
+
+  public boolean isArchived() {
+    return archived;
+  }
+
+  public void setArchived(boolean archived) {
+    this.archived = archived;
   }
 
   public void setMaintainerUsernameCsv(String maintainerUsernameCsv) {

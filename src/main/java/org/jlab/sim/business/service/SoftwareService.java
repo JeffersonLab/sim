@@ -10,6 +10,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
+import org.jlab.sim.persistence.enumeration.Include;
 import org.jlab.sim.persistence.enumeration.SoftwareType;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.JPAService;
@@ -127,6 +128,7 @@ public class SoftwareService extends JPAService<Software> {
       String username,
       Repository repository,
       SoftwareType type,
+      Include includeArchived,
       int offset,
       int max) {
     CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
@@ -134,7 +136,8 @@ public class SoftwareService extends JPAService<Software> {
     Root<Software> root = cq.from(Software.class);
     cq.select(root);
 
-    List<Predicate> filters = getFilters(cb, cq, root, softwareName, username, repository, type);
+    List<Predicate> filters =
+        getFilters(cb, cq, root, softwareName, username, repository, type, includeArchived);
 
     if (!filters.isEmpty()) {
       cq.where(cb.and(filters.toArray(new Predicate[] {})));
@@ -159,7 +162,8 @@ public class SoftwareService extends JPAService<Software> {
       String softwareName,
       String username,
       Repository repository,
-      SoftwareType type) {
+      SoftwareType type,
+      Include includeArchived) {
     List<Predicate> filters = new ArrayList<>();
 
     if (softwareName != null && !softwareName.isEmpty()) {
@@ -182,17 +186,28 @@ public class SoftwareService extends JPAService<Software> {
       filters.add(cb.equal(root.get("type"), type));
     }
 
+    if (includeArchived == null) {
+      filters.add(cb.equal(root.get("archived"), false));
+    } else if (Include.EXCLUSIVELY == includeArchived) {
+      filters.add(cb.equal(root.get("archived"), true));
+    } // else Include.YES, which means don't filter at all
+
     return filters;
   }
 
   @PermitAll
   public long countList(
-      String softwareName, String username, Repository repository, SoftwareType type) {
+      String softwareName,
+      String username,
+      Repository repository,
+      SoftwareType type,
+      Include includeArchived) {
     CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
     CriteriaQuery<Long> cq = cb.createQuery(Long.class);
     Root<Software> root = cq.from(Software.class);
 
-    List<Predicate> filters = getFilters(cb, cq, root, softwareName, username, repository, type);
+    List<Predicate> filters =
+        getFilters(cb, cq, root, softwareName, username, repository, type, includeArchived);
 
     if (!filters.isEmpty()) {
       cq.where(cb.and(filters.toArray(new Predicate[] {})));
