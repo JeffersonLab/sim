@@ -96,7 +96,13 @@ public class SyncService extends JPAService<Software> {
 
           Software software =
               new Software(
-                  repository, name, SoftwareType.APP, description, maintainerUsernameCsv, homeUrl);
+                  repository,
+                  name,
+                  SoftwareType.APP,
+                  description,
+                  maintainerUsernameCsv,
+                  homeUrl,
+                  false);
 
           softwareList.add(software);
         }
@@ -140,7 +146,13 @@ public class SyncService extends JPAService<Software> {
 
           Software software =
               new Software(
-                  repository, name, SoftwareType.APP, description, maintainerUsernameCsv, homeUrl);
+                  repository,
+                  name,
+                  SoftwareType.APP,
+                  description,
+                  maintainerUsernameCsv,
+                  homeUrl,
+                  false);
 
           softwareList.add(software);
         }
@@ -188,7 +200,8 @@ public class SyncService extends JPAService<Software> {
           String description = cells.get(1).text();
 
           Software software =
-              new Software(repository, name, type, description, maintainerUsernameCsv, homeUrl);
+              new Software(
+                  repository, name, type, description, maintainerUsernameCsv, homeUrl, false);
 
           softwareList.add(software);
         }
@@ -229,7 +242,8 @@ public class SyncService extends JPAService<Software> {
             String maintainerUsernameCsv = tokens[2];
 
             Software software =
-                new Software(repository, name, SoftwareType.APP, null, maintainerUsernameCsv, null);
+                new Software(
+                    repository, name, SoftwareType.APP, null, maintainerUsernameCsv, null, false);
 
             softwareList.add(software);
 

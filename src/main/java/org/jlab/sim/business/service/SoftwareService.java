@@ -30,7 +30,8 @@ public class SoftwareService extends JPAService<Software> {
       SoftwareType type,
       String description,
       String maintainerUsernameCsv,
-      String homeUrl)
+      String homeUrl,
+      boolean archived)
       throws UserFriendlyException {
     checkAuthenticated();
 
@@ -52,7 +53,8 @@ public class SoftwareService extends JPAService<Software> {
       throw new UserFriendlyException("Type cannot be empty");
     }
 
-    Software software = new Software(repo, name, type, description, maintainerUsernameCsv, homeUrl);
+    Software software =
+        new Software(repo, name, type, description, maintainerUsernameCsv, homeUrl, archived);
 
     create(software);
   }
@@ -64,7 +66,8 @@ public class SoftwareService extends JPAService<Software> {
       SoftwareType type,
       String description,
       String maintainerUsernameCsv,
-      String homeUrl)
+      String homeUrl,
+      boolean archived)
       throws UserFriendlyException {
     checkAuthenticated();
 
@@ -96,6 +99,7 @@ public class SoftwareService extends JPAService<Software> {
     software.setDescription(description);
     software.setMaintainerUsernameCsv(maintainerUsernameCsv);
     software.setHomeUrl(homeUrl);
+    software.setArchived(archived);
 
     edit(software);
   }

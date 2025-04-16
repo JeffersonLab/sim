@@ -10,6 +10,7 @@ jlab.addRow = function() {
         maintainerUsernameCsv = $("#row-maintainers").val(),
         homeUrl = $("#row-url").val(),
         repositoryId = $("#row-repo").val(),
+        archived = $("#row-archived").val(),
         reloading = false;
 
     $(".dialog-submit-button")
@@ -28,7 +29,8 @@ jlab.addRow = function() {
             type: type,
             description: description,
             maintainerUsernameCsv: maintainerUsernameCsv,
-            homeUrl: homeUrl
+            homeUrl: homeUrl,
+            archived: archived
         },
         dataType: "json"
     });

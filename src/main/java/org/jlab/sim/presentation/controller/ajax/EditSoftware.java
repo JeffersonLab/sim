@@ -45,10 +45,15 @@ public class EditSoftware extends HttpServlet {
       String maintainerUsernameCsv = request.getParameter("maintainerUsernameCsv");
       String homeUrl = request.getParameter("homeUrl");
       SoftwareType type = Parameter.convertSoftwareType(request, "type");
+      Boolean archived = ParamConverter.convertYNBoolean(request, "archived");
+
+      if (archived == null) {
+        throw new UserFriendlyException("archived must not be empty");
+      }
 
       // Since name is key in other repos, must delete and add new for name changes.
       softwareService.editSoftware(
-          softwareId, repositoryId, type, description, maintainerUsernameCsv, homeUrl);
+          softwareId, repositoryId, type, description, maintainerUsernameCsv, homeUrl, archived);
     } catch (UserFriendlyException e) {
       stat = "fail";
       error = "Unable to edit Software: " + e.getUserMessage();

@@ -64,13 +64,15 @@ public class Software implements Serializable {
       SoftwareType type,
       String description,
       String maintainerUsernameCsv,
-      String homeUrl) {
+      String homeUrl,
+      boolean archived) {
     this.repository = repository;
     this.name = name;
     this.type = type;
     this.description = description;
     this.maintainerUsernameCsv = maintainerUsernameCsv;
     this.homeUrl = homeUrl;
+    this.archived = archived;
   }
 
   public BigInteger getSoftwareId() {
