@@ -5,17 +5,12 @@ jlab.editableRowTable.dialog.width = 600;
 jlab.editableRowTable.dialog.height = 600;
 jlab.addRow = function() {
     var name = $("#row-name").val(),
-        actionId = $("#row-action").val(),
-        locationData = $("#row-location").select2('data');
-    alias = $("#row-alias").val(),
-        device = $("#row-device").val(),
-        screenCommand = $("#row-screen-command").val(),
-        managedBy = $("#row-managed-by").val(),
-        maskedBy = $("#row-masked-by").val(),
-        pv = $("#row-pv").val(),
+        type = $("#row-type").val(),
+        description = $("#row-description").val(),
+        maintainerUsernameCsv = $("#row-maintainers").val(),
+        homeUrl = $("#row-url").val(),
+        repositoryId = $("#row-repo").val(),
         reloading = false;
-
-    let locationId = locationData.map(a => a.id);
 
     $(".dialog-submit-button")
         .height($(".dialog-submit-button").height())
@@ -28,15 +23,12 @@ jlab.addRow = function() {
         url: jlab.contextPath + "/ajax/add-software",
         type: "POST",
         data: {
+            repositoryId: repositoryId,
             name: name,
-            actionId: actionId,
-            locationId: locationId, /*renamed 'locationId[]' by jQuery*/
-            alias: alias,
-            device: device,
-            screenCommand: screenCommand,
-            managedBy: managedBy,
-            maskedBy: maskedBy,
-            pv: pv
+            type: type,
+            description: description,
+            maintainerUsernameCsv: maintainerUsernameCsv,
+            homeUrl: homeUrl
         },
         dataType: "json"
     });
@@ -51,7 +43,7 @@ jlab.addRow = function() {
     });
 
     request.fail(function(xhr, textStatus) {
-        window.console && console.log('Unable to add alarm; Text Status: ' + textStatus + ', Ready State: ' + xhr.readyState + ', HTTP Status Code: ' + xhr.status);
+        window.console && console.log('Unable to add software; Text Status: ' + textStatus + ', Ready State: ' + xhr.readyState + ', HTTP Status Code: ' + xhr.status);
         alert('Unable to Save: Server unavailable or unresponsive');
     });
 
