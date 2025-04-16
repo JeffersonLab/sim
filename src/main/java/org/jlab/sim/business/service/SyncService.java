@@ -63,7 +63,7 @@ public class SyncService extends JPAService<Software> {
     List<Software> softwareList = new ArrayList<>();
 
     String url =
-        "https://api.github.com/search/repositories?per_page=100&q=topic%3Aace+owner%3AJeffersonLab";
+        "https://api.github.com/search/repositories?per_page=100&q=topic%3Aacg+org%3AJeffersonLab";
 
     HttpResponse<String> response = null;
 

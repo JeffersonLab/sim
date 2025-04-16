@@ -10,7 +10,7 @@ insert into SIM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) value
 insert into SIM_OWNER.SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('SMOOTHNESS_VERSION', '4.11.0', 'STRING', 'Version of smoothness lib on CDN.  Only used if SMOOTHNESS_LOCATION=CDN', 'CDN', 3);
 
 -- REPO
-insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) values (SIM_OWNER.REPOSITORY_ID.nextval, 'GITHUB', 'Microsoft GitHub Cloud Hosted Dev Platform with org=JeffersonLab and topic=ACE', 'https://github.com/orgs/JeffersonLab/repositories?q=topic%3Aace');
+insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) values (SIM_OWNER.REPOSITORY_ID.nextval, 'GITHUB', 'Microsoft GitHub Cloud Hosted Dev Platform with org=JeffersonLab and topic=acg', 'https://github.com/orgs/JeffersonLab/repositories?q=topic%3Aacg');
 insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) values (SIM_OWNER.REPOSITORY_ID.nextval, 'CERTIFIED', 'Certified Software', 'https://devweb.acc.jlab.org/controls_web/cjs/CSD/csd.php');
 insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) values (SIM_OWNER.REPOSITORY_ID.nextval, 'CSUE', 'Controls System UNIX Environment', 'https://opweb.acc.jlab.org/CSUEApps/csueTools/csueAppsWeb.php');
 insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) values (SIM_OWNER.REPOSITORY_ID.nextval, 'LLAPP', 'Low Level Apps', 'https://devweb.acc.jlab.org/llapp.php');
