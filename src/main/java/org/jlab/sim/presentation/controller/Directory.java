@@ -122,7 +122,7 @@ public class Directory extends HttpServlet {
     }
 
     if (includeArchived != null) {
-      filters.add("Archived \"" + includeArchived + "\"");
+      filters.add("Include Archived \"" + includeArchived + "\"");
     }
 
     if (!filters.isEmpty()) {
