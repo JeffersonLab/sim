@@ -58,41 +58,15 @@ jlab.addRow = function() {
     });
 };
 jlab.editRow = function(removeSync) {
-    var name = $("#row-name").val(),
-        actionId = $("#row-action").val(),
-        locationData = $("#row-location").select2('data');
-    alias = $("#row-alias").val(),
-        device = $("#row-device").val(),
-        screenCommand = $("#row-screen-command").val(),
-        managedBy = $("#row-managed-by").val(),
-        maskedBy = $("#row-masked-by").val(),
-        pv = $("#row-pv").val(),
-        syncRuleId = $("#row-sync-rule-id").val(),
-        syncElementName = $("#row-sync-element-name").val(),
-        syncElementId = $("#row-sync-element-id").val(),
-        alarmId = $(".editable-row-table tr.selected-row").attr("data-id"),
+    var softwareId = $(".editable-row-table tr.selected-row").attr("data-id"),
+        name = $("#row-name").val(),
+        type = $("#row-type").val(),
+        description = $("#row-description").val(),
+        maintainerUsernameCsv = $("#row-maintainers").val(),
+        homeUrl = $("#row-url").val(),
+        repositoryId = $("#row-repo").val(),
+        archived = $("#row-archived").val(),
         reloading = false;
-
-    if(removeSync) {
-        syncRuleId = "";
-        syncElementId = "";
-        syncElementName = "";
-
-        $("#remove-sync-button")
-            .height($("#remove-sync-button").height())
-            .width($("#remove-sync-button").width())
-            .empty().append('<div class="button-indicator"></div>');
-    }
-    else {
-        $("#remove-sync-button").attr("disabled", "disabled");
-    }
-
-    let locationId = locationData.map(a => a.id),
-        emptyLocationId = 'N';
-
-    if(locationId.length === 0) {
-        emptyLocationId = 'Y';
-    }
 
     $(".dialog-submit-button")
         .height($(".dialog-submit-button").height())
@@ -102,23 +76,17 @@ jlab.editRow = function(removeSync) {
     $(".ui-dialog-titlebar button").attr("disabled", "disabled");
 
     var request = jQuery.ajax({
-        url: "/jaws/ajax/edit-alarm",
+        url: jlab.contextPath + "/ajax/edit-software",
         type: "POST",
         data: {
-            alarmId: alarmId,
+            softwareId: softwareId,
+            repositoryId: repositoryId,
             name: name,
-            actionId: actionId,
-            locationId: locationId, /*renamed 'locationId[]' by jQuery*/
-            'emptyLocationId[]': emptyLocationId,
-            alias: alias,
-            device: device,
-            screenCommand: screenCommand,
-            managedBy: managedBy,
-            maskedBy: maskedBy,
-            pv: pv,
-            syncElementName: syncElementName,
-            syncRuleId: syncRuleId,
-            syncElementId: syncElementId
+            type: type,
+            description: description,
+            maintainerUsernameCsv: maintainerUsernameCsv,
+            homeUrl: homeUrl,
+            archived: archived
         },
         dataType: "json"
     });
@@ -133,7 +101,7 @@ jlab.editRow = function(removeSync) {
     });
 
     request.fail(function(xhr, textStatus) {
-        window.console && console.log('Unable to edit alarm; Text Status: ' + textStatus + ', Ready State: ' + xhr.readyState + ', HTTP Status Code: ' + xhr.status);
+        window.console && console.log('Unable to edit software; Text Status: ' + textStatus + ', Ready State: ' + xhr.readyState + ', HTTP Status Code: ' + xhr.status);
         alert('Unable to Save: Server unavailable or unresponsive');
     });
 
@@ -142,8 +110,6 @@ jlab.editRow = function(removeSync) {
             $(".dialog-submit-button").empty().text("Save");
             $(".dialog-close-button").removeAttr("disabled");
             $(".ui-dialog-titlebar button").removeAttr("disabled");
-            $("#remove-sync-button").empty().text("Remove Sync");
-            $("#remove-sync-button").removeAttr("disabled");
 
         }
     });
@@ -198,7 +164,7 @@ $(document).on("click", "#open-edit-row-dialog-button", function() {
     $("#row-name").val($selectedRow.attr("data-name"));
     $("#row-type").val($selectedRow.attr("data-type"));
     $("#row-description").val($selectedRow.attr("data-description"));
-    $("#row-maintainer").val($selectedRow.attr("data-maintainer-csv"));
+    $("#row-maintainers").val($selectedRow.attr("data-maintainer-csv"));
     $("#row-repo").val($selectedRow.attr("data-repo-id"));
     $("#row-archived").val($selectedRow.attr("data-archived"));
 

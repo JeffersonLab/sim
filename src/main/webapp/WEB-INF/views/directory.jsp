@@ -122,7 +122,7 @@
                 <tbody>
                     <c:forEach var="software" items="${softwareList}">
                         <tr data-id="${software.softwareId}"
-                            data-archived="${software.archived}"
+                            data-archived="${software.archived ? 'Y' : 'N'}"
                             data-name="${fn:escapeXml(software.name)}"
                             data-type="${fn:escapeXml(software.type)}"
                             data-description="${fn:escapeXml(software.description)}"
