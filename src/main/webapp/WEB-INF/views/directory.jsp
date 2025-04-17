@@ -7,20 +7,7 @@
 <c:set var="title" value="Directory"/>
 <s:page title="${title}">
     <jsp:attribute name="stylesheets">
-        <style>
-            td:first-child {
-                width: 200px;
-            }
-            td:nth-child(2) {
-                width: 75px;
-            }
-            td:nth-child(3) {
-                word-break: break-word;
-            }
-            td:nth-child(5) {
-                word-break: break-word;
-            }
-        </style>
+        <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/css/directory.css"/>
     </jsp:attribute>
     <jsp:attribute name="scripts">
         <script type="text/javascript" src="${pageContext.request.contextPath}/resources/v${initParam.releaseNumber}/js/directory.js"></script>
@@ -187,7 +174,7 @@
                             <label for="row-description">Description</label>
                         </div>
                         <div class="li-value">
-                            <input type="text" id="row-description"/>
+                            <textarea id="row-description"></textarea>
                         </div>
                     </li>
                     <li>
