@@ -94,15 +94,20 @@ public class SyncService extends JPAService<Software> {
           String maintainerUsernameCsv = null;
           String description = item.getString("description");
 
+          JsonArray topics = item.getJsonArray("topics");
+
+          List<String> topicList = new ArrayList<>();
+
+          for (int j = 0; j < topics.size(); j++) {
+            String topic = topics.getString(j);
+            topicList.add(topic);
+          }
+
+          SoftwareType type = getFromTopicList(topicList);
+
           Software software =
               new Software(
-                  repository,
-                  name,
-                  SoftwareType.APP,
-                  description,
-                  maintainerUsernameCsv,
-                  homeUrl,
-                  false);
+                  repository, name, type, description, maintainerUsernameCsv, homeUrl, false);
 
           softwareList.add(software);
         }
@@ -115,6 +120,22 @@ public class SyncService extends JPAService<Software> {
     }
 
     return softwareList;
+  }
+
+  private SoftwareType getFromTopicList(List<String> topicList) {
+    SoftwareType type = SoftwareType.APP;
+
+    if (topicList.contains("app")) {
+      // break out of if/else
+    } else if (topicList.contains("lib")) {
+      type = SoftwareType.LIB;
+    } else if (topicList.contains("script")) {
+      type = SoftwareType.SCRIPT;
+    } else if (topicList.contains("plugin")) {
+      type = SoftwareType.PLUGIN;
+    }
+
+    return type;
   }
 
   private List<Software> fetchCSUE(Repository repository) throws UserFriendlyException {
