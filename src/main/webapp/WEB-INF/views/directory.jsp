@@ -132,7 +132,7 @@
                             <td>
                                 <c:choose>
                                     <c:when test="${not empty software.homeUrl}">
-                                        <a href="${software.homeUrl}"><c:out value="${software.name}"/></a>
+                                        <a class="ext-link" href="${software.homeUrl}"><c:out value="${software.name}"/></a>
                                     </c:when>
                                     <c:otherwise>
                                         <c:out value="${software.name}"/>
