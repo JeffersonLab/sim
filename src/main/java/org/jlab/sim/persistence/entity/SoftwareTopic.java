@@ -1,11 +1,9 @@
 package org.jlab.sim.persistence.entity;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "SOFTWARE_TOPIC", schema = "SIM_OWNER")
