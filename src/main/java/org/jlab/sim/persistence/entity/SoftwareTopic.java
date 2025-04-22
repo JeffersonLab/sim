@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "SOFTWARE_TOPIC", schema = "SIM_OWNER")
-public class SoftwareTopic implements Serializable {
+public class SoftwareTopic implements Serializable, Comparable<SoftwareTopic> {
   private static final long serialVersionUID = 1L;
 
   @EmbeddedId
@@ -61,5 +61,10 @@ public class SoftwareTopic implements Serializable {
   @Override
   public int hashCode() {
     return Objects.hashCode(softwareTopicId);
+  }
+
+  @Override
+  public int compareTo(SoftwareTopic o) {
+    return this.topic.getName().compareTo(o.topic.getName());
   }
 }

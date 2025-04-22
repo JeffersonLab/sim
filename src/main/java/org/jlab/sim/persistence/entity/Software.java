@@ -2,8 +2,7 @@ package org.jlab.sim.persistence.entity;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -146,7 +145,16 @@ public class Software implements Serializable {
     this.maintainerUsernameCsv = maintainerUsernameCsv;
   }
 
+  public void sortSoftwareTopicList() {
+    if (softwareTopicList != null) {
+      Collections.sort(softwareTopicList);
+    }
+  }
+
   public List<SoftwareTopic> getSoftwareTopicList() {
+
+    sortSoftwareTopicList();
+
     return softwareTopicList;
   }
 

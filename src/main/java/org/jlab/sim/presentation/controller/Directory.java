@@ -53,6 +53,7 @@ public class Directory extends HttpServlet {
     String softwareName = request.getParameter("softwareName");
     String username = request.getParameter("username");
     SoftwareType type = Parameter.convertSoftwareType(request, "type");
+    String[] topicNameArray = request.getParameterValues("topic");
     BigInteger repositoryId = ParamConverter.convertBigInteger(request, "repositoryId");
     Include includeArchived = Parameter.convertInclude(request, "archived");
 
@@ -60,7 +61,7 @@ public class Directory extends HttpServlet {
     int maxPerPage = 100;
 
     List<Repository> repoList =
-        repositoryService.findAll(new JPAService.OrderDirective("name", true));
+        repositoryService.findAll(new JPAService.OrderDirective("name", false));
 
     List<SoftwareType> typeList = Arrays.asList(SoftwareType.values());
 
@@ -74,16 +75,24 @@ public class Directory extends HttpServlet {
 
     List<Software> softwareList =
         softwareService.filterList(
-            softwareName, username, repository, type, includeArchived, offset, maxPerPage);
+            softwareName,
+            username,
+            repository,
+            type,
+            topicNameArray,
+            includeArchived,
+            offset,
+            maxPerPage);
 
     long totalRecords =
-        softwareService.countList(softwareName, username, repository, type, includeArchived);
+        softwareService.countList(
+            softwareName, username, repository, type, topicNameArray, includeArchived);
 
     Paginator paginator = new Paginator(totalRecords, offset, maxPerPage);
 
     String selectionMessage =
         createSelectionMessage(
-            paginator, softwareName, username, repository, type, includeArchived);
+            paginator, softwareName, username, repository, type, topicNameArray, includeArchived);
 
     List<Topic> topicList = topicService.findAll(new JPAService.OrderDirective("name", true));
 
@@ -104,6 +113,7 @@ public class Directory extends HttpServlet {
       String username,
       Repository repository,
       SoftwareType type,
+      String[] topicNameArray,
       Include includeArchived) {
     DecimalFormat formatter = new DecimalFormat("###,###");
 
@@ -125,6 +135,10 @@ public class Directory extends HttpServlet {
 
     if (type != null) {
       filters.add("Type \"" + type + "\"");
+    }
+
+    if (topicNameArray != null && topicNameArray.length > 0) {
+      filters.add("Topic \"" + String.join(",", topicNameArray) + "\"");
     }
 
     if (includeArchived != null) {

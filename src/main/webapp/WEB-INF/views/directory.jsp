@@ -74,7 +74,7 @@
                                     <div class="li-value">
                                         <select id="topic-select" name="topic" multiple="multiple">
                                             <c:forEach items="${topicList}" var="topic">
-                                                <option value="${topic.name}">
+                                                <option value="${topic.name}"${s:inArray(paramValues.topic, topic.name) ? ' selected="selected"' : ''}>
                                                     <c:out value="${topic.name}"/></option>
                                             </c:forEach>
                                         </select>
