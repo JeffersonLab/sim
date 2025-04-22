@@ -61,7 +61,14 @@
                             data-url="${fn:escapeXml(software.homeUrl)}">
                             <td><c:out value="${software.name}"/></td>
                             <td><c:out value="${software.type}"/></td>
-                            <td><c:out value="${software.description}"/></td>
+                            <td>
+                                <div><c:out value="${software.description}"/></div>
+                                <ul class="topic-list">
+                                    <c:forEach items="${software.stringTopicList}" var="stringTopic">
+                                    <li class="topic"><c:out value="${stringTopic}"/></li>
+                                    </c:forEach>
+                                </ul>
+                            </td>
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
                             <td><c:out value="${software.homeUrl}"/></td>
                             <td>
@@ -91,6 +98,11 @@
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
+                                <ul class="topic-list">
+                                    <c:forEach items="${software.stringTopicList}" var="stringTopic">
+                                        <li class="topic"><c:out value="${stringTopic}"/></li>
+                                    </c:forEach>
+                                </ul>
                             </td>
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
                             <td><c:out value="${software.homeUrl}"/></td>
@@ -103,7 +115,14 @@
                         <tr class="remove-row" data-id="${software.softwareId}">
                             <td><c:out value="${software.name}"/></td>
                             <td><c:out value="${software.type}"/></td>
-                            <td><c:out value="${software.description}"/></td>
+                            <td>
+                                <div><c:out value="${software.description}"/></div>
+                                <ul class="topic-list">
+                                    <c:forEach items="${software.stringTopicList}" var="stringTopic">
+                                        <li class="topic"><c:out value="${stringTopic}"/></li>
+                                    </c:forEach>
+                                </ul>
+                            </td>
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
                             <td><c:out value="${software.homeUrl}"/></td>
                             <td>
@@ -115,7 +134,14 @@
                         <tr>
                             <td><c:out value="${software.name}"/></td>
                             <td><c:out value="${software.type}"/></td>
-                            <td><c:out value="${software.description}"/></td>
+                            <td>
+                                <div><c:out value="${software.description}"/></div>
+                                <ul class="topic-list">
+                                    <c:forEach items="${software.stringTopicList}" var="stringTopic">
+                                        <li class="topic"><c:out value="${stringTopic}"/></li>
+                                    </c:forEach>
+                                </ul>
+                            </td>
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
                             <td><c:out value="${software.homeUrl}"/></td>
                             <td></td>

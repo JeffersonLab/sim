@@ -61,6 +61,8 @@ public class Software implements Serializable {
   @JoinColumn(name = "SOFTWARE_ID", referencedColumnName = "SOFTWARE_ID")
   private List<SoftwareTopic> softwareTopicList;
 
+  @Transient private List<String> stringTopicList;
+
   public Software() {}
 
   public Software(
@@ -181,5 +183,13 @@ public class Software implements Serializable {
     }*/
 
     return equals;
+  }
+
+  public List<String> getStringTopicList() {
+    return stringTopicList;
+  }
+
+  public void setStringTopicList(List<String> stringTopicList) {
+    this.stringTopicList = stringTopicList;
   }
 }

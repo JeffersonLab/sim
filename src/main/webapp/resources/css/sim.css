@@ -7,3 +7,20 @@
     vertical-align: super;
     line-height: 1.0;
 }
+.topic {
+    color: #0969da;
+    background-color: #ddf4ff;
+    border-radius: 8px 8px;
+    padding: 4px 8px;
+    margin: 4px;
+    display: inline;
+}
+.topic-list {
+    margin: 8px;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+}

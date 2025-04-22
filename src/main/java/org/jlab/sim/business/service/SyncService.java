@@ -172,6 +172,8 @@ public class SyncService extends JPAService<Software> {
               new Software(
                   repository, name, type, description, maintainerUsernameCsv, homeUrl, false);
 
+          software.setStringTopicList(topicList);
+
           softwareList.add(software);
         }
 
