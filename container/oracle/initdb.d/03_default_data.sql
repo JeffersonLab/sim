@@ -14,6 +14,7 @@ insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) va
 insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) values (SIM_OWNER.REPOSITORY_ID.nextval, 'CERTIFIED', 'Certified Software', 'https://devweb.acc.jlab.org/controls_web/cjs/CSD/csd.php');
 insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) values (SIM_OWNER.REPOSITORY_ID.nextval, 'CSUE', 'Controls System UNIX Environment', 'https://opweb.acc.jlab.org/CSUEApps/csueTools/csueAppsWeb.php');
 insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) values (SIM_OWNER.REPOSITORY_ID.nextval, 'LLAPP', 'Low Level Apps', 'https://devweb.acc.jlab.org/llapp.php');
+insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) values (SIM_OWNER.REPOSITORY_ID.nextval, 'GITLAB', 'CNI GitLab install at code.jlab.org for group Accelerator', 'https://code.jlab.org/accelerator');
 
 -- SOFTWARE
 insert into SIM_OWNER.SOFTWARE (SOFTWARE_ID, NAME, TYPE, DESCRIPTION, REPOSITORY_ID, HOME_URL, MAINTAINER_USERNAME_CSV) values (SIM_OWNER.SOFTWARE_ID.nextval, 'sim', 'APP', 'Software Inventory Manager.  Aggregates software info into a phonebook-like directory', 1, 'https://github.com/jeffersonlab/sim', 'ryans');
