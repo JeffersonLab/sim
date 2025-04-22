@@ -18,6 +18,22 @@ td:nth-child(5) {
     height: 100px;
     resize: none;
 }
-#row-tags {
-    width: 400px;
+#row-topics {
+    width: 350px;
+}
+.topic {
+    color: #0969da;
+    background-color: #ddf4ff;
+    border: 1px solid white;
+    border-radius: 8px 8px;
+    padding: 4px 8px;
+    display: inline;
+}
+.tag-list {
+    margin: 8px;
+    padding: 0;
+    list-style: none;
+}
+#topic-select {
+    width: 250px;
 }

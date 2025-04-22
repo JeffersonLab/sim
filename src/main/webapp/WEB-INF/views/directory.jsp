@@ -69,6 +69,19 @@
                                 </li>
                                 <li>
                                     <div class="li-key">
+                                        <label for="topic-select">Topics</label>
+                                    </div>
+                                    <div class="li-value">
+                                        <select id="topic-select" name="topic" multiple="multiple">
+                                            <c:forEach items="${topicList}" var="topic">
+                                                <option value="${topic.name}">
+                                                    <c:out value="${topic.name}"/></option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="li-key">
                                         <label for="archived-select">Include Archived</label>
                                     </div>
                                     <div class="li-value">
@@ -131,9 +144,11 @@
                             <td><c:out value="${software.type}"/></td>
                             <td>
                                 <div><c:out value="${software.description}"/></div>
+                                <ul class="tag-list">
                                 <c:forEach items="${software.softwareTopicList}" var="softwareTopic">
-                                    <span class="topic"><c:out value="${softwareTopic.topic.name}"/></span>
+                                    <li class="topic"><c:out value="${softwareTopic.topic.name}"/></li>
                                 </c:forEach>
+                                </ul>
                             </td>
                             <td><c:out value="${software.repository.name}"/></td>
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
@@ -198,13 +213,13 @@
                     </li>
                     <li>
                         <div class="li-key">
-                            <label for="row-tags">Tags</label>
+                            <label for="row-topics">Topics</label>
                         </div>
                         <div class="li-value">
-                            <select id="row-tags" multiple="multiple">
-                                <c:forEach items="${tagList}" var="tag">
-                                    <option value="${tag}">
-                                        <c:out value="${tag}"/></option>
+                            <select id="row-topics" multiple="multiple">
+                                <c:forEach items="${topicList}" var="topic">
+                                    <option value="${topic.name}">
+                                        <c:out value="${topic.name}"/></option>
                                 </c:forEach>
                             </select>
                         </div>

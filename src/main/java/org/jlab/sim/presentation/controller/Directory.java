@@ -14,8 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.jlab.sim.business.service.RepositoryService;
 import org.jlab.sim.business.service.SoftwareService;
+import org.jlab.sim.business.service.TopicService;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
+import org.jlab.sim.persistence.entity.Topic;
 import org.jlab.sim.persistence.enumeration.Include;
 import org.jlab.sim.persistence.enumeration.SoftwareType;
 import org.jlab.sim.presentation.util.Parameter;
@@ -34,6 +36,7 @@ public class Directory extends HttpServlet {
 
   @EJB SoftwareService softwareService;
   @EJB RepositoryService repositoryService;
+  @EJB TopicService topicService;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -82,11 +85,9 @@ public class Directory extends HttpServlet {
         createSelectionMessage(
             paginator, softwareName, username, repository, type, includeArchived);
 
-    List<String> tagList = new ArrayList<>();
-    tagList.add("java");
-    tagList.add("python");
+    List<Topic> topicList = topicService.findAll(new JPAService.OrderDirective("name", true));
 
-    request.setAttribute("tagList", tagList);
+    request.setAttribute("topicList", topicList);
     request.setAttribute("selectionMessage", selectionMessage);
     request.setAttribute("repoList", repoList);
     request.setAttribute("typeList", typeList);

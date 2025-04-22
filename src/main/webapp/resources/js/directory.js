@@ -187,12 +187,15 @@ $(document).on("click", ".default-clear-panel", function () {
     $("#software-name").val('');
     $("#username").val('');
     $("#repository-select").val('');
+    $("#topic-select").val(null).trigger('change');
     $("#type-select").val('');
     $("#archived-select").val('');
     return false;
 });
 $(function(){
-    $("#row-tags").select2({
+    $("#row-topics").select2({
         tags: true
     });
+
+    $("#topic-select").select2();
 });
