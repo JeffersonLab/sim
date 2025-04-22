@@ -65,8 +65,7 @@ public class SyncService extends JPAService<Software> {
   private List<Software> fetchGitLab(Repository repository) throws UserFriendlyException {
     List<Software> softwareList = new ArrayList<>();
 
-    String url =
-            "https://code.jlab.org/api/v4/groups/Accelerator/projects?include_subgroups=Y";
+    String url = "https://code.jlab.org/api/v4/groups/Accelerator/projects?include_subgroups=Y";
 
     HttpResponse<String> response = null;
 
@@ -83,7 +82,7 @@ public class SyncService extends JPAService<Software> {
       String jsonString = response.body();
 
       try (StringReader stringReader = new StringReader(jsonString);
-           JsonReader jsonReader = Json.createReader(stringReader)) {
+          JsonReader jsonReader = Json.createReader(stringReader)) {
 
         JsonArray array = jsonReader.readArray();
 
@@ -107,8 +106,8 @@ public class SyncService extends JPAService<Software> {
           SoftwareType type = getFromTopicList(topicList);
 
           Software software =
-                  new Software(
-                          repository, name, type, description, maintainerUsernameCsv, homeUrl, false);
+              new Software(
+                  repository, name, type, description, maintainerUsernameCsv, homeUrl, false);
 
           softwareList.add(software);
         }
