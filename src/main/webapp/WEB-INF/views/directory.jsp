@@ -128,7 +128,8 @@
                             data-topic-csv="${fn:escapeXml(software.topicCsv)}"
                             data-description="${fn:escapeXml(software.description)}"
                             data-repo-id="${software.repository.repositoryId}"
-                            data-maintainer-csv="${fn:escapeXml(software.maintainerUsernameCsv)}">
+                            data-maintainer-csv="${fn:escapeXml(software.maintainerUsernameCsv)}"
+                            data-url="${fn:escapeXml(software.homeUrl)}">
                             <td>
                                 <c:choose>
                                     <c:when test="${not empty software.homeUrl}">
@@ -231,6 +232,14 @@
                         </div>
                         <div class="li-value">
                             <input type="text" id="row-maintainers" placeholder="CSV of usernames"/>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label for="row-url">Home URL</label>
+                        </div>
+                        <div class="li-value">
+                            <input type="text" id="row-url"/>
                         </div>
                     </li>
                     <li>

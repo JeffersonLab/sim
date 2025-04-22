@@ -13,6 +13,9 @@ td:nth-child(5) {
 #row-form input[type="text"] {
     width: 400px;
 }
+#row-url {
+    width: 400px;
+}
 #row-description {
     width: 400px;
     height: 100px;
