@@ -82,6 +82,11 @@ public class Directory extends HttpServlet {
         createSelectionMessage(
             paginator, softwareName, username, repository, type, includeArchived);
 
+    List<String> tagList = new ArrayList<>();
+    tagList.add("java");
+    tagList.add("python");
+
+    request.setAttribute("tagList", tagList);
     request.setAttribute("selectionMessage", selectionMessage);
     request.setAttribute("repoList", repoList);
     request.setAttribute("typeList", typeList);

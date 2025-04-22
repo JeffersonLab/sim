@@ -2,6 +2,7 @@ package org.jlab.sim.persistence.entity;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -55,6 +56,10 @@ public class Software implements Serializable {
   @Column(name = "ARCHIVED_YN", nullable = false, length = 1)
   @Convert(converter = YnStringToBoolean.class)
   private boolean archived;
+
+  @OneToMany(fetch = FetchType.EAGER)
+  @JoinColumn(name = "SOFTWARE_ID", referencedColumnName = "SOFTWARE_ID")
+  private List<SoftwareTopic> softwareTopicList;
 
   public Software() {}
 
@@ -137,6 +142,14 @@ public class Software implements Serializable {
 
   public void setMaintainerUsernameCsv(String maintainerUsernameCsv) {
     this.maintainerUsernameCsv = maintainerUsernameCsv;
+  }
+
+  public List<SoftwareTopic> getSoftwareTopicList() {
+    return softwareTopicList;
+  }
+
+  public void setSoftwareTopicList(List<SoftwareTopic> softwareTopicList) {
+    this.softwareTopicList = softwareTopicList;
   }
 
   @Override

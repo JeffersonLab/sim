@@ -129,7 +129,12 @@
                                 </c:if>
                             </td>
                             <td><c:out value="${software.type}"/></td>
-                            <td><c:out value="${software.description}"/></td>
+                            <td>
+                                <div><c:out value="${software.description}"/></div>
+                                <c:forEach items="${software.softwareTopicList}" var="softwareTopic">
+                                    <span class="topic"><c:out value="${softwareTopic.topic.name}"/></span>
+                                </c:forEach>
+                            </td>
                             <td><c:out value="${software.repository.name}"/></td>
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
                         </tr>
@@ -187,6 +192,19 @@
                                 <c:forEach items="${repoList}" var="repo">
                                     <option value="${repo.repositoryId}">
                                         <c:out value="${repo.name}"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label for="row-tags">Tags</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="row-tags" multiple="multiple">
+                                <c:forEach items="${tagList}" var="tag">
+                                    <option value="${tag}">
+                                        <c:out value="${tag}"/></option>
                                 </c:forEach>
                             </select>
                         </div>

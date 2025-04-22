@@ -191,3 +191,8 @@ $(document).on("click", ".default-clear-panel", function () {
     $("#archived-select").val('');
     return false;
 });
+$(function(){
+    $("#row-tags").select2({
+        tags: true
+    });
+});
