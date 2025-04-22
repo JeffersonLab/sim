@@ -69,6 +69,19 @@
                                 </li>
                                 <li>
                                     <div class="li-key">
+                                        <label for="topic-select">Topics</label>
+                                    </div>
+                                    <div class="li-value">
+                                        <select id="topic-select" name="topic" multiple="multiple">
+                                            <c:forEach items="${topicList}" var="topic">
+                                                <option value="${topic.name}"${s:inArray(paramValues.topic, topic.name) ? ' selected="selected"' : ''}>
+                                                    <c:out value="${topic.name}"/></option>
+                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="li-key">
                                         <label for="archived-select">Include Archived</label>
                                     </div>
                                     <div class="li-value">
@@ -112,6 +125,7 @@
                             data-archived="${software.archived ? 'Y' : 'N'}"
                             data-name="${fn:escapeXml(software.name)}"
                             data-type="${fn:escapeXml(software.type)}"
+                            data-topic-csv="${fn:escapeXml(software.topicCsv)}"
                             data-description="${fn:escapeXml(software.description)}"
                             data-repo-id="${software.repository.repositoryId}"
                             data-maintainer-csv="${fn:escapeXml(software.maintainerUsernameCsv)}">
@@ -129,7 +143,14 @@
                                 </c:if>
                             </td>
                             <td><c:out value="${software.type}"/></td>
-                            <td><c:out value="${software.description}"/></td>
+                            <td>
+                                <div><c:out value="${software.description}"/></div>
+                                <ul class="topic-list">
+                                <c:forEach items="${software.softwareTopicList}" var="softwareTopic">
+                                    <li class="topic"><c:out value="${softwareTopic.topic.name}"/></li>
+                                </c:forEach>
+                                </ul>
+                            </td>
                             <td><c:out value="${software.repository.name}"/></td>
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
                         </tr>
@@ -187,6 +208,19 @@
                                 <c:forEach items="${repoList}" var="repo">
                                     <option value="${repo.repositoryId}">
                                         <c:out value="${repo.name}"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label for="row-topics">Topics</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="row-topics" multiple="multiple">
+                                <c:forEach items="${topicList}" var="topic">
+                                    <option value="${topic.name}">
+                                        <c:out value="${topic.name}"/></option>
                                 </c:forEach>
                             </select>
                         </div>

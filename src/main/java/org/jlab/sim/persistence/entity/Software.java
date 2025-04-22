@@ -2,7 +2,7 @@ package org.jlab.sim.persistence.entity;
 
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Objects;
+import java.util.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -55,6 +55,16 @@ public class Software implements Serializable {
   @Column(name = "ARCHIVED_YN", nullable = false, length = 1)
   @Convert(converter = YnStringToBoolean.class)
   private boolean archived;
+
+  @OneToMany(fetch = FetchType.EAGER)
+  @JoinColumn(
+      name = "SOFTWARE_ID",
+      referencedColumnName = "SOFTWARE_ID",
+      insertable = false,
+      updatable = false)
+  private List<SoftwareTopic> softwareTopicList;
+
+  @Transient private List<String> stringTopicList;
 
   public Software() {}
 
@@ -139,6 +149,35 @@ public class Software implements Serializable {
     this.maintainerUsernameCsv = maintainerUsernameCsv;
   }
 
+  @PostLoad
+  public void sortSoftwareTopicList() {
+    if (softwareTopicList != null) {
+      Collections.sort(softwareTopicList);
+    }
+  }
+
+  public List<SoftwareTopic> getSoftwareTopicList() {
+    return softwareTopicList;
+  }
+
+  public void setSoftwareTopicList(List<SoftwareTopic> softwareTopicList) {
+    this.softwareTopicList = softwareTopicList;
+  }
+
+  public String getTopicCsv() {
+    String csv = "";
+    if (softwareTopicList != null) {
+      for (int i = 0; i < softwareTopicList.size(); i++) {
+        SoftwareTopic topic = softwareTopicList.get(i);
+        csv = csv + topic.getTopic().getName();
+        if (i < softwareTopicList.size() - 1) {
+          csv = csv + ",";
+        }
+      }
+    }
+    return csv;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (!(o instanceof Software)) return false;
@@ -159,6 +198,12 @@ public class Software implements Serializable {
       equals = equals && Objects.equals(description, other.description);
     }
 
+    // Only compare if other is non-empty.
+    String otherTopicCsv = other.getStringTopicCsv();
+    if (otherTopicCsv != null && !otherTopicCsv.isBlank()) {
+      equals = equals && Objects.equals(getTopicCsv(), otherTopicCsv);
+    }
+
     /*if (other.maintainerUsernameCsv != null && !other.maintainerUsernameCsv.isBlank()) {
       equals = equals && Objects.equals(maintainerUsernameCsv, other.maintainerUsernameCsv);
     }
@@ -168,5 +213,28 @@ public class Software implements Serializable {
     }*/
 
     return equals;
+  }
+
+  public List<String> getStringTopicList() {
+    return stringTopicList;
+  }
+
+  public void setStringTopicList(List<String> stringTopicList) {
+    this.stringTopicList = stringTopicList;
+  }
+
+  public String getStringTopicCsv() {
+    String csv = "";
+    if (stringTopicList != null) {
+      Collections.sort(stringTopicList);
+      for (int i = 0; i < stringTopicList.size(); i++) {
+        String topic = stringTopicList.get(i);
+        csv = csv + topic;
+        if (i < stringTopicList.size() - 1) {
+          csv = csv + ",";
+        }
+      }
+    }
+    return csv;
   }
 }

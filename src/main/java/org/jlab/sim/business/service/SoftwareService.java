@@ -10,6 +10,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
+import org.jlab.sim.persistence.entity.SoftwareTopic;
 import org.jlab.sim.persistence.enumeration.Include;
 import org.jlab.sim.persistence.enumeration.SoftwareType;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
@@ -18,6 +19,7 @@ import org.jlab.smoothness.business.service.JPAService;
 @Stateless
 public class SoftwareService extends JPAService<Software> {
   @EJB RepositoryService repositoryService;
+  @EJB SoftwareTopicService softwareTopicService;
 
   public SoftwareService() {
     super(Software.class);
@@ -28,6 +30,7 @@ public class SoftwareService extends JPAService<Software> {
       BigInteger repoId,
       String name,
       SoftwareType type,
+      String[] topicArray,
       String description,
       String maintainerUsernameCsv,
       String homeUrl,
@@ -57,6 +60,10 @@ public class SoftwareService extends JPAService<Software> {
         new Software(repo, name, type, description, maintainerUsernameCsv, homeUrl, archived);
 
     create(software);
+
+    em.flush();
+
+    softwareTopicService.set(software, topicArray);
   }
 
   @PermitAll
@@ -64,6 +71,7 @@ public class SoftwareService extends JPAService<Software> {
       BigInteger softwareId,
       BigInteger repoId,
       SoftwareType type,
+      String[] topicArray,
       String description,
       String maintainerUsernameCsv,
       String homeUrl,
@@ -102,6 +110,10 @@ public class SoftwareService extends JPAService<Software> {
     software.setArchived(archived);
 
     edit(software);
+
+    em.flush();
+
+    softwareTopicService.set(software, topicArray);
   }
 
   @PermitAll
@@ -118,6 +130,12 @@ public class SoftwareService extends JPAService<Software> {
       throw new UserFriendlyException("software not found with id: " + softwareId);
     }
 
+    System.err.println("removing with id: " + softwareId);
+
+    for (SoftwareTopic st : software.getSoftwareTopicList()) {
+      em.remove(st);
+    }
+
     remove(software);
   }
 
@@ -132,6 +150,7 @@ public class SoftwareService extends JPAService<Software> {
       String username,
       Repository repository,
       SoftwareType type,
+      String[] topicNameArray,
       Include includeArchived,
       int offset,
       int max) {
@@ -141,7 +160,16 @@ public class SoftwareService extends JPAService<Software> {
     cq.select(root);
 
     List<Predicate> filters =
-        getFilters(cb, cq, root, softwareName, username, repository, type, includeArchived);
+        getFilters(
+            cb,
+            cq,
+            root,
+            softwareName,
+            username,
+            repository,
+            type,
+            topicNameArray,
+            includeArchived);
 
     if (!filters.isEmpty()) {
       cq.where(cb.and(filters.toArray(new Predicate[] {})));
@@ -167,6 +195,7 @@ public class SoftwareService extends JPAService<Software> {
       String username,
       Repository repository,
       SoftwareType type,
+      String[] topicNameArray,
       Include includeArchived) {
     List<Predicate> filters = new ArrayList<>();
 
@@ -190,6 +219,16 @@ public class SoftwareService extends JPAService<Software> {
       filters.add(cb.equal(root.get("type"), type));
     }
 
+    if (topicNameArray != null && topicNameArray.length > 0) {
+      for (String topicName : topicNameArray) {
+        Subquery<BigInteger> subquery = cq.subquery(BigInteger.class);
+        Root<SoftwareTopic> subqueryRoot = subquery.from(SoftwareTopic.class);
+        subquery.select(subqueryRoot.get("software").get("softwareId"));
+        subquery.where(cb.equal(subqueryRoot.get("topic").get("name"), topicName));
+        filters.add(cb.in(root.get("softwareId")).value(subquery));
+      }
+    }
+
     if (includeArchived == null) {
       filters.add(cb.equal(root.get("archived"), false));
     } else if (Include.EXCLUSIVELY == includeArchived) {
@@ -205,13 +244,23 @@ public class SoftwareService extends JPAService<Software> {
       String username,
       Repository repository,
       SoftwareType type,
+      String[] topicNameArray,
       Include includeArchived) {
     CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
     CriteriaQuery<Long> cq = cb.createQuery(Long.class);
     Root<Software> root = cq.from(Software.class);
 
     List<Predicate> filters =
-        getFilters(cb, cq, root, softwareName, username, repository, type, includeArchived);
+        getFilters(
+            cb,
+            cq,
+            root,
+            softwareName,
+            username,
+            repository,
+            type,
+            topicNameArray,
+            includeArchived);
 
     if (!filters.isEmpty()) {
       cq.where(cb.and(filters.toArray(new Predicate[] {})));

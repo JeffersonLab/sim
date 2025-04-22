@@ -18,3 +18,16 @@ insert into SIM_OWNER.REPOSITORY (REPOSITORY_ID, NAME, DESCRIPTION, HOME_URL) va
 
 -- SOFTWARE
 insert into SIM_OWNER.SOFTWARE (SOFTWARE_ID, NAME, TYPE, DESCRIPTION, REPOSITORY_ID, HOME_URL, MAINTAINER_USERNAME_CSV) values (SIM_OWNER.SOFTWARE_ID.nextval, 'sim', 'APP', 'Software Inventory Manager.  Aggregates software info into a phonebook-like directory', 1, 'https://github.com/jeffersonlab/sim', 'ryans');
+
+-- TOPICS
+insert into SIM_OWNER.TOPIC (TOPIC_ID, NAME) values (SIM_OWNER.TOPIC_ID.nextval, 'java');
+insert into SIM_OWNER.TOPIC (TOPIC_ID, NAME) values (SIM_OWNER.TOPIC_ID.nextval, 'python');
+insert into SIM_OWNER.TOPIC (TOPIC_ID, NAME) values (SIM_OWNER.TOPIC_ID.nextval, 'c++');
+insert into SIM_OWNER.TOPIC (TOPIC_ID, NAME) values (SIM_OWNER.TOPIC_ID.nextval, 'app');
+insert into SIM_OWNER.TOPIC (TOPIC_ID, NAME) values (SIM_OWNER.TOPIC_ID.nextval, 'lib');
+insert into SIM_OWNER.TOPIC (TOPIC_ID, NAME) values (SIM_OWNER.TOPIC_ID.nextval, 'script');
+insert into SIM_OWNER.TOPIC (TOPIC_ID, NAME) values (SIM_OWNER.TOPIC_ID.nextval, 'plugin');
+
+-- SOFTWARE_TOPIC
+insert into SIM_OWNER.SOFTWARE_TOPIC (SOFTWARE_ID, TOPIC_ID) values (1, 1);
+insert into SIM_OWNER.SOFTWARE_TOPIC (SOFTWARE_ID, TOPIC_ID) values (1, 4);

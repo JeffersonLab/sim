@@ -45,6 +45,7 @@ public class AddSoftware extends HttpServlet {
       String maintainerUsernameCsv = request.getParameter("maintainerUsernameCsv");
       String homeUrl = request.getParameter("homeUrl");
       SoftwareType type = Parameter.convertSoftwareType(request, "type");
+      String[] topicArray = request.getParameterValues("topicArray[]");
       Boolean archived = ParamConverter.convertYNBoolean(request, "archived");
 
       if (archived == null) {
@@ -52,7 +53,14 @@ public class AddSoftware extends HttpServlet {
       }
 
       softwareService.addSoftware(
-          repositoryId, name, type, description, maintainerUsernameCsv, homeUrl, archived);
+          repositoryId,
+          name,
+          type,
+          topicArray,
+          description,
+          maintainerUsernameCsv,
+          homeUrl,
+          archived);
     } catch (UserFriendlyException e) {
       stat = "fail";
       error = "Unable to add Software: " + e.getUserMessage();

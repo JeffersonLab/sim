@@ -18,3 +18,9 @@ td:nth-child(5) {
     height: 100px;
     resize: none;
 }
+#row-topics {
+    width: 350px;
+}
+#topic-select {
+    width: 250px;
+}

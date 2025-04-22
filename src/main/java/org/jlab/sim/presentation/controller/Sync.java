@@ -65,7 +65,7 @@ public class Sync extends HttpServlet {
 
       localList =
           softwareService.filterList(
-              null, null, repository, null, Include.YES, 0, Integer.MAX_VALUE);
+              null, null, repository, null, null, Include.YES, 0, Integer.MAX_VALUE);
 
       diff = syncService.diff(localList, remoteMap);
     } catch (UserFriendlyException e) {

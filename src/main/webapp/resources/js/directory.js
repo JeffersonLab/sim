@@ -6,6 +6,7 @@ jlab.editableRowTable.dialog.height = 500;
 jlab.addRow = function() {
     var name = $("#row-name").val(),
         type = $("#row-type").val(),
+        topicArray = $("#row-topics").val(),
         description = $("#row-description").val(),
         maintainerUsernameCsv = $("#row-maintainers").val(),
         homeUrl = $("#row-url").val(),
@@ -27,6 +28,7 @@ jlab.addRow = function() {
             repositoryId: repositoryId,
             name: name,
             type: type,
+            topicArray: topicArray,
             description: description,
             maintainerUsernameCsv: maintainerUsernameCsv,
             homeUrl: homeUrl,
@@ -61,6 +63,7 @@ jlab.editRow = function(removeSync) {
     var softwareId = $(".editable-row-table tr.selected-row").attr("data-id"),
         name = $("#row-name").val(),
         type = $("#row-type").val(),
+        topicArray = $("#row-topics").val(),
         description = $("#row-description").val(),
         maintainerUsernameCsv = $("#row-maintainers").val(),
         homeUrl = $("#row-url").val(),
@@ -83,6 +86,7 @@ jlab.editRow = function(removeSync) {
             repositoryId: repositoryId,
             name: name,
             type: type,
+            topicArray: topicArray,
             description: description,
             maintainerUsernameCsv: maintainerUsernameCsv,
             homeUrl: homeUrl,
@@ -166,6 +170,7 @@ $(document).on("click", "#open-edit-row-dialog-button", function() {
     $("#row-description").val($selectedRow.attr("data-description"));
     $("#row-maintainers").val($selectedRow.attr("data-maintainer-csv"));
     $("#row-repo").val($selectedRow.attr("data-repo-id"));
+    $("#row-topics").val($selectedRow.attr("data-topic-csv").split(",")).trigger('change');
     $("#row-archived").val($selectedRow.attr("data-archived"));
 
     $("#row-name").attr("disabled", "disabled");
@@ -187,7 +192,15 @@ $(document).on("click", ".default-clear-panel", function () {
     $("#software-name").val('');
     $("#username").val('');
     $("#repository-select").val('');
+    $("#topic-select").val(null).trigger('change');
     $("#type-select").val('');
     $("#archived-select").val('');
     return false;
+});
+$(function(){
+    $("#row-topics").select2({
+        tags: true
+    });
+
+    $("#topic-select").select2();
 });
