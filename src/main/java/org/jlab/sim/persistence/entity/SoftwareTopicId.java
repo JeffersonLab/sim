@@ -22,6 +22,11 @@ public class SoftwareTopicId implements Serializable {
 
   public SoftwareTopicId() {}
 
+  public SoftwareTopicId(BigInteger softwareId, BigInteger topicId) {
+    this.softwareId = softwareId;
+    this.topicId = topicId;
+  }
+
   public BigInteger getSoftwareId() {
     return softwareId;
   }

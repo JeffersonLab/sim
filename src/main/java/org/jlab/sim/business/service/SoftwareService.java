@@ -19,6 +19,7 @@ import org.jlab.smoothness.business.service.JPAService;
 @Stateless
 public class SoftwareService extends JPAService<Software> {
   @EJB RepositoryService repositoryService;
+  @EJB SoftwareTopicService softwareTopicService;
 
   public SoftwareService() {
     super(Software.class);
@@ -29,6 +30,7 @@ public class SoftwareService extends JPAService<Software> {
       BigInteger repoId,
       String name,
       SoftwareType type,
+      String[] topicArray,
       String description,
       String maintainerUsernameCsv,
       String homeUrl,
@@ -58,6 +60,10 @@ public class SoftwareService extends JPAService<Software> {
         new Software(repo, name, type, description, maintainerUsernameCsv, homeUrl, archived);
 
     create(software);
+
+    em.flush();
+
+    softwareTopicService.set(software, topicArray);
   }
 
   @PermitAll

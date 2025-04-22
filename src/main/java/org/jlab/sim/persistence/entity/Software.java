@@ -145,6 +145,7 @@ public class Software implements Serializable {
     this.maintainerUsernameCsv = maintainerUsernameCsv;
   }
 
+  @PostLoad
   public void sortSoftwareTopicList() {
     if (softwareTopicList != null) {
       Collections.sort(softwareTopicList);
@@ -152,14 +153,25 @@ public class Software implements Serializable {
   }
 
   public List<SoftwareTopic> getSoftwareTopicList() {
-
-    sortSoftwareTopicList();
-
     return softwareTopicList;
   }
 
   public void setSoftwareTopicList(List<SoftwareTopic> softwareTopicList) {
     this.softwareTopicList = softwareTopicList;
+  }
+
+  public String getTopicCsv() {
+    String csv = "";
+    if (softwareTopicList != null) {
+      for (int i = 0; i < softwareTopicList.size(); i++) {
+        SoftwareTopic topic = softwareTopicList.get(i);
+        csv = csv + topic.getTopic().getName();
+        if (i < softwareTopicList.size() - 1) {
+          csv = csv + ",";
+        }
+      }
+    }
+    return csv;
   }
 
   @Override

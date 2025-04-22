@@ -6,6 +6,7 @@ jlab.editableRowTable.dialog.height = 500;
 jlab.addRow = function() {
     var name = $("#row-name").val(),
         type = $("#row-type").val(),
+        topicArray = $("#row-topics").val(),
         description = $("#row-description").val(),
         maintainerUsernameCsv = $("#row-maintainers").val(),
         homeUrl = $("#row-url").val(),
@@ -27,6 +28,7 @@ jlab.addRow = function() {
             repositoryId: repositoryId,
             name: name,
             type: type,
+            topicArray: topicArray,
             description: description,
             maintainerUsernameCsv: maintainerUsernameCsv,
             homeUrl: homeUrl,
@@ -166,6 +168,7 @@ $(document).on("click", "#open-edit-row-dialog-button", function() {
     $("#row-description").val($selectedRow.attr("data-description"));
     $("#row-maintainers").val($selectedRow.attr("data-maintainer-csv"));
     $("#row-repo").val($selectedRow.attr("data-repo-id"));
+    $("#row-topics").val($selectedRow.attr("data-topic-csv").split(",")).trigger('change');
     $("#row-archived").val($selectedRow.attr("data-archived"));
 
     $("#row-name").attr("disabled", "disabled");

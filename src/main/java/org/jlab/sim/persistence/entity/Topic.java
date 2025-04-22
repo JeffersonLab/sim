@@ -13,6 +13,8 @@ public class Topic implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
+  @SequenceGenerator(name = "TopicId", sequenceName = "TOPIC_ID", allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TopicId")
   @Basic(optional = false)
   @NotNull
   @Column(name = "TOPIC_ID", nullable = false, precision = 22, scale = 0)

@@ -125,6 +125,7 @@
                             data-archived="${software.archived ? 'Y' : 'N'}"
                             data-name="${fn:escapeXml(software.name)}"
                             data-type="${fn:escapeXml(software.type)}"
+                            data-topic-csv="${fn:escapeXml(software.topicCsv)}"
                             data-description="${fn:escapeXml(software.description)}"
                             data-repo-id="${software.repository.repositoryId}"
                             data-maintainer-csv="${fn:escapeXml(software.maintainerUsernameCsv)}">

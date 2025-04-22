@@ -94,7 +94,7 @@ public class Directory extends HttpServlet {
         createSelectionMessage(
             paginator, softwareName, username, repository, type, topicNameArray, includeArchived);
 
-    List<Topic> topicList = topicService.findAll(new JPAService.OrderDirective("name", true));
+    List<Topic> topicList = topicService.getAll();
 
     request.setAttribute("topicList", topicList);
     request.setAttribute("selectionMessage", selectionMessage);
