@@ -52,8 +52,71 @@ public class SyncService extends JPAService<Software> {
       case "LLAPP":
         softwareList = fetchLLAPP(repository);
         break;
+      case "GITLAB":
+        softwareList = fetchGitLab(repository);
+        break;
       default:
         throw new UserFriendlyException("Unknown Repository: " + repository.getName());
+    }
+
+    return softwareList;
+  }
+
+  private List<Software> fetchGitLab(Repository repository) throws UserFriendlyException {
+    List<Software> softwareList = new ArrayList<>();
+
+    String url = "https://code.jlab.org/api/v4/groups/Accelerator/projects?include_subgroups=Y";
+
+    HttpResponse<String> response = null;
+
+    try {
+      HttpClient client = HttpClient.newHttpClient();
+      HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
+
+      response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    } catch (IOException | InterruptedException e) {
+      throw new UserFriendlyException("Could not connect to GitHub");
+    }
+
+    if (response != null && response.statusCode() == 200) {
+      String jsonString = response.body();
+
+      try (StringReader stringReader = new StringReader(jsonString);
+          JsonReader jsonReader = Json.createReader(stringReader)) {
+
+        JsonArray array = jsonReader.readArray();
+
+        for (int i = 0; i < array.size(); i++) {
+          JsonObject item = array.getJsonObject(i);
+
+          String name = item.getString("name");
+          String homeUrl = item.getString("web_url");
+          String maintainerUsernameCsv = null;
+          String description = item.getString("description");
+
+          JsonArray topics = item.getJsonArray("topics");
+
+          List<String> topicList = new ArrayList<>();
+
+          for (int j = 0; j < topics.size(); j++) {
+            String topic = topics.getString(j);
+            topicList.add(topic);
+          }
+
+          SoftwareType type = getFromTopicList(topicList);
+
+          Software software =
+              new Software(
+                  repository, name, type, description, maintainerUsernameCsv, homeUrl, false);
+
+          softwareList.add(software);
+        }
+
+      } catch (Exception e) {
+        throw new UserFriendlyException("Could not parse JSON", e);
+      }
+    } else {
+      throw new UserFriendlyException("Request failed with status code: " + response.statusCode());
     }
 
     return softwareList;
