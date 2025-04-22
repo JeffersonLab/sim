@@ -71,6 +71,7 @@ public class SoftwareService extends JPAService<Software> {
       BigInteger softwareId,
       BigInteger repoId,
       SoftwareType type,
+      String[] topicArray,
       String description,
       String maintainerUsernameCsv,
       String homeUrl,
@@ -109,6 +110,10 @@ public class SoftwareService extends JPAService<Software> {
     software.setArchived(archived);
 
     edit(software);
+
+    em.flush();
+
+    softwareTopicService.set(software, topicArray);
   }
 
   @PermitAll

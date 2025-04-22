@@ -27,6 +27,13 @@ public class TopicService extends JPAService<Topic> {
 
     query.setParameter("name", topicName);
 
-    return query.getSingleResult();
+    List<Topic> topics = query.getResultList();
+    Topic topic = null;
+
+    if (topics.size() > 0) {
+      topic = topics.get(0);
+    }
+
+    return topic;
   }
 }

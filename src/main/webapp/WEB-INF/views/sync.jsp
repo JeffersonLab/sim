@@ -56,6 +56,7 @@
                         <tr class="add-row"
                             data-name="${fn:escapeXml(software.name)}"
                             data-type="${fn:escapeXml(software.type)}"
+                            data-topic-csv="${fn:escapeXml(software.stringTopicCsv)}"
                             data-description="${fn:escapeXml(software.description)}"
                             data-maintainer="${fn:escapeXml(software.maintainerUsernameCsv)}"
                             data-url="${fn:escapeXml(software.homeUrl)}">
@@ -80,6 +81,7 @@
                         <tr data-id = "${software.softwareId}"
                             data-name="${fn:escapeXml(software.name)}"
                             data-type="${fn:escapeXml(software.type)}"
+                            data-topic-csv="${fn:escapeXml(software.topicCsv)}"
                             data-description="${fn:escapeXml(remoteMap[software.name].description)}"
                             data-maintainer="${fn:escapeXml(software.maintainerUsernameCsv)}"
                             data-url="${fn:escapeXml(software.homeUrl)}">

@@ -212,4 +212,18 @@ public class Software implements Serializable {
   public void setStringTopicList(List<String> stringTopicList) {
     this.stringTopicList = stringTopicList;
   }
+
+  public String getStringTopicCsv() {
+    String csv = "";
+    if (stringTopicList != null) {
+      for (int i = 0; i < stringTopicList.size(); i++) {
+        String topic = stringTopicList.get(i);
+        csv = csv + topic;
+        if (i < stringTopicList.size() - 1) {
+          csv = csv + ",";
+        }
+      }
+    }
+    return csv;
+  }
 }
