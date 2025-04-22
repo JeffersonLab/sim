@@ -78,13 +78,15 @@
                         </tr>
                     </c:forEach>
                     <c:forEach var="software" items="${diff.updateList}">
+                        <c:set value="${not empty remoteMap[software.name].homeUrl}"
+                               var="homeUrlSync"/>
                         <tr data-id = "${software.softwareId}"
                             data-name="${fn:escapeXml(software.name)}"
                             data-type="${fn:escapeXml(software.type)}"
                             data-topic-csv="${fn:escapeXml(remoteMap[software.name].stringTopicCsv)}"
                             data-description="${fn:escapeXml(remoteMap[software.name].description)}"
                             data-maintainer="${fn:escapeXml(software.maintainerUsernameCsv)}"
-                            data-url="${fn:escapeXml(software.homeUrl)}">
+                            data-url="${fn:escapeXml(homeUrlSync ? remoteMap[software.name].homeUrl : software.homeUrl)}">
                             <td><c:out value="${software.name}"/></td>
                             <td><c:out value="${software.type}"/></td>
                             <td>
@@ -101,7 +103,7 @@
                                     </c:otherwise>
                                 </c:choose>
                                 <c:choose>
-                                    <c:when test="${software.stringTopicCsv eq remoteMap[software.name].stringTopicCsv}">
+                                    <c:when test="${software.topicCsv eq remoteMap[software.name].stringTopicCsv}">
                                         <ul class="topic-list">
                                             <c:forEach items="${software.stringTopicList}" var="stringTopic">
                                                 <li class="topic"><c:out value="${stringTopic}"/></li>
@@ -129,7 +131,20 @@
                                 </c:choose>
                             </td>
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
-                            <td><c:out value="${software.homeUrl}"/></td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${not homeUrlSync || software.homeUrl eq remoteMap[software.name].homeUrl}">
+                                        <c:out value="${software.homeUrl}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div>
+                                            <div class="remote"><c:out
+                                                    value="${remoteMap[software.name].homeUrl}"/></div>
+                                            <span class="local"><c:out value="${software.homeUrl}"/></span>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
                             <td>
                                 <button class="update" type="button"${pageContext.request.isUserInRole('sim-admin') ? '' : ' disabled="disabled"'}>Update</button>
                             </td>

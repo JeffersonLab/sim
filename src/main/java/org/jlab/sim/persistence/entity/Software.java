@@ -204,12 +204,13 @@ public class Software implements Serializable {
       equals = equals && Objects.equals(getTopicCsv(), otherTopicCsv);
     }
 
-    /*if (other.maintainerUsernameCsv != null && !other.maintainerUsernameCsv.isBlank()) {
-      equals = equals && Objects.equals(maintainerUsernameCsv, other.maintainerUsernameCsv);
-    }
-
+    // Only compare if other is non-empty.
     if (other.homeUrl != null && !other.homeUrl.isBlank()) {
       equals = equals && Objects.equals(homeUrl, other.homeUrl);
+    }
+
+    /*if (other.maintainerUsernameCsv != null && !other.maintainerUsernameCsv.isBlank()) {
+      equals = equals && Objects.equals(maintainerUsernameCsv, other.maintainerUsernameCsv);
     }*/
 
     return equals;
