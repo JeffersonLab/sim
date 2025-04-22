@@ -81,7 +81,7 @@
                         <tr data-id = "${software.softwareId}"
                             data-name="${fn:escapeXml(software.name)}"
                             data-type="${fn:escapeXml(software.type)}"
-                            data-topic-csv="${fn:escapeXml(software.topicCsv)}"
+                            data-topic-csv="${fn:escapeXml(remoteMap[software.name].stringTopicCsv)}"
                             data-description="${fn:escapeXml(remoteMap[software.name].description)}"
                             data-maintainer="${fn:escapeXml(software.maintainerUsernameCsv)}"
                             data-url="${fn:escapeXml(software.homeUrl)}">
@@ -100,11 +100,33 @@
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
+                                <c:choose>
+                                    <c:when test="${software.stringTopicCsv eq remoteMap[software.name].stringTopicCsv}">
+                                        <ul class="topic-list">
+                                            <c:forEach items="${software.stringTopicList}" var="stringTopic">
+                                                <li class="topic"><c:out value="${stringTopic}"/></li>
+                                            </c:forEach>
+                                        </ul>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div>
+                                            <div class="remote">
+                                                <ul class="topic-list">
+                                                    <c:forEach items="${remoteMap[software.name].stringTopicList}" var="stringTopic">
+                                                        <li class="topic"><c:out value="${stringTopic}"/></li>
+                                                    </c:forEach>
+                                                </ul>
+                                            </div>
+                                            <div class="local">
                                 <ul class="topic-list">
-                                    <c:forEach items="${software.stringTopicList}" var="stringTopic">
-                                        <li class="topic"><c:out value="${stringTopic}"/></li>
+                                    <c:forEach items="${software.softwareTopicList}" var="softwareTopic">
+                                        <li class="topic"><c:out value="${softwareTopic.topic.name}"/></li>
                                     </c:forEach>
                                 </ul>
+                                            </div>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
                             </td>
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
                             <td><c:out value="${software.homeUrl}"/></td>
@@ -139,8 +161,8 @@
                             <td>
                                 <div><c:out value="${software.description}"/></div>
                                 <ul class="topic-list">
-                                    <c:forEach items="${software.stringTopicList}" var="stringTopic">
-                                        <li class="topic"><c:out value="${stringTopic}"/></li>
+                                    <c:forEach items="${software.softwareTopicList}" var="softwareTopic">
+                                        <li class="topic"><c:out value="${softwareTopic.topic.name}"/></li>
                                     </c:forEach>
                                 </ul>
                             </td>

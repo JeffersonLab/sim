@@ -108,6 +108,8 @@ jlab.removeRow = function($tr, batch) {
 jlab.updateRow = function($tr, batch) {
     var softwareId = $tr.attr("data-id"),
         type = $tr.attr("data-type"),
+        topicCsv = $tr.attr("data-topic-csv"),
+        topicArray = topicCsv.split(','),
         description = $tr.attr("data-description"),
         maintainerUsernameCsv = $tr.attr("data-maintainer"),
         homeUrl = $tr.attr("data-url"),
@@ -126,6 +128,7 @@ jlab.updateRow = function($tr, batch) {
             softwareId: softwareId,
             repositoryId: repositoryId,
             type: type,
+            topicArray: topicArray,
             description: description,
             maintainerUsernameCsv: maintainerUsernameCsv,
             homeUrl: homeUrl,
