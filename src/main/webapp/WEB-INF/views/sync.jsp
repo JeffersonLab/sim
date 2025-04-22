@@ -142,8 +142,8 @@
                             <td>
                                 <div><c:out value="${software.description}"/></div>
                                 <ul class="topic-list">
-                                    <c:forEach items="${software.stringTopicList}" var="stringTopic">
-                                        <li class="topic"><c:out value="${stringTopic}"/></li>
+                                    <c:forEach items="${software.softwareTopicList}" var="softwareTopic">
+                                        <li class="topic"><c:out value="${softwareTopic.topic.name}"/></li>
                                     </c:forEach>
                                 </ul>
                             </td>

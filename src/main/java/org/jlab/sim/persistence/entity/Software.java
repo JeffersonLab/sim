@@ -57,7 +57,11 @@ public class Software implements Serializable {
   private boolean archived;
 
   @OneToMany(fetch = FetchType.EAGER)
-  @JoinColumn(name = "SOFTWARE_ID", referencedColumnName = "SOFTWARE_ID")
+  @JoinColumn(
+      name = "SOFTWARE_ID",
+      referencedColumnName = "SOFTWARE_ID",
+      insertable = false,
+      updatable = false)
   private List<SoftwareTopic> softwareTopicList;
 
   @Transient private List<String> stringTopicList;

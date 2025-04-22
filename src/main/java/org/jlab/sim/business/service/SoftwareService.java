@@ -130,6 +130,12 @@ public class SoftwareService extends JPAService<Software> {
       throw new UserFriendlyException("software not found with id: " + softwareId);
     }
 
+    System.err.println("removing with id: " + softwareId);
+
+    for (SoftwareTopic st : software.getSoftwareTopicList()) {
+      em.remove(st);
+    }
+
     remove(software);
   }
 
