@@ -80,10 +80,12 @@
                     <c:forEach var="software" items="${diff.updateList}">
                         <c:set value="${not empty remoteMap[software.name].homeUrl}"
                                var="homeUrlSync"/>
+                        <c:set value="${not empty remoteMap[software.name].stringTopicCsv}"
+                               var="topicSync"/>
                         <tr data-id = "${software.softwareId}"
                             data-name="${fn:escapeXml(software.name)}"
                             data-type="${fn:escapeXml(software.type)}"
-                            data-topic-csv="${fn:escapeXml(remoteMap[software.name].stringTopicCsv)}"
+                            data-topic-csv="${fn:escapeXml(topicSync ? remoteMap[software.name].stringTopicCsv : software.topicCsv)}"
                             data-description="${fn:escapeXml(remoteMap[software.name].description)}"
                             data-maintainer="${fn:escapeXml(software.maintainerUsernameCsv)}"
                             data-url="${fn:escapeXml(homeUrlSync ? remoteMap[software.name].homeUrl : software.homeUrl)}">
@@ -103,7 +105,7 @@
                                     </c:otherwise>
                                 </c:choose>
                                 <c:choose>
-                                    <c:when test="${software.topicCsv eq remoteMap[software.name].stringTopicCsv}">
+                                    <c:when test="${not topicSync || software.topicCsv eq remoteMap[software.name].stringTopicCsv}">
                                         <ul class="topic-list">
                                             <c:forEach items="${software.stringTopicList}" var="stringTopic">
                                                 <li class="topic"><c:out value="${stringTopic}"/></li>
