@@ -104,7 +104,11 @@ public class Directory extends HttpServlet {
     request.setAttribute("softwareList", softwareList);
     request.setAttribute("paginator", paginator);
 
-    request.getRequestDispatcher("/WEB-INF/views/directory.jsp").forward(request, response);
+    if ("Y".equals(request.getParameter("loose"))) {
+      request.getRequestDispatcher("/WEB-INF/views/directory-loose.jsp").forward(request, response);
+    } else {
+      request.getRequestDispatcher("/WEB-INF/views/directory.jsp").forward(request, response);
+    }
   }
 
   private String createSelectionMessage(
