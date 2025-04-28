@@ -16,6 +16,17 @@ create_role
 echo "----------------"
 echo "| Create Users |"
 echo "----------------"
+KEYCLOAK_USERNAME=jdoe
+KEYCLOAK_FIRSTNAME=John
+KEYCLOAK_LASTNAME=Doe
+KEYCLOAK_EMAIL=jdoe@example.com
+KEYCLOAK_PASSWORD=password
+KEYCLOAK_ROLE_NAME=${KEYCLOAK_RESOURCE}-user
+create_user
+assign_role
+KEYCLOAK_ROLE_NAME=${KEYCLOAK_RESOURCE}-admin
+assign_role
+
 KEYCLOAK_USERNAME=jadams
 KEYCLOAK_FIRSTNAME=Jane
 KEYCLOAK_LASTNAME=Adams
