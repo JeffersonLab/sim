@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.TypedQuery;
@@ -25,7 +26,7 @@ public class SoftwareService extends JPAService<Software> {
     super(Software.class);
   }
 
-  @PermitAll
+  @RolesAllowed({"sim-admin", "acg"})
   public void addSoftware(
       BigInteger repoId,
       String name,
@@ -36,7 +37,6 @@ public class SoftwareService extends JPAService<Software> {
       String homeUrl,
       boolean archived)
       throws UserFriendlyException {
-    checkAuthenticated();
 
     if (repoId == null) {
       throw new UserFriendlyException("repoId cannot be empty");
@@ -66,7 +66,7 @@ public class SoftwareService extends JPAService<Software> {
     softwareTopicService.set(software, topicArray);
   }
 
-  @PermitAll
+  @RolesAllowed({"sim-admin", "acg"})
   public void editSoftware(
       BigInteger softwareId,
       BigInteger repoId,
@@ -77,7 +77,6 @@ public class SoftwareService extends JPAService<Software> {
       String homeUrl,
       boolean archived)
       throws UserFriendlyException {
-    checkAuthenticated();
 
     if (softwareId == null) {
       throw new UserFriendlyException("softwareId cannot be empty");
@@ -116,10 +115,8 @@ public class SoftwareService extends JPAService<Software> {
     softwareTopicService.set(software, topicArray);
   }
 
-  @PermitAll
+  @RolesAllowed({"sim-admin", "acg"})
   public void removeSoftware(BigInteger softwareId) throws UserFriendlyException {
-    checkAuthenticated();
-
     if (softwareId == null) {
       throw new UserFriendlyException("softwareId cannot be empty");
     }

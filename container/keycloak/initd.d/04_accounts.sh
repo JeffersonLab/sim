@@ -9,6 +9,8 @@ KEYCLOAK_ROLE_NAME=${KEYCLOAK_RESOURCE}-user
 create_role
 KEYCLOAK_ROLE_NAME=${KEYCLOAK_RESOURCE}-admin
 create_role
+KEYCLOAK_ROLE_NAME=acg
+create_role
 
 
 echo "----------------"
@@ -28,6 +30,8 @@ KEYCLOAK_FIRSTNAME=John
 KEYCLOAK_LASTNAME=Smith
 KEYCLOAK_EMAIL=jsmith@example.com
 create_user
+assign_role
+KEYCLOAK_ROLE_NAME=acg
 assign_role
 
 

@@ -58,7 +58,11 @@ public class Directory extends HttpServlet {
     Include includeArchived = Parameter.convertInclude(request, "archived");
 
     int offset = ParamUtil.convertAndValidateNonNegativeInt(request, "offset", 0);
-    int maxPerPage = 100;
+    Integer maxPerPage = ParamConverter.convertInteger(request, "max");
+
+    if (maxPerPage == null || maxPerPage > 100 || maxPerPage < 1) {
+      maxPerPage = 100;
+    }
 
     List<Repository> repoList =
         repositoryService.findAll(new JPAService.OrderDirective("name", false));

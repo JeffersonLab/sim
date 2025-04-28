@@ -200,6 +200,10 @@ $(document).on("click", ".default-clear-panel", function () {
     $("#archived-select").val('');
     return false;
 });
+$(document).on("change", ".change-submit", function () {
+    let formId = $(this).attr("form");
+    document.getElementById(formId).submit();
+});
 $(function(){
     $("#row-topics").select2({
         tags: true
