@@ -124,7 +124,7 @@
                 <td>
                     <c:choose>
                         <c:when test="${not empty software.homeUrl}">
-                            <a class="ext-link" href="${software.homeUrl}"><c:out value="${software.name}"/></a>
+                            <a ${'Y' eq param.loose ? 'target="_parent"' : ''} href="${software.homeUrl}"><c:out value="${software.name}"/></a>
                         </c:when>
                         <c:otherwise>
                             <c:out value="${software.name}"/>
