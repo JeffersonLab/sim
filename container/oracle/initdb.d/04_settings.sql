@@ -13,7 +13,7 @@ insert into SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('SMOOTH
 
 -- OPTIONAL: IP READ FILTER (ACL)
 insert into SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('IP_READ_FILTER_ENABLED', 'N', 'BOOLEAN', 'Whether to enable IP filtering of pages requiring auth to view.  You must redeploy the app for this setting change to take effect.', 'ACL', 1);
-insert into SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT, CHANGE_ACTION_JNDI) values ('IP_READ_ALLOWLIST_PATTERN', '127\.0.*', 'STRING', 'Java REGEX Pattern of allowed IPs for unauthenticated access to view IpReadFilter pages', 'ACL', 2, 'java:global/sim/IpReadAllowlistReconfigureService');
+insert into SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT, CHANGE_ACTION_JNDI) values ('IP_READ_ALLOWLIST_PATTERN', '127\.0.*', 'STRING', 'Java REGEX Pattern of allowed IPs for unauthenticated access to view IpReadFilter pages', 'ACL', 2, 'java:global/smoothness/IpReadAllowlistReconfigureService');
 insert into SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('IP_READ_URL_PATTERN', '/*', 'STRING', 'URL patterns to match when applying the IP Read Filter.  You must redeploy the app for this setting change to take effect.', 'ACL', 3);
 
 -- OPTIONAL: Notification Banner
