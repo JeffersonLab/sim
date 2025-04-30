@@ -266,9 +266,13 @@ public class SyncService extends JPAService<Software> {
 
           SoftwareType type = getFromTopicList(topicList);
 
+          boolean archived = item.getBoolean("archived");
+
           Software software =
               new Software(
-                  repository, name, type, description, maintainerUsernameCsv, homeUrl, false);
+                  repository, name, type, description, maintainerUsernameCsv, homeUrl, archived);
+
+          software.setArchivedSynced(true);
 
           software.setStringTopicList(topicList);
 
