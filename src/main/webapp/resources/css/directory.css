@@ -19,7 +19,8 @@ td:nth-child(5) {
 #row-url {
     width: 400px;
 }
-#row-description {
+#row-description,
+#row-note {
     width: 400px;
     height: 100px;
     resize: none;
@@ -32,4 +33,19 @@ td:nth-child(5) {
 }
 .max-select {
     float: right;
+}
+.non-empty-note {
+    border: 1px dotted black;
+    margin: 1em 0;
+    padding: 1em 1em 1em 3em;
+    background-color: lightgray;
+    border-radius: 16px;
+    position: relative;
+}
+.non-empty-note:before {
+    content: "🛈";
+    position: absolute;
+    left: 15px;
+    font-size: 24px;
+    line-height: 20px;
 }

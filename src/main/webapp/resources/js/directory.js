@@ -2,12 +2,13 @@ var jlab = jlab || {};
 jlab.editableRowTable = jlab.editableRowTable || {};
 jlab.editableRowTable.entity = 'Software';
 jlab.editableRowTable.dialog.width = 600;
-jlab.editableRowTable.dialog.height = 550;
+jlab.editableRowTable.dialog.height = 600;
 jlab.addRow = function() {
     var name = $("#row-name").val(),
         type = $("#row-type").val(),
         topicArray = $("#row-topics").val(),
         description = $("#row-description").val(),
+        note = $("#row-note").val(),
         maintainerUsernameCsv = $("#row-maintainers").val(),
         homeUrl = $("#row-url").val(),
         repositoryId = $("#row-repo").val(),
@@ -30,6 +31,7 @@ jlab.addRow = function() {
             type: type,
             topicArray: topicArray,
             description: description,
+            note: note,
             maintainerUsernameCsv: maintainerUsernameCsv,
             homeUrl: homeUrl,
             archived: archived
@@ -65,6 +67,7 @@ jlab.editRow = function(removeSync) {
         type = $("#row-type").val(),
         topicArray = $("#row-topics").val(),
         description = $("#row-description").val(),
+        note = $("#row-note").val(),
         maintainerUsernameCsv = $("#row-maintainers").val(),
         homeUrl = $("#row-url").val(),
         repositoryId = $("#row-repo").val(),
@@ -88,6 +91,7 @@ jlab.editRow = function(removeSync) {
             type: type,
             topicArray: topicArray,
             description: description,
+            note: note,
             maintainerUsernameCsv: maintainerUsernameCsv,
             homeUrl: homeUrl,
             archived: archived
@@ -170,6 +174,7 @@ $(document).on("click", "#open-edit-row-dialog-button", function() {
     $("#row-name").val($selectedRow.attr("data-name"));
     $("#row-type").val($selectedRow.attr("data-type"));
     $("#row-description").val($selectedRow.attr("data-description"));
+    $("#row-note").val($selectedRow.attr("data-note"));
     $("#row-maintainers").val($selectedRow.attr("data-maintainer-csv"));
     $("#row-repo").val($selectedRow.attr("data-repo-id"));
     $("#row-topics").val($selectedRow.attr("data-topic-csv").split(",")).trigger('change');
