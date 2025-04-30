@@ -83,7 +83,7 @@ public class SyncService extends JPAService<Software> {
     String accessToken = SecretStore.get("GITLAB_ACCESS_TOKEN");
 
     if (accessToken == null) {
-      throw new UserFriendlyException("GITLAB_ACCESS_TOKEN is not set in the env");
+      throw new UserFriendlyException("GITLAB_ACCESS_TOKEN is not set");
     }
 
     HttpResponse<String> response = null;
