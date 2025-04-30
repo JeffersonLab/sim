@@ -102,6 +102,14 @@
                                 </select>
                             </div>
                         </li>
+                        <li>
+                            <div class="li-key">
+                                <label for="row-note">Note</label>
+                            </div>
+                            <div class="li-value">
+                                <textarea id="row-note"></textarea>
+                            </div>
+                        </li>
                     </ul>
                 </form>
             </section>

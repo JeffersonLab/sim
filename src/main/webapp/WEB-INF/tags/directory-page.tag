@@ -118,6 +118,7 @@
                 data-type="${fn:escapeXml(software.type)}"
                 data-topic-csv="${fn:escapeXml(software.topicCsv)}"
                 data-description="${fn:escapeXml(software.description)}"
+                data-note="${fn:escapeXml(software.note)}"
                 data-repo-id="${software.repository.repositoryId}"
                 data-maintainer-csv="${fn:escapeXml(software.maintainerUsernameCsv)}"
                 data-url="${fn:escapeXml(software.homeUrl)}">
@@ -137,6 +138,7 @@
                 <td><c:out value="${software.type}"/></td>
                 <td>
                     <div><c:out value="${software.description}"/></div>
+                    <div class="note-div"><c:out value="${software.note}"/></div>
                     <ul class="topic-list">
                         <c:forEach items="${software.softwareTopicList}" var="softwareTopic">
                             <li class="topic"><c:out value="${softwareTopic.topic.name}"/></li>

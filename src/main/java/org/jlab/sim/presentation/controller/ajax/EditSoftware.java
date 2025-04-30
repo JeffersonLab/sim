@@ -48,6 +48,11 @@ public class EditSoftware extends HttpServlet {
       String[] topicArray = request.getParameterValues("topicArray[]");
       Boolean archived = ParamConverter.convertYNBoolean(request, "archived");
 
+      // If note field is null (no key), that means leave as is.
+      // To clear, set to empty string!
+      // This allows us to totally ignore this field on sync page
+      String note = request.getParameter("note");
+
       if (archived == null) {
         throw new UserFriendlyException("archived must not be empty");
       }
@@ -61,7 +66,8 @@ public class EditSoftware extends HttpServlet {
           description,
           maintainerUsernameCsv,
           homeUrl,
-          archived);
+          archived,
+          note);
     } catch (UserFriendlyException e) {
       stat = "fail";
       error = "Unable to edit Software: " + e.getUserMessage();

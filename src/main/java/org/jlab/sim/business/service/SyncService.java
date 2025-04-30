@@ -146,7 +146,14 @@ public class SyncService extends JPAService<Software> {
 
           Software software =
               new Software(
-                  repository, name, type, description, maintainerUsernameCsv, homeUrl, archived);
+                  repository,
+                  name,
+                  type,
+                  description,
+                  maintainerUsernameCsv,
+                  homeUrl,
+                  archived,
+                  null);
 
           software.setArchivedSynced(true);
 
@@ -272,7 +279,14 @@ public class SyncService extends JPAService<Software> {
 
           Software software =
               new Software(
-                  repository, name, type, description, maintainerUsernameCsv, homeUrl, archived);
+                  repository,
+                  name,
+                  type,
+                  description,
+                  maintainerUsernameCsv,
+                  homeUrl,
+                  archived,
+                  null);
 
           software.setArchivedSynced(true);
 
@@ -358,7 +372,8 @@ public class SyncService extends JPAService<Software> {
                   description,
                   maintainerUsernameCsv,
                   homeUrl,
-                  false);
+                  false,
+                  null);
 
           softwareList.add(software);
         }
@@ -407,7 +422,7 @@ public class SyncService extends JPAService<Software> {
 
           Software software =
               new Software(
-                  repository, name, type, description, maintainerUsernameCsv, homeUrl, false);
+                  repository, name, type, description, maintainerUsernameCsv, homeUrl, false, null);
 
           softwareList.add(software);
         }
@@ -449,7 +464,14 @@ public class SyncService extends JPAService<Software> {
 
             Software software =
                 new Software(
-                    repository, name, SoftwareType.APP, null, maintainerUsernameCsv, null, false);
+                    repository,
+                    name,
+                    SoftwareType.APP,
+                    null,
+                    maintainerUsernameCsv,
+                    null,
+                    false,
+                    null);
 
             softwareList.add(software);
 
