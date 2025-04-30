@@ -143,7 +143,6 @@ public class SyncService extends JPAService<Software> {
           SoftwareType type = getFromTopicList(topicList);
 
           boolean archived = item.getBoolean("archived");
-          ;
 
           Software software =
               new Software(
@@ -204,17 +203,16 @@ public class SyncService extends JPAService<Software> {
     return softwareList;
   }
 
-  private List<Software> fetchGitHub(Repository repository) throws UserFriendlyException {
+  private PaginatedResult paginatedGitHubQuery(String url, Repository repository)
+      throws UserFriendlyException {
     List<Software> softwareList = new ArrayList<>();
+    String nextUrl = null;
 
     String accessToken = SecretStore.get("GITHUB_ACCESS_TOKEN");
 
     if (accessToken == null) {
       throw new UserFriendlyException("GITHUB_ACCESS_TOKEN is not set");
     }
-
-    String url =
-        "https://api.github.com/search/repositories?per_page=100&q=topic%3Aacg+org%3AJeffersonLab";
 
     HttpResponse<String> response = null;
 
@@ -234,6 +232,13 @@ public class SyncService extends JPAService<Software> {
 
     if (response != null && response.statusCode() == 200) {
       String jsonString = response.body();
+
+      Map<String, String> links = parseFirstLinkHeader(response.headers());
+
+      if (!links.isEmpty()) {
+        nextUrl = links.get("next");
+        // System.out.println("Setting Next URL: " + nextUrl);
+      }
 
       try (StringReader stringReader = new StringReader(jsonString);
           JsonReader jsonReader = Json.createReader(stringReader)) {
@@ -276,6 +281,22 @@ public class SyncService extends JPAService<Software> {
     } else {
       throw new UserFriendlyException("Request failed with status code: " + response.statusCode());
     }
+
+    return new PaginatedResult(softwareList, nextUrl);
+  }
+
+  private List<Software> fetchGitHub(Repository repository) throws UserFriendlyException {
+    List<Software> softwareList = new ArrayList<>();
+
+    String url =
+        "https://api.github.com/search/repositories?per_page=100&q=topic%3Aacg+org%3AJeffersonLab";
+
+    do {
+      // System.err.println("Fetching GitHub Projects with URL: " + url);
+      PaginatedResult result = paginatedGitHubQuery(url, repository);
+      softwareList.addAll(result.softwareList);
+      url = result.nextUrl;
+    } while (url != null);
 
     return softwareList;
   }
