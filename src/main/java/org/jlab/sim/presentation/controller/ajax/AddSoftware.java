@@ -47,6 +47,7 @@ public class AddSoftware extends HttpServlet {
       SoftwareType type = Parameter.convertSoftwareType(request, "type");
       String[] topicArray = request.getParameterValues("topicArray[]");
       Boolean archived = ParamConverter.convertYNBoolean(request, "archived");
+      String note = request.getParameter("note");
 
       if (archived == null) {
         throw new UserFriendlyException("archived must not be empty");
@@ -60,7 +61,8 @@ public class AddSoftware extends HttpServlet {
           description,
           maintainerUsernameCsv,
           homeUrl,
-          archived);
+          archived,
+          note);
     } catch (UserFriendlyException e) {
       stat = "fail";
       error = "Unable to add Software: " + e.getUserMessage();

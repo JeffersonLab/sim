@@ -38,6 +38,10 @@ public class Software implements Serializable {
   @Column(name = "DESCRIPTION", nullable = true, length = 256)
   private String description;
 
+  @Size(max = 256)
+  @Column(name = "NOTE", nullable = true, length = 256)
+  private String note;
+
   @NotNull
   @ManyToOne(optional = false)
   @JoinColumn(name = "REPOSITORY_ID", referencedColumnName = "REPOSITORY_ID", nullable = false)
@@ -76,7 +80,8 @@ public class Software implements Serializable {
       String description,
       String maintainerUsernameCsv,
       String homeUrl,
-      boolean archived) {
+      boolean archived,
+      String note) {
     this.repository = repository;
     this.name = name;
     this.type = type;
@@ -84,6 +89,7 @@ public class Software implements Serializable {
     this.maintainerUsernameCsv = maintainerUsernameCsv;
     this.homeUrl = homeUrl;
     this.archived = archived;
+    this.note = note;
   }
 
   public BigInteger getSoftwareId() {
@@ -116,6 +122,14 @@ public class Software implements Serializable {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public String getNote() {
+    return note;
+  }
+
+  public void setNote(String note) {
+    this.note = note;
   }
 
   public Repository getRepository() {

@@ -35,7 +35,8 @@ public class SoftwareService extends JPAService<Software> {
       String description,
       String maintainerUsernameCsv,
       String homeUrl,
-      boolean archived)
+      boolean archived,
+      String note)
       throws UserFriendlyException {
 
     if (repoId == null) {
@@ -57,7 +58,7 @@ public class SoftwareService extends JPAService<Software> {
     }
 
     Software software =
-        new Software(repo, name, type, description, maintainerUsernameCsv, homeUrl, archived);
+        new Software(repo, name, type, description, maintainerUsernameCsv, homeUrl, archived, note);
 
     create(software);
 
@@ -75,7 +76,8 @@ public class SoftwareService extends JPAService<Software> {
       String description,
       String maintainerUsernameCsv,
       String homeUrl,
-      boolean archived)
+      boolean archived,
+      String note)
       throws UserFriendlyException {
 
     if (softwareId == null) {
@@ -107,6 +109,11 @@ public class SoftwareService extends JPAService<Software> {
     software.setMaintainerUsernameCsv(maintainerUsernameCsv);
     software.setHomeUrl(homeUrl);
     software.setArchived(archived);
+
+    // If note == null we treat this as "leave existing as is"
+    if (note != null) {
+      software.setNote(note);
+    }
 
     edit(software);
 
