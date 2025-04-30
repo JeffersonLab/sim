@@ -65,7 +65,7 @@ public class SyncService extends JPAService<Software> {
   private List<Software> fetchGitLab(Repository repository) throws UserFriendlyException {
     List<Software> softwareList = new ArrayList<>();
 
-    String accessToken = System.getenv("GITLAB_ACCESS_TOKEN");
+    String accessToken = SecretStore.get("GITLAB_ACCESS_TOKEN");
 
     if (accessToken == null) {
       throw new UserFriendlyException("GITLAB_ACCESS_TOKEN is not set in the env");
