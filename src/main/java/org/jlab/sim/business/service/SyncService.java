@@ -150,6 +150,8 @@ public class SyncService extends JPAService<Software> {
 
           software.setArchivedSynced(true);
 
+          software.setStringTopicList(topicList);
+
           softwareList.add(software);
         }
 
