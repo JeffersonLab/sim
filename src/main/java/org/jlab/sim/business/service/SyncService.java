@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import javax.json.Json;
@@ -62,16 +65,36 @@ public class SyncService extends JPAService<Software> {
     return softwareList;
   }
 
-  private List<Software> fetchGitLab(Repository repository) throws UserFriendlyException {
-    List<Software> softwareList = new ArrayList<>();
+  class PaginatedResult {
+    public List<Software> softwareList;
+    public String nextUrl;
 
-    String url = "https://code.jlab.org/api/v4/groups/Accelerator/projects?include_subgroups=Y";
+    public PaginatedResult(List<Software> softwareList, String nextUrl) {
+      this.softwareList = softwareList;
+      this.nextUrl = nextUrl;
+    }
+  }
+
+  private PaginatedResult paginatedGitLabQuery(String url, Repository repository)
+      throws UserFriendlyException {
+    List<Software> softwareList = new ArrayList();
+    String nextUrl = null;
+
+    String accessToken = SecretStore.get("GITLAB_ACCESS_TOKEN");
+
+    if (accessToken == null) {
+      throw new UserFriendlyException("GITLAB_ACCESS_TOKEN is not set in the env");
+    }
 
     HttpResponse<String> response = null;
 
     try {
       HttpClient client = HttpClient.newHttpClient();
-      HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
+      HttpRequest request =
+          HttpRequest.newBuilder()
+              .uri(URI.create(url))
+              .header("Private-Token", accessToken)
+              .build();
 
       response = client.send(request, HttpResponse.BodyHandlers.ofString());
     } catch (IOException | InterruptedException e) {
@@ -80,6 +103,15 @@ public class SyncService extends JPAService<Software> {
 
     if (response != null && response.statusCode() == 200) {
       String jsonString = response.body();
+
+      Map<String, String> links = parseFirstLinkHeader(response.headers());
+
+      if (!links.isEmpty()) {
+        nextUrl = links.get("next");
+        // System.out.println("Setting Next URL: " + nextUrl);
+      }
+
+      // System.err.println(jsonString);
 
       try (StringReader stringReader = new StringReader(jsonString);
           JsonReader jsonReader = Json.createReader(stringReader)) {
@@ -92,7 +124,12 @@ public class SyncService extends JPAService<Software> {
           String name = item.getString("name");
           String homeUrl = item.getString("web_url");
           String maintainerUsernameCsv = null;
-          String description = item.getString("description");
+
+          String description = null;
+
+          if (!item.isNull("description")) {
+            description = item.getString("description");
+          }
 
           JsonArray topics = item.getJsonArray("topics");
 
@@ -105,9 +142,14 @@ public class SyncService extends JPAService<Software> {
 
           SoftwareType type = getFromTopicList(topicList);
 
+          boolean archived = item.getBoolean("archived");
+          ;
+
           Software software =
               new Software(
-                  repository, name, type, description, maintainerUsernameCsv, homeUrl, false);
+                  repository, name, type, description, maintainerUsernameCsv, homeUrl, archived);
+
+          software.setArchivedSynced(true);
 
           softwareList.add(software);
         }
@@ -118,6 +160,46 @@ public class SyncService extends JPAService<Software> {
     } else {
       throw new UserFriendlyException("Request failed with status code: " + response.statusCode());
     }
+
+    return new PaginatedResult(softwareList, nextUrl);
+  }
+
+  private static final Pattern LINK_PATTERN = Pattern.compile("<([^>]+)>\\s*;\\s*rel=\"([^\"]+)\"");
+
+  private Map<String, String> parseFirstLinkHeader(HttpHeaders headers) {
+    List<String> linkHeaders = headers.allValues("Link");
+
+    if (linkHeaders.isEmpty()) {
+      return new HashMap<>();
+    }
+
+    String linkHeader = linkHeaders.get(0);
+
+    Matcher matcher = LINK_PATTERN.matcher(linkHeader);
+    Map<String, String> link = new HashMap<>();
+
+    while (matcher.find()) {
+      String uri = matcher.group(1);
+      String rel = matcher.group(2);
+
+      link.put(rel, uri);
+    }
+
+    return link;
+  }
+
+  private List<Software> fetchGitLab(Repository repository) throws UserFriendlyException {
+    List<Software> softwareList = new ArrayList<>();
+
+    String url =
+        "https://code.jlab.org/api/v4/groups/Accelerator/projects?include_subgroups=Y&per_page=100";
+
+    do {
+      // System.err.println("Fetching GitLab Projects with URL: " + url);
+      PaginatedResult result = paginatedGitLabQuery(url, repository);
+      softwareList.addAll(result.softwareList);
+      url = result.nextUrl;
+    } while (url != null);
 
     return softwareList;
   }
