@@ -77,7 +77,7 @@ public class SyncService extends JPAService<Software> {
 
   private PaginatedResult paginatedGitLabQuery(String url, Repository repository)
       throws UserFriendlyException {
-    List<Software> softwareList = new ArrayList();
+    List<Software> softwareList = new ArrayList<>();
     String nextUrl = null;
 
     String accessToken = SecretStore.get("GITLAB_ACCESS_TOKEN");
