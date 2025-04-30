@@ -207,6 +207,12 @@ public class SyncService extends JPAService<Software> {
   private List<Software> fetchGitHub(Repository repository) throws UserFriendlyException {
     List<Software> softwareList = new ArrayList<>();
 
+    String accessToken = SecretStore.get("GITHUB_ACCESS_TOKEN");
+
+    if (accessToken == null) {
+      throw new UserFriendlyException("GITHUB_ACCESS_TOKEN is not set");
+    }
+
     String url =
         "https://api.github.com/search/repositories?per_page=100&q=topic%3Aacg+org%3AJeffersonLab";
 
@@ -214,7 +220,12 @@ public class SyncService extends JPAService<Software> {
 
     try {
       HttpClient client = HttpClient.newHttpClient();
-      HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
+      HttpRequest request =
+          HttpRequest.newBuilder()
+              .uri(URI.create(url))
+              .header("Authorization", "Bearer " + accessToken)
+              .header("X-GitHub-Api-Version", "2022-11-28")
+              .build();
 
       response = client.send(request, HttpResponse.BodyHandlers.ofString());
     } catch (IOException | InterruptedException e) {
