@@ -65,13 +65,19 @@ public class SyncService extends JPAService<Software> {
   private List<Software> fetchGitLab(Repository repository) throws UserFriendlyException {
     List<Software> softwareList = new ArrayList<>();
 
+    String accessToken = System.getenv("GITLAB_ACCESS_TOKEN");
+
+    if(accessToken == null) {
+      throw new UserFriendlyException("GITLAB_ACCESS_TOKEN is not set in the env");
+    }
+
     String url = "https://code.jlab.org/api/v4/groups/Accelerator/projects?include_subgroups=Y";
 
     HttpResponse<String> response = null;
 
     try {
       HttpClient client = HttpClient.newHttpClient();
-      HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
+      HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("Private-Token", accessToken).build();
 
       response = client.send(request, HttpResponse.BodyHandlers.ofString());
     } catch (IOException | InterruptedException e) {
@@ -80,6 +86,8 @@ public class SyncService extends JPAService<Software> {
 
     if (response != null && response.statusCode() == 200) {
       String jsonString = response.body();
+
+      //System.err.println(jsonString);
 
       try (StringReader stringReader = new StringReader(jsonString);
           JsonReader jsonReader = Json.createReader(stringReader)) {
@@ -92,7 +100,13 @@ public class SyncService extends JPAService<Software> {
           String name = item.getString("name");
           String homeUrl = item.getString("web_url");
           String maintainerUsernameCsv = null;
-          String description = item.getString("description");
+
+
+          String description =  null;
+
+          if(!item.isNull("description")) {
+            description = item.getString("description");
+          }
 
           JsonArray topics = item.getJsonArray("topics");
 
