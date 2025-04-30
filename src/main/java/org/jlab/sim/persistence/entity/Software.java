@@ -65,6 +65,7 @@ public class Software implements Serializable {
   private List<SoftwareTopic> softwareTopicList;
 
   @Transient private List<String> stringTopicList;
+  @Transient private boolean archivedSynced = false;
 
   public Software() {}
 
@@ -178,6 +179,14 @@ public class Software implements Serializable {
     return csv;
   }
 
+  public boolean isArchivedSynced() {
+    return archivedSynced;
+  }
+
+  public void setArchivedSynced(boolean archivedSynced) {
+    this.archivedSynced = archivedSynced;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (!(o instanceof Software)) return false;
@@ -207,6 +216,11 @@ public class Software implements Serializable {
     // Only compare if other is non-empty.
     if (other.homeUrl != null && !other.homeUrl.isBlank()) {
       equals = equals && Objects.equals(homeUrl, other.homeUrl);
+    }
+
+    // Only compare if other is synced.
+    if (other.archivedSynced) {
+      equals = equals && Objects.equals(archived, other.archived);
     }
 
     /*if (other.maintainerUsernameCsv != null && !other.maintainerUsernameCsv.isBlank()) {

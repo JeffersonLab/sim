@@ -55,6 +55,7 @@
                     <c:forEach var="software" items="${diff.addList}">
                         <tr class="add-row"
                             data-name="${fn:escapeXml(software.name)}"
+                            data-archived="${fn:escapeXml(software.archived)}"
                             data-type="${fn:escapeXml(software.type)}"
                             data-topic-csv="${fn:escapeXml(software.stringTopicCsv)}"
                             data-description="${fn:escapeXml(software.description)}"
@@ -71,7 +72,10 @@
                                 </ul>
                             </td>
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
-                            <td><c:out value="${software.homeUrl}"/></td>
+                            <td>
+                                <c:out value="${software.homeUrl}"/>
+                                <div>Archived: ${software.archived}</div>
+                            </td>
                             <td>
                                 <button class="add" type="button"${(pageContext.request.isUserInRole('sim-admin') or pageContext.request.isUserInRole('acg')) ? '' : ' disabled="disabled"'}>Add</button>
                             </td>
@@ -82,8 +86,11 @@
                                var="homeUrlSync"/>
                         <c:set value="${not empty remoteMap[software.name].stringTopicCsv}"
                                var="topicSync"/>
+                        <c:set value="${not empty remoteMap[software.name].archived}"
+                               var="archivedSync"/>
                         <tr data-id = "${software.softwareId}"
                             data-name="${fn:escapeXml(software.name)}"
+                            data-archived="${fn:escapeXml(archivedSync ? remoteMap[software.name].archived : software.archived)}"
                             data-type="${fn:escapeXml(software.type)}"
                             data-topic-csv="${fn:escapeXml(topicSync ? remoteMap[software.name].stringTopicCsv : software.topicCsv)}"
                             data-description="${fn:escapeXml(remoteMap[software.name].description)}"
@@ -146,6 +153,20 @@
                                         </div>
                                     </c:otherwise>
                                 </c:choose>
+                                <div>Archived:
+                                <c:choose>
+                                    <c:when test="${not archivedSync || software.archived eq remoteMap[software.name].archived}">
+                                        <c:out value="${software.archived}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div>
+                                            <div class="remote"><c:out
+                                                    value="${remoteMap[software.name].archived}"/></div>
+                                            <span class="local"><c:out value="${software.archived}"/></span>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                                </div>
                             </td>
                             <td>
                                 <button class="update" type="button"${(pageContext.request.isUserInRole('sim-admin') or pageContext.request.isUserInRole('acg')) ? '' : ' disabled="disabled"'}>Update</button>
@@ -165,7 +186,10 @@
                                 </ul>
                             </td>
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
-                            <td><c:out value="${software.homeUrl}"/></td>
+                            <td>
+                                <c:out value="${software.homeUrl}"/>
+                                <div>Archived: ${software.archived}</div>
+                            </td>
                             <td>
                                 <button class="remove" type="button"${(pageContext.request.isUserInRole('sim-admin') or pageContext.request.isUserInRole('acg')) ? '' : ' disabled="disabled"'}>Remove</button>
                             </td>
@@ -184,7 +208,10 @@
                                 </ul>
                             </td>
                             <td><c:out value="${software.maintainerUsernameCsv}"/></td>
-                            <td><c:out value="${software.homeUrl}"/></td>
+                            <td>
+                                <c:out value="${software.homeUrl}"/>
+                                <div>Archived: ${software.archived}</div>
+                            </td>
                             <td></td>
                         </tr>
                     </c:forEach>

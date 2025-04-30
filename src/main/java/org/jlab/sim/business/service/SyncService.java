@@ -67,7 +67,7 @@ public class SyncService extends JPAService<Software> {
 
     String accessToken = System.getenv("GITLAB_ACCESS_TOKEN");
 
-    if(accessToken == null) {
+    if (accessToken == null) {
       throw new UserFriendlyException("GITLAB_ACCESS_TOKEN is not set in the env");
     }
 
@@ -77,7 +77,11 @@ public class SyncService extends JPAService<Software> {
 
     try {
       HttpClient client = HttpClient.newHttpClient();
-      HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).header("Private-Token", accessToken).build();
+      HttpRequest request =
+          HttpRequest.newBuilder()
+              .uri(URI.create(url))
+              .header("Private-Token", accessToken)
+              .build();
 
       response = client.send(request, HttpResponse.BodyHandlers.ofString());
     } catch (IOException | InterruptedException e) {
@@ -87,7 +91,7 @@ public class SyncService extends JPAService<Software> {
     if (response != null && response.statusCode() == 200) {
       String jsonString = response.body();
 
-      //System.err.println(jsonString);
+      // System.err.println(jsonString);
 
       try (StringReader stringReader = new StringReader(jsonString);
           JsonReader jsonReader = Json.createReader(stringReader)) {
@@ -101,10 +105,9 @@ public class SyncService extends JPAService<Software> {
           String homeUrl = item.getString("web_url");
           String maintainerUsernameCsv = null;
 
+          String description = null;
 
-          String description =  null;
-
-          if(!item.isNull("description")) {
+          if (!item.isNull("description")) {
             description = item.getString("description");
           }
 
@@ -119,9 +122,14 @@ public class SyncService extends JPAService<Software> {
 
           SoftwareType type = getFromTopicList(topicList);
 
+          boolean archived = item.getBoolean("archived");
+          ;
+
           Software software =
               new Software(
-                  repository, name, type, description, maintainerUsernameCsv, homeUrl, false);
+                  repository, name, type, description, maintainerUsernameCsv, homeUrl, archived);
+
+          software.setArchivedSynced(true);
 
           softwareList.add(software);
         }

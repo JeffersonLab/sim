@@ -1,6 +1,7 @@
 var jlab = jlab || {};
 jlab.addRow = function($tr, batch) {
     var name = $tr.attr("data-name"),
+        archived = $tr.attr("data-archived"),
         type = $tr.attr("data-type"),
         topicCsv = $tr.attr("data-topic-csv"),
         topicArray = topicCsv.split(','),
@@ -26,7 +27,7 @@ jlab.addRow = function($tr, batch) {
             description: description,
             maintainerUsernameCsv: maintainerUsernameCsv,
             homeUrl: homeUrl,
-            archived: 'N'
+            archived: archived === 'true' ? 'Y' : 'N'
         },
         dataType: "json"
     });
@@ -107,6 +108,7 @@ jlab.removeRow = function($tr, batch) {
 };
 jlab.updateRow = function($tr, batch) {
     var softwareId = $tr.attr("data-id"),
+        archived = $tr.attr("data-archived"),
         type = $tr.attr("data-type"),
         topicCsv = $tr.attr("data-topic-csv"),
         topicArray = topicCsv.split(','),
@@ -132,7 +134,7 @@ jlab.updateRow = function($tr, batch) {
             description: description,
             maintainerUsernameCsv: maintainerUsernameCsv,
             homeUrl: homeUrl,
-            archived: 'N'
+            archived: archived === 'true' ? 'Y' : 'N'
         },
         dataType: "json"
     });
