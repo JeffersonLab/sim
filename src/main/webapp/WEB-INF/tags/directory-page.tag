@@ -160,8 +160,8 @@
     <div class="max-select">
         <label for="max-select">Max Per Page</label>
         <select id="max-select" name="max" form="directory-form" class="change-submit">
-            <option value="100"${param.max eq 100 ? ' selected="selected"' : ''}>100</option>
             <option value="10"${param.max eq 10 ? ' selected="selected"' : ''}>10</option>
+            <option value="100"${param.max eq 100 ? ' selected="selected"' : ''}>100</option>
         </select>
     </div>
 </section>

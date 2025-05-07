@@ -61,7 +61,7 @@ public class Directory extends HttpServlet {
     Integer maxPerPage = ParamConverter.convertInteger(request, "max");
 
     if (maxPerPage == null || maxPerPage > 100 || maxPerPage < 1) {
-      maxPerPage = 100;
+      maxPerPage = 10;
     }
 
     List<Repository> repoList =
