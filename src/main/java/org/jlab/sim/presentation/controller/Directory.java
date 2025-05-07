@@ -65,7 +65,7 @@ public class Directory extends HttpServlet {
     }
 
     List<Repository> repoList =
-        repositoryService.findAll(new JPAService.OrderDirective("name", false));
+        repositoryService.findAll(new JPAService.OrderDirective("name", true));
 
     List<SoftwareType> typeList = Arrays.asList(SoftwareType.values());
 
