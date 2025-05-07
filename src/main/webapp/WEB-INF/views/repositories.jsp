@@ -24,7 +24,16 @@
                 <tbody>
                     <c:forEach var="repo" items="${repoList}">
                         <tr>
-                            <td><a class="ext-link" href="${repo.homeUrl}"><c:out value="${repo.name}"/></a></td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${empty repo.homeUrl}">
+                                        <c:out value="${repo.name}"/>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <a class="ext-link" href="${repo.homeUrl}"><c:out value="${repo.name}"/></a>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
                             <td><c:out value="${repo.description}"/></td>
                             <td>
                                 <!-- Use onclick to avoid https://bugs.webkit.org/show_bug.cgi?id=30103 -->
