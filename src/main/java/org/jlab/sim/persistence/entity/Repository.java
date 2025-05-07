@@ -1,5 +1,7 @@
 package org.jlab.sim.persistence.entity;
 
+import org.jlab.smoothness.persistence.util.YnStringToBoolean;
+
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Objects;
@@ -36,6 +38,11 @@ public class Repository implements Serializable {
   @Column(name = "HOME_URL", nullable = false, length = 256)
   private String homeUrl;
 
+  @Basic
+  @Column(name = "SYNC_YN", nullable = false, length = 1)
+  @Convert(converter = YnStringToBoolean.class)
+  private boolean sync;
+
   public Repository() {}
 
   public BigInteger getRepositoryId() {
@@ -68,6 +75,14 @@ public class Repository implements Serializable {
 
   public void setHomeUrl(String homeUrl) {
     this.homeUrl = homeUrl;
+  }
+
+  public boolean isSync() {
+    return sync;
+  }
+
+  public void setSync(boolean sync) {
+    this.sync = sync;
   }
 
   @Override

@@ -42,7 +42,7 @@
                                 </c:url>
                                 <form method="get"
                                       action="${pageContext.request.contextPath}/repositories/sync/${repo.repositoryId}">
-                                    <button class="single-char-button" type="button"
+                                    <button class="single-char-button" type="button" ${repo.sync ? '' : 'disabled="disabled"'}
                                             onclick="window.location.href = '${url}';  return false;">
                                         &rarr;
                                     </button>
