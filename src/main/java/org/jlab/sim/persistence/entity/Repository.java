@@ -1,13 +1,12 @@
 package org.jlab.sim.persistence.entity;
 
-import org.jlab.smoothness.persistence.util.YnStringToBoolean;
-
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Objects;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import org.jlab.smoothness.persistence.util.YnStringToBoolean;
 
 @Entity
 @Table(name = "REPOSITORY", schema = "SIM_OWNER")
