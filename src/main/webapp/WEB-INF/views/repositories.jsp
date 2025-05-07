@@ -33,6 +33,7 @@
                                         <a class="ext-link" href="${repo.homeUrl}"><c:out value="${repo.name}"/></a>
                                     </c:otherwise>
                                 </c:choose>
+                                (<a href="directory?repositoryId=${repo.repositoryId}">Software</a>)
                             </td>
                             <td><c:out value="${repo.description}"/></td>
                             <td>
