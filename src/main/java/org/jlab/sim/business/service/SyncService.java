@@ -262,7 +262,12 @@ public class SyncService extends JPAService<Software> {
           String name = item.getString("name");
           String homeUrl = item.getString("html_url");
           String maintainerUsernameCsv = null;
-          String description = item.getString("description");
+
+          String description = null;
+
+          if (!item.isNull("description")) {
+            description = item.getString("description");
+          }
 
           JsonArray topics = item.getJsonArray("topics");
 
