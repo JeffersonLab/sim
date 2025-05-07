@@ -1,8 +1,8 @@
 var jlab = jlab || {};
 jlab.editableRowTable = jlab.editableRowTable || {};
 jlab.editableRowTable.entity = 'Software';
-jlab.editableRowTable.dialog.width = 600;
-jlab.editableRowTable.dialog.height = 600;
+jlab.editableRowTable.dialog.width = 650;
+jlab.editableRowTable.dialog.height = 650;
 jlab.addRow = function() {
     var name = $("#row-name").val(),
         type = $("#row-type").val(),

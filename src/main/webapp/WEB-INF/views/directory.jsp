@@ -67,12 +67,14 @@
                                 <label for="row-topics">Topics</label>
                             </div>
                             <div class="li-value">
+                                <div class="topic-scroll-wrap">
                                 <select id="row-topics" multiple="multiple">
                                     <c:forEach items="${topicList}" var="topic">
                                         <option value="${topic.name}">
                                             <c:out value="${topic.name}"/></option>
                                     </c:forEach>
                                 </select>
+                                </div>
                             </div>
                         </li>
                         <li>
