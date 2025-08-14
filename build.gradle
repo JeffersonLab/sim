@@ -35,6 +35,9 @@ dependencies {
                     'org.hibernate:hibernate-envers:5.3.28.Final',
                     'org.jsoup:jsoup:1.14.2'
 }
+tasks.named('jar') {
+    enabled = false
+}
 war {
     archiveFileName = 'sim.war'
     filesMatching('WEB-INF/web.xml') {
@@ -49,7 +52,6 @@ war {
         }
     }
 }
-
 spotless {
     java {
         googleJavaFormat()
