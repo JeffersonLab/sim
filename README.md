@@ -38,7 +38,7 @@ http://localhost:8080/sim
 See: [Docker Compose Strategy](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c)
 
 ## Install
-This application requires a Java 11+ JVM and standard library to run, plus a Java EE 8+ application server (developed with Wildfly).
+This application requires a Java 17+ JVM and standard library to run, plus a Java EE 8+ application server (developed with Wildfly).
 
 
 1. Install service [dependencies](https://github.com/JeffersonLab/sim/blob/main/deps.yaml)
