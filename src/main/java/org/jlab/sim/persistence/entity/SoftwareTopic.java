@@ -1,9 +1,9 @@
 package org.jlab.sim.persistence.entity;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Objects;
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "SOFTWARE_TOPIC", schema = "SIM_OWNER")

@@ -1,10 +1,10 @@
 package org.jlab.sim.business.service;
 
+import jakarta.annotation.security.PermitAll;
+import jakarta.ejb.EJB;
+import jakarta.ejb.Stateless;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
-import javax.annotation.security.PermitAll;
-import javax.ejb.EJB;
-import javax.ejb.Stateless;
-import javax.persistence.TypedQuery;
 import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.entity.SoftwareTopic;
 import org.jlab.sim.persistence.entity.SoftwareTopicId;
