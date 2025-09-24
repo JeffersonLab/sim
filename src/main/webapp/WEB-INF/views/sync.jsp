@@ -1,9 +1,9 @@
-<%@taglib prefix="sql" uri="http://java.sun.com/jsp/jstl/sql"%>
+<%@taglib prefix="sql" uri="jakarta.tags.sql"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness"%>
+<%@taglib prefix="c" uri="jakarta.tags.core"%>
+<%@taglib prefix="fn" uri="jakarta.tags.functions"%>
+<%@taglib prefix="fmt" uri="jakarta.tags.fmt"%>
+<%@taglib prefix="s" uri="jlab.tags.smoothness"%>
 <c:set var="title" value="Sync"/>
 <s:page title="${title}">
     <jsp:attribute name="stylesheets">

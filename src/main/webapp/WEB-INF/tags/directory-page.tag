@@ -1,8 +1,8 @@
 <%@tag description="Directory Page" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-<%@taglib prefix="s" uri="http://jlab.org/jsp/smoothness"%>
+<%@taglib prefix="c" uri="jakarta.tags.core"%>
+<%@taglib prefix="fn" uri="jakarta.tags.functions"%>
+<%@taglib prefix="fmt" uri="jakarta.tags.fmt"%>
+<%@taglib prefix="s" uri="jlab.tags.smoothness"%>
 <section>
     <s:filter-flyout-widget clearButton="true" ribbon="${'Y' eq param.loose ? 'false' : 'true'}">
         <form id="directory-form" class="filter-form" method="get" action="directory">
