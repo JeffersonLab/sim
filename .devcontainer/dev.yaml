@@ -24,6 +24,3 @@ services:
     image: sim
     hostname: dev
     container_name: sim-dev
-    environment:
-      ORACLE_USER: 'SIM_OWNER'
-      ORACLE_PASS: 'password'
