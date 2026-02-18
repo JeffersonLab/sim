@@ -21,6 +21,6 @@ services:
       service: puppet
 
   dev:
-    image: sim
+    image: jeffersonlab/sim:latest
     hostname: dev
     container_name: sim-dev
