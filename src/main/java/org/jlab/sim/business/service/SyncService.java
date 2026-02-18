@@ -200,7 +200,7 @@ public class SyncService extends JPAService<Software> {
     List<Software> softwareList = new ArrayList<>();
 
     String url =
-        "https://code.jlab.org/api/v4/groups/Accelerator/projects?include_subgroups=Y&per_page=100";
+        "https://code.jlab.org/api/v4/groups/acc/projects?include_subgroups=Y&per_page=100";
 
     do {
       // System.err.println("Fetching GitLab Projects with URL: " + url);
