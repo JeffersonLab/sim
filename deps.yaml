@@ -2,7 +2,7 @@ services:
   oracle:
     image: gvenzl/oracle-xe:21.3.0
     hostname: oracle
-    container_name: oracle
+    container_name: sim-oracle
     ports:
       - "1521:1521"
       - "5500:5500"
@@ -15,7 +15,7 @@ services:
   keycloak:
     image: jeffersonlab/keycloak:2.1.0
     hostname: keycloak
-    container_name: keycloak
+    container_name: sim-keycloak
     ports:
       - "8081:8080"
       - "9991:9990"
@@ -31,7 +31,7 @@ services:
   puppet:
     image: jeffersonlab/puppet-show:3.0.2
     hostname: puppet
-    container_name: puppet
+    container_name: sim-puppet
     ports:
       - "3000:3000"
     privileged: true
@@ -41,7 +41,7 @@ services:
   mailhog:
     image: mailhog/mailhog:v1.0.1
     hostname: mailhog
-    container_name: mailhog
+    container_name: sim-mailhog
     ports:
       - "1025:1025"
       - "8025:8025"

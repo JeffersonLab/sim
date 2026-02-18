@@ -1,0 +1,26 @@
+name: sim-devcontainers
+services:
+  oracle:
+    extends:
+      file: ../compose.yaml
+      service: oracle
+
+  keycloak:
+    extends:
+      file: ../compose.yaml
+      service: keycloak
+
+  mailhog:
+    extends:
+      file: ../compose.yaml
+      service: mailhog
+
+  puppet:
+    extends:
+      file: ../compose.yaml
+      service: puppet
+
+  dev:
+    image: jeffersonlab/sim:latest
+    hostname: dev
+    container_name: sim-dev

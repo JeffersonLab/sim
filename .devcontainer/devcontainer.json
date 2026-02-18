@@ -1,0 +1,18 @@
+{
+  "dockerComposeFile": "dev.yaml",
+  "service": "dev",
+  "workspaceFolder": "/home/dev/sim",
+  "runServices": [
+    "dev",
+    "oracle",
+    "keycloak",
+    "mailhog",
+    "puppet"
+  ],
+  "remoteUser": "dev",
+  "customizations": {
+    "jetbrains": {
+      "backend": "IntelliJ"
+    }
+  }
+}
