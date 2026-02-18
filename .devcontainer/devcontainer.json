@@ -1,0 +1,6 @@
+{
+  "dockerComposeFile": "dev.yaml",
+  "service": "dev",
+  "workspaceFolder": "/home/dev/sim",
+  "runServices": ["dev", "oracle", "keycloak"]
+}

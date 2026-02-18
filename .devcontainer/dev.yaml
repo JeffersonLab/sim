@@ -1,0 +1,19 @@
+name: sim-devcontainers
+services:
+  oracle:
+    extends:
+      file: ../compose.yaml
+      service: oracle
+
+  keycloak:
+    extends:
+      file: ../compose.yaml
+      service: keycloak
+
+  dev:
+    image: jeffersonlab/sim:latest
+    hostname: dev
+    container_name: sim-dev
+    environment:
+      ORACLE_USER: 'SIM_OWNER'
+      ORACLE_PASS: 'password'
