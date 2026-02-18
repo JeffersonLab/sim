@@ -33,5 +33,22 @@ USER dev:dev
 COPY --from=builder /app/build/libs/* /opt/wildfly/current/standalone/deployments
 
 ENV TZ='America/New_York'
+
+# Used by app runtime smoothness weblib User Directory Cache
 ENV KEYCLOAK_FRONTEND_SERVER_URL='http://localhost:8081/auth'
 ENV KEYCLOAK_BACKEND_SERVER_URL='http://keycloak:8080/auth'
+ENV KEYCLOAK_REALM='test-realm'
+ENV KEYCLOAK_RESOURCE='sim'
+ENV KEYCLOAK_SECRET='yHi6W2raPmLvPXoxqMA7VWbLAA2WN0eB'
+
+# Used by container-entrypoint.sh
+ENV ORACLE_DATASOURCE='sim'
+ENV ORACLE_SERVER='oracle:1521'
+ENV ORACLE_USER='SIM_OWNER'
+ENV ORACLE_PASS='password'
+ENV ORACLE_SERVICE='xepdb1'
+
+# Used by app for path building
+ENV PUPPET_SHOW_SERVER_URL='http://puppet:3000'
+ENV BACKEND_SERVER_URL='http://sim:8080'
+ENV FRONTEND_SERVER_URL='https://localhost:8443'
