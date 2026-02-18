@@ -17,8 +17,11 @@ RUN cd /app && gradle build -x test --no-watch-fs $OPTIONAL_CERT_ARG
 
 ################## Stage 1
 FROM ${RUN_IMAGE} AS runner
-COPY --from=builder /app/container/app/app-setup.env /
 USER root
+COPY --from=builder /app/container/app/app-setup.env /
+RUN mkdir -p /home/dev/secrets
+RUN chown -R dev:dev /home/dev
+COPY --from=builder /app/container/app/sim.properties /home/dev/secrets
 RUN /server-setup.sh /app-setup.env wildfly_start_and_wait \
      && /app-setup.sh /app-setup.env config_keycloak_client \
      && /app-setup.sh /app-setup.env config_oracle_client \
@@ -28,3 +31,7 @@ RUN /server-setup.sh /app-setup.env wildfly_start_and_wait \
      && rm -rf /opt/wildfly/current/standalone/configuration/standalone_xml_history \
 USER dev:dev
 COPY --from=builder /app/build/libs/* /opt/wildfly/current/standalone/deployments
+
+ENV TZ='America/New_York'
+ENV KEYCLOAK_FRONTEND_SERVER_URL='http://localhost:8081/auth'
+ENV KEYCLOAK_BACKEND_SERVER_URL='http://keycloak:8080/auth'

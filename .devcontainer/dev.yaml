@@ -10,8 +10,18 @@ services:
       file: ../compose.yaml
       service: keycloak
 
+  mailhog:
+    extends:
+      file: ../compose.yaml
+      service: mailhog
+
+  puppet:
+    extends:
+      file: ../compose.yaml
+      service: puppet
+
   dev:
-    image: jeffersonlab/sim:latest
+    image: sim
     hostname: dev
     container_name: sim-dev
     environment:
