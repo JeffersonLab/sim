@@ -457,31 +457,32 @@ public class SyncService extends JPAService<Software> {
     if (response != null && response.statusCode() == 200) {
       String text = response.body();
 
-      Scanner scanner = new Scanner(text);
+      try (Scanner scanner = new Scanner(text)) {
 
-      while (scanner.hasNextLine()) {
-        String line = scanner.nextLine();
-        if (!line.startsWith("<pre>")) {
-          String[] tokens = line.split("\\s+");
-          if (tokens.length > 8) {
-            String name = tokens[8];
-            String maintainerUsernameCsv = tokens[2];
+        while (scanner.hasNextLine()) {
+          String line = scanner.nextLine();
+          if (!line.startsWith("<pre>")) {
+            String[] tokens = line.split("\\s+");
+            if (tokens.length > 8) {
+              String name = tokens[8];
+              String maintainerUsernameCsv = tokens[2];
 
-            Software software =
-                new Software(
-                    repository,
-                    name,
-                    SoftwareType.APP,
-                    null,
-                    maintainerUsernameCsv,
-                    null,
-                    false,
-                    null);
+              Software software =
+                  new Software(
+                      repository,
+                      name,
+                      SoftwareType.APP,
+                      null,
+                      maintainerUsernameCsv,
+                      null,
+                      false,
+                      null);
 
-            softwareList.add(software);
+              softwareList.add(software);
 
-          } else {
-            throw new UserFriendlyException("unexpected line: " + line);
+            } else {
+              throw new UserFriendlyException("unexpected line: " + line);
+            }
           }
         }
       }
