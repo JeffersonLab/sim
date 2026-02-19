@@ -11,6 +11,9 @@
   ],
   "remoteUser": "dev",
   "customizations": {
+    "vscode": {
+      "extensions": ["redhat.vscode-server-connector"]
+    },
     "jetbrains": {
       "backend": "IntelliJ"
     }
