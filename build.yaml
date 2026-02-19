@@ -1,0 +1,28 @@
+services:
+  oracle:
+    extends:
+      file: compose.yaml
+      service: oracle
+
+  keycloak:
+    extends:
+      file: compose.yaml
+      service: keycloak
+
+  puppet:
+    extends:
+      file: compose.yaml
+      service: puppet
+
+  mailhog:
+    extends:
+      file: compose.yaml
+      service: mailhog
+
+  sim:
+    extends:
+      file: compose.yaml
+      service: sim
+    build:
+      context: .
+      dockerfile: Dockerfile

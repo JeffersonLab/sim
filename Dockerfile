@@ -1,5 +1,5 @@
 ARG BUILD_IMAGE=gradle:9-jdk21
-ARG RUN_IMAGE=jeffersonlab/wildfly:3.0.0
+ARG RUN_IMAGE=jeffersonlab/wildfly:3.0.1
 
 ################## Stage 0
 FROM ${BUILD_IMAGE} AS builder
@@ -29,7 +29,7 @@ RUN /server-setup.sh /app-setup.env wildfly_start_and_wait \
      && /server-setup.sh /app-setup.env wildfly_reload \
      && /server-setup.sh /app-setup.env wildfly_stop \
      && rm -rf /opt/wildfly/current/standalone/configuration/standalone_xml_history \
-USER dev:dev
+USER dev
 COPY --from=builder /app/build/libs/* /opt/wildfly/current/standalone/deployments
 
 ENV TZ='America/New_York'
