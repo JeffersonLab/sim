@@ -180,7 +180,7 @@ public class SoftwareService extends JPAService<Software> {
     }
 
     List<Order> orders = new ArrayList<>();
-    Path p0 = root.get("name");
+    Path<String> p0 = root.get("name");
     Order o0 = cb.asc(p0);
     orders.add(o0);
     cq.orderBy(orders);
