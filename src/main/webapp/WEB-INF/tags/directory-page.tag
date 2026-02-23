@@ -108,6 +108,7 @@
             <th>Description</th>
             <th>Repo</th>
             <th>Maintainers</th>
+            <th>Downtime Risk</th>
         </tr>
         </thead>
         <tbody>
@@ -147,6 +148,7 @@
                 </td>
                 <td><c:out value="${software.repository.name}"/></td>
                 <td><c:out value="${software.maintainerUsernameCsv}"/></td>
+                <td><c:out value="${software.risk}"/></td>
             </tr>
         </c:forEach>
         </tbody>

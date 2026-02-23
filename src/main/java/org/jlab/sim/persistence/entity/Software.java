@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.*;
+import org.jlab.sim.persistence.enumeration.DowntimeRisk;
+import org.jlab.sim.persistence.enumeration.OpsImpact;
 import org.jlab.sim.persistence.enumeration.SoftwareType;
 import org.jlab.smoothness.persistence.util.YnStringToBoolean;
 
@@ -59,6 +61,14 @@ public class Software implements Serializable {
   @Column(name = "ARCHIVED_YN", nullable = false, length = 1)
   @Convert(converter = YnStringToBoolean.class)
   private boolean archived;
+
+  @NotNull
+  @Column(name = "OPS_IMPACT", nullable = false)
+  private OpsImpact impact;
+
+  @NotNull
+  @Column(name = "DOWNTIME_RISK", nullable = false)
+  private DowntimeRisk risk;
 
   @OneToMany(fetch = FetchType.EAGER)
   @JoinColumn(
@@ -199,6 +209,18 @@ public class Software implements Serializable {
 
   public void setArchivedSynced(boolean archivedSynced) {
     this.archivedSynced = archivedSynced;
+  }
+
+  public OpsImpact getImpact() {
+    return impact;
+  }
+
+  public void setImpact(OpsImpact impact) {
+    this.impact = impact;
+  }
+
+  public DowntimeRisk getRisk() {
+    return risk;
   }
 
   @Override
