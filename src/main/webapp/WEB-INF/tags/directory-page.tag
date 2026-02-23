@@ -122,7 +122,15 @@
                 data-note="${fn:escapeXml(software.note)}"
                 data-repo-id="${software.repository.repositoryId}"
                 data-maintainer-csv="${fn:escapeXml(software.maintainerUsernameCsv)}"
-                data-url="${fn:escapeXml(software.homeUrl)}">
+                data-url="${fn:escapeXml(software.homeUrl)}"
+                data-risk="${fn:escapeXml(software.risk.value)}"
+                data-probability="${fn:escapeXml(software.probability.value)}"
+                data-impact="${fn:escapeXml(software.impact.value)}"
+                data-rate="${fn:escapeXml(software.rate.value)}"
+                data-difficulty="${fn:escapeXml(software.difficulty.value)}"
+                data-complexity="${fn:escapeXml(software.complexity.value)}"
+                data-gaps="${fn:escapeXml(software.gaps.value)}"
+                data-esotericism="${fn:escapeXml(software.esotericism.value)}">
                 <td>
                     <c:choose>
                         <c:when test="${not empty software.homeUrl}">
@@ -148,7 +156,10 @@
                 </td>
                 <td><c:out value="${software.repository.name}"/></td>
                 <td><c:out value="${software.maintainerUsernameCsv}"/></td>
-                <td><c:out value="${software.risk}"/></td>
+                <td>
+                    <a class="risk-dialog-opener" href="#"><c:out value="${software.risk}"/>
+                        (<c:out value="${software.risk.value}"/>)</a>
+                </td>
             </tr>
         </c:forEach>
         </tbody>
@@ -167,3 +178,82 @@
         </select>
     </div>
 </section>
+<div class="dialog" id="risk-dialog" title="Software Downtime Risk Assessment">
+    <section>
+            <ul class="key-value-list">
+                <li>
+                    <div class="li-key">
+                        <label>Risk Score</label>
+                    </div>
+                    <div class="li-value">
+                        <span id="risk-score"></span>
+                    </div>
+                </li>
+            </ul>
+            <fieldset>
+                <ul class="key-value-list">
+                    <li>
+                        <div class="li-key">
+                            <label>Ops Impact</label>
+                        </div>
+                        <div class="li-value">
+                            <span id="impact"></span>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label>Downtime Probability</label>
+                        </div>
+                        <div class="li-value">
+                            <span id="probability"></span>
+                        </div>
+                    </li>
+                </ul>
+            </fieldset>
+            <ul class="key-value-list">
+                <li>
+                    <div class="li-key">
+                        <label>Past Downtime Rate</label>
+                    </div>
+                    <div class="li-value">
+                        <span id="rate"></span>
+                    </div>
+                </li>
+                <li>
+                    <div class="li-key">
+                        <label>Debug/Test Difficulty</label>
+                    </div>
+                    <div class="li-value">
+                        <span id="difficulty"></span>
+                    </div>
+                </li>
+                <li>
+                    <div class="li-key">
+                        <label>Code Complexity</label>
+                    </div>
+                    <div class="li-value">
+                        <span id="complexity"></span>
+                    </div>
+                </li>
+                <li>
+                    <div class="li-key">
+                        <label>Documentation Gaps</label>
+                    </div>
+                    <div class="li-value">
+                        <span id="gaps"></span>
+                    </div>
+                </li>
+                <li>
+                    <div class="li-key">
+                        <label>Esotericism</label>
+                    </div>
+                    <div class="li-value">
+                        <span id="esotericism"></span>
+                    </div>
+                </li>
+        </ul>
+        <div class="dialog-button-panel">
+            <button class="dialog-close-button" type="button">OK</button>
+        </div>
+    </section>
+</div>

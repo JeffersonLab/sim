@@ -209,10 +209,32 @@ $(document).on("change", ".change-submit", function () {
     let formId = $(this).attr("form");
     document.getElementById(formId).submit();
 });
+$(document).on("click", ".risk-dialog-opener", function () {
+    let $tr = $(this).closest("tr");
+
+    $("#risk-score").text($tr.attr("data-risk"));
+    $("#impact").text($tr.attr("data-impact"));
+    $("#probability").text($tr.attr("data-probability"));
+    $("#rate").text($tr.attr("data-rate"));
+    $("#complexity").text($tr.attr("data-complexity"));
+    $("#difficulty").text($tr.attr("data-difficulty"));
+    $("#gaps").text($tr.attr("data-gaps"));
+    $("#esotericism").text($tr.attr("data-esotericism"));
+    $("#risk-dialog").dialog("open");
+    return false;
+});
 $(function(){
     $("#row-topics").select2({
         tags: true
     });
 
     $("#topic-select").select2();
+
+    $("#risk-dialog").dialog({
+        autoOpen: false,
+        width: 640,
+        height: 480,
+        modal: true,
+        draggable: false
+    });
 });
