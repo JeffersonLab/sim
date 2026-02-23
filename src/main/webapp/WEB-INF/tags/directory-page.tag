@@ -197,7 +197,11 @@
                             <label>Ops Impact</label>
                         </div>
                         <div class="li-value">
-                            <span id="impact"></span>
+                            <select id="impact">
+                                <c:forEach items="${impactList}" var="opt">
+                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                                </c:forEach>
+                            </select>
                         </div>
                     </li>
                     <li>
@@ -216,7 +220,11 @@
                         <label>Past Downtime Rate</label>
                     </div>
                     <div class="li-value">
-                        <span id="rate"></span>
+                        <select id="rate">
+                            <c:forEach items="${rateList}" var="opt">
+                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                            </c:forEach>
+                        </select>
                     </div>
                 </li>
                 <li>
@@ -224,7 +232,11 @@
                         <label>Debug/Test Difficulty</label>
                     </div>
                     <div class="li-value">
-                        <span id="difficulty"></span>
+                        <select id="difficulty">
+                            <c:forEach items="${difficultyList}" var="opt">
+                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                            </c:forEach>
+                        </select>
                     </div>
                 </li>
                 <li>
@@ -232,7 +244,11 @@
                         <label>Code Complexity</label>
                     </div>
                     <div class="li-value">
-                        <span id="complexity"></span>
+                        <select id="complexity">
+                            <c:forEach items="${complexityList}" var="opt">
+                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                            </c:forEach>
+                        </select>
                     </div>
                 </li>
                 <li>
@@ -240,7 +256,11 @@
                         <label>Documentation Gaps</label>
                     </div>
                     <div class="li-value">
-                        <span id="gaps"></span>
+                        <select id="gaps">
+                            <c:forEach items="${gapList}" var="opt">
+                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                            </c:forEach>
+                        </select>
                     </div>
                 </li>
                 <li>
@@ -248,7 +268,11 @@
                         <label>Esotericism</label>
                     </div>
                     <div class="li-value">
-                        <span id="esotericism"></span>
+                        <select id="esotericism">
+                            <c:forEach items="${esotericismList}" var="opt">
+                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                            </c:forEach>
+                        </select>
                     </div>
                 </li>
         </ul>

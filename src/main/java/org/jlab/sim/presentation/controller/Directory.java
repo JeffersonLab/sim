@@ -18,8 +18,7 @@ import org.jlab.sim.business.service.TopicService;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.entity.Topic;
-import org.jlab.sim.persistence.enumeration.Include;
-import org.jlab.sim.persistence.enumeration.SoftwareType;
+import org.jlab.sim.persistence.enumeration.*;
 import org.jlab.sim.presentation.util.Parameter;
 import org.jlab.smoothness.business.service.JPAService;
 import org.jlab.smoothness.presentation.util.Paginator;
@@ -107,6 +106,14 @@ public class Directory extends HttpServlet {
     request.setAttribute("includeList", includeList);
     request.setAttribute("softwareList", softwareList);
     request.setAttribute("paginator", paginator);
+    request.setAttribute("riskList", Arrays.asList(DowntimeRisk.values()));
+    request.setAttribute("impactList", Arrays.asList(OpsImpact.values()));
+    request.setAttribute("probabilityList", Arrays.asList(DowntimeProbability.values()));
+    request.setAttribute("rateList", Arrays.asList(PastDowntimeRate.values()));
+    request.setAttribute("difficultyList", Arrays.asList(DebugTestDifficulty.values()));
+    request.setAttribute("complexityList", Arrays.asList(CodeComplexity.values()));
+    request.setAttribute("gapList", Arrays.asList(DocumentationGaps.values()));
+    request.setAttribute("esotericismList", Arrays.asList(Esotericism.values()));
 
     if ("Y".equals(request.getParameter("loose"))) {
       request.getRequestDispatcher("/WEB-INF/views/directory-loose.jsp").forward(request, response);

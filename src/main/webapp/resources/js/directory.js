@@ -213,13 +213,13 @@ $(document).on("click", ".risk-dialog-opener", function () {
     let $tr = $(this).closest("tr");
 
     $("#risk-score").text($tr.attr("data-risk"));
-    $("#impact").text($tr.attr("data-impact"));
+    $("#impact").val($tr.attr("data-impact"));
     $("#probability").text($tr.attr("data-probability"));
-    $("#rate").text($tr.attr("data-rate"));
-    $("#complexity").text($tr.attr("data-complexity"));
-    $("#difficulty").text($tr.attr("data-difficulty"));
-    $("#gaps").text($tr.attr("data-gaps"));
-    $("#esotericism").text($tr.attr("data-esotericism"));
+    $("#rate").val($tr.attr("data-rate"));
+    $("#complexity").val($tr.attr("data-complexity"));
+    $("#difficulty").val($tr.attr("data-difficulty"));
+    $("#gaps").val($tr.attr("data-gaps"));
+    $("#esotericism").val($tr.attr("data-esotericism"));
     $("#risk-dialog").dialog("open");
     return false;
 });
