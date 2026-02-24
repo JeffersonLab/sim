@@ -180,7 +180,7 @@
 </section>
 <div class="dialog" id="risk-dialog" title="Downtime Risk Assessment">
     <section>
-        <a style="float: right;" target="_blank" href="https://acgdocs.acc.jlab.org/en/software-directory-guidance#software-risk-guidance">Explanation</a>
+        <a style="float: right;" target="_blank" href="https://acgdocs.acc.jlab.org/en/software-directory-guidance#software-risk-guidance">Guidance</a>
         <ul class="key-value-list">
                 <li>
                     <div class="li-key">
@@ -216,7 +216,8 @@
                             <label>Downtime Probability</label>
                         </div>
                         <div class="li-value">
-                            <select id="probability">
+                            <span id="probability-visible"></span>
+                            <select id="probability" style="display: none;">
                                 <c:forEach items="${probabilityList}" var="opt">
                                     <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
                                 </c:forEach>
@@ -293,6 +294,7 @@
                 </ul>
             </fieldset>
         <div class="dialog-button-panel">
+            <button id="risk-update-button" type="button">Update</button>
             <button class="dialog-close-button" type="button">OK</button>
         </div>
     </section>

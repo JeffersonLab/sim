@@ -53,3 +53,7 @@ td:nth-child(5) {
     overflow: auto;
     height: 60px;
 }
+#risk-update-button {
+    float: left;
+    margin-left: 0;
+}

@@ -217,13 +217,35 @@ $(document).on("click", ".risk-dialog-opener", function () {
     $("#risk-score").val($tr.attr("data-risk"));
     $("#probability").val($tr.attr("data-probability"));
     $("#risk-score-visible").text($("#risk-score option:selected").text());
+    $("#probability-visible").text($("#probability option:selected").text());
 
     $("#impact").val($tr.attr("data-impact"));
     $("#rate").val($tr.attr("data-rate"));
-    $("#complexity").val($tr.attr("data-complexity"));
     $("#difficulty").val($tr.attr("data-difficulty"));
+    $("#complexity").val($tr.attr("data-complexity"));
     $("#gaps").val($tr.attr("data-gaps"));
     $("#esotericism").val($tr.attr("data-esotericism"));
+
+    let editable = $("#logout-form").length;
+
+    if(editable) {
+        $("#risk-update-button").removeAttr("disabled");
+        $("#impact").removeAttr("disabled");
+        $("#rate").removeAttr("disabled");
+        $("#difficulty").removeAttr("disabled");
+        $("#complexity").removeAttr("disabled");
+        $("#gaps").removeAttr("disabled");
+        $("#esotericism").removeAttr("disabled");
+    } else {
+        $("#risk-update-button").attr("disabled", "disabled");
+        $("#impact").attr("disabled", "disabled");
+        $("#rate").attr("disabled", "disabled");
+        $("#difficulty").attr("disabled", "disabled");
+        $("#complexity").attr("disabled", "disabled");
+        $("#gaps").attr("disabled", "disabled");
+        $("#esotericism").attr("disabled", "disabled");
+    }
+
     $("#risk-dialog").dialog("open");
     return false;
 });
@@ -236,7 +258,9 @@ $(function(){
 
     $("#risk-dialog").dialog({
         autoOpen: false,
+        minWidth: 640,
         width: 640,
+        minHeight: 580,
         height: 580,
         modal: true,
         draggable: false
