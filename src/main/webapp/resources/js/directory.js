@@ -212,9 +212,13 @@ $(document).on("change", ".change-submit", function () {
 $(document).on("click", ".risk-dialog-opener", function () {
     let $tr = $(this).closest("tr");
 
-    $("#risk-score").text($tr.attr("data-risk"));
+    $("#risk-dialog").dialog("option", "title", $tr.attr("data-name") + " - Downtime Risk Assessment");
+
+    $("#risk-score").val($tr.attr("data-risk"));
+    $("#probability").val($tr.attr("data-probability"));
+    $("#risk-score-visible").text($("#risk-score option:selected").text());
+
     $("#impact").val($tr.attr("data-impact"));
-    $("#probability").text($tr.attr("data-probability"));
     $("#rate").val($tr.attr("data-rate"));
     $("#complexity").val($tr.attr("data-complexity"));
     $("#difficulty").val($tr.attr("data-difficulty"));
@@ -233,7 +237,7 @@ $(function(){
     $("#risk-dialog").dialog({
         autoOpen: false,
         width: 640,
-        height: 480,
+        height: 580,
         modal: true,
         draggable: false
     });

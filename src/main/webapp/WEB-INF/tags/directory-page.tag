@@ -178,19 +178,26 @@
         </select>
     </div>
 </section>
-<div class="dialog" id="risk-dialog" title="Software Downtime Risk Assessment">
+<div class="dialog" id="risk-dialog" title="Downtime Risk Assessment">
     <section>
-            <ul class="key-value-list">
+        <a style="float: right;" target="_blank" href="https://acgdocs.acc.jlab.org/en/software-directory-guidance#software-risk-guidance">Explanation</a>
+        <ul class="key-value-list">
                 <li>
                     <div class="li-key">
                         <label>Risk Score</label>
                     </div>
                     <div class="li-value">
-                        <span id="risk-score"></span>
+                        <span id="risk-score-visible"></span>
+                        <select id="risk-score" style="display: none;">
+                            <c:forEach items="${riskList}" var="opt">
+                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                            </c:forEach>
+                        </select>
                     </div>
                 </li>
             </ul>
             <fieldset>
+                <legend>Risk = Impact + Probability</legend>
                 <ul class="key-value-list">
                     <li>
                         <div class="li-key">
@@ -209,73 +216,82 @@
                             <label>Downtime Probability</label>
                         </div>
                         <div class="li-value">
-                            <span id="probability"></span>
+                            <select id="probability">
+                                <c:forEach items="${probabilityList}" var="opt">
+                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                </ul>
+                <div>Probability = AVG(Risk Factors)</div>
+            </fieldset>
+            &nbsp;
+            <fieldset>
+                <legend>Risk Factors</legend>
+                <ul class="key-value-list">
+                    <li>
+                        <div class="li-key">
+                            <label>Past Downtime Rate</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="rate">
+                                <c:forEach items="${rateList}" var="opt">
+                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label>Debug/Test Difficulty</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="difficulty">
+                                <c:forEach items="${difficultyList}" var="opt">
+                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label>Code Complexity</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="complexity">
+                                <c:forEach items="${complexityList}" var="opt">
+                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label>Documentation Gaps</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="gaps">
+                                <c:forEach items="${gapList}" var="opt">
+                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label>Esotericism</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="esotericism">
+                                <c:forEach items="${esotericismList}" var="opt">
+                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                                </c:forEach>
+                            </select>
                         </div>
                     </li>
                 </ul>
             </fieldset>
-            <ul class="key-value-list">
-                <li>
-                    <div class="li-key">
-                        <label>Past Downtime Rate</label>
-                    </div>
-                    <div class="li-value">
-                        <select id="rate">
-                            <c:forEach items="${rateList}" var="opt">
-                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                </li>
-                <li>
-                    <div class="li-key">
-                        <label>Debug/Test Difficulty</label>
-                    </div>
-                    <div class="li-value">
-                        <select id="difficulty">
-                            <c:forEach items="${difficultyList}" var="opt">
-                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                </li>
-                <li>
-                    <div class="li-key">
-                        <label>Code Complexity</label>
-                    </div>
-                    <div class="li-value">
-                        <select id="complexity">
-                            <c:forEach items="${complexityList}" var="opt">
-                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                </li>
-                <li>
-                    <div class="li-key">
-                        <label>Documentation Gaps</label>
-                    </div>
-                    <div class="li-value">
-                        <select id="gaps">
-                            <c:forEach items="${gapList}" var="opt">
-                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                </li>
-                <li>
-                    <div class="li-key">
-                        <label>Esotericism</label>
-                    </div>
-                    <div class="li-value">
-                        <select id="esotericism">
-                            <c:forEach items="${esotericismList}" var="opt">
-                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
-                            </c:forEach>
-                        </select>
-                    </div>
-                </li>
-        </ul>
         <div class="dialog-button-panel">
             <button class="dialog-close-button" type="button">OK</button>
         </div>
