@@ -209,10 +209,118 @@ $(document).on("change", ".change-submit", function () {
     let formId = $(this).attr("form");
     document.getElementById(formId).submit();
 });
+$(document).on("click", "#risk-update-button", function() {
+    var softwareId = $("#risk-software-id").val(),
+        impact = $("#impact").val(),
+        rate = $("#rate").val(),
+        difficulty = $("#difficulty").val(),
+        complexity = $("#complexity").val(),
+        gaps = $("#gaps").val(),
+        esotericism = $("#esotericism").val(),
+        $updateButton = $("#risk-update-button"),
+        reloading = false;
+
+    $updateButton
+        .height($updateButton.height())
+        .width($updateButton.width())
+        .empty().append('<div class="button-indicator"></div>');
+    $(".dialog-close-button").attr("disabled", "disabled");
+    $(".ui-dialog-titlebar button").attr("disabled", "disabled");
+
+    var request = jQuery.ajax({
+        url: jlab.contextPath + "/ajax/edit-software-risk",
+        type: "POST",
+        data: {
+            softwareId: softwareId,
+            impact: impact,
+            rate: rate,
+            difficulty: difficulty,
+            complexity: complexity,
+            gaps: gaps,
+            esotericism: esotericism
+        },
+        dataType: "json"
+    });
+
+    request.done(function(json) {
+        if (json.stat === 'ok') {
+            reloading = true;
+            window.location.reload();
+        } else {
+            alert(json.error);
+        }
+    });
+
+    request.fail(function(xhr, textStatus) {
+        window.console && console.log('Unable to edit software; Text Status: ' + textStatus + ', Ready State: ' + xhr.readyState + ', HTTP Status Code: ' + xhr.status);
+        alert('Unable to Save: Server unavailable or unresponsive');
+    });
+
+    request.always(function() {
+        if (!reloading) {
+            $updateButton.empty().text("Update");
+            $updateButton.removeAttr("disabled");
+            $(".ui-dialog-titlebar button").removeAttr("disabled");
+
+        }
+    });
+});
+$(document).on("click", ".risk-dialog-opener", function () {
+    let $tr = $(this).closest("tr");
+
+    $("#risk-software-id").val($tr.attr("data-id"));
+
+    $("#risk-dialog").dialog("option", "title", $tr.attr("data-name") + " - Downtime Risk Assessment");
+
+    $("#risk-score").val($tr.attr("data-risk"));
+    $("#probability").val($tr.attr("data-probability"));
+    $("#risk-score-visible").text($("#risk-score option:selected").text());
+    $("#probability-visible").text($("#probability option:selected").text());
+
+    $("#impact").val($tr.attr("data-impact"));
+    $("#rate").val($tr.attr("data-rate"));
+    $("#difficulty").val($tr.attr("data-difficulty"));
+    $("#complexity").val($tr.attr("data-complexity"));
+    $("#gaps").val($tr.attr("data-gaps"));
+    $("#esotericism").val($tr.attr("data-esotericism"));
+
+    let editable = $("#logout-form").length;
+
+    if(editable) {
+        $("#risk-update-button").removeAttr("disabled");
+        $("#impact").removeAttr("disabled");
+        $("#rate").removeAttr("disabled");
+        $("#difficulty").removeAttr("disabled");
+        $("#complexity").removeAttr("disabled");
+        $("#gaps").removeAttr("disabled");
+        $("#esotericism").removeAttr("disabled");
+    } else {
+        $("#risk-update-button").attr("disabled", "disabled");
+        $("#impact").attr("disabled", "disabled");
+        $("#rate").attr("disabled", "disabled");
+        $("#difficulty").attr("disabled", "disabled");
+        $("#complexity").attr("disabled", "disabled");
+        $("#gaps").attr("disabled", "disabled");
+        $("#esotericism").attr("disabled", "disabled");
+    }
+
+    $("#risk-dialog").dialog("open");
+    return false;
+});
 $(function(){
     $("#row-topics").select2({
         tags: true
     });
 
     $("#topic-select").select2();
+
+    $("#risk-dialog").dialog({
+        autoOpen: false,
+        minWidth: 640,
+        width: 640,
+        minHeight: 580,
+        height: 580,
+        modal: true,
+        draggable: false
+    });
 });

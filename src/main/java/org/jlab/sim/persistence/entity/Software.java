@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.*;
-import org.jlab.sim.persistence.enumeration.SoftwareType;
+import org.jlab.sim.persistence.enumeration.*;
 import org.jlab.smoothness.persistence.util.YnStringToBoolean;
 
 @Entity
@@ -59,6 +59,38 @@ public class Software implements Serializable {
   @Column(name = "ARCHIVED_YN", nullable = false, length = 1)
   @Convert(converter = YnStringToBoolean.class)
   private boolean archived;
+
+  @NotNull
+  @Column(name = "OPS_IMPACT", nullable = false)
+  private OpsImpact impact;
+
+  @NotNull
+  @Column(name = "DOWN_PROBABILITY", nullable = false, updatable = false)
+  private DowntimeProbability probability;
+
+  @NotNull
+  @Column(name = "DOWNTIME_RISK", nullable = false, updatable = false)
+  private DowntimeRisk risk;
+
+  @NotNull
+  @Column(name = "PAST_DOWNTIME", nullable = false)
+  private PastDowntimeRate rate;
+
+  @NotNull
+  @Column(name = "DEBUGGABILITY_N_TESTING", nullable = false)
+  private DebugTestDifficulty difficulty;
+
+  @NotNull
+  @Column(name = "CODE_COMPLEXITY", nullable = false)
+  private CodeComplexity complexity;
+
+  @NotNull
+  @Column(name = "DOCUMENTATION_GAPS", nullable = false)
+  private DocumentationGaps gaps;
+
+  @NotNull
+  @Column(name = "ESOTERICISM", nullable = false)
+  private Esotericism esotericism;
 
   @OneToMany(fetch = FetchType.EAGER)
   @JoinColumn(
@@ -199,6 +231,62 @@ public class Software implements Serializable {
 
   public void setArchivedSynced(boolean archivedSynced) {
     this.archivedSynced = archivedSynced;
+  }
+
+  public OpsImpact getImpact() {
+    return impact;
+  }
+
+  public void setImpact(OpsImpact impact) {
+    this.impact = impact;
+  }
+
+  public DowntimeProbability getProbability() {
+    return probability;
+  }
+
+  public DowntimeRisk getRisk() {
+    return risk;
+  }
+
+  public PastDowntimeRate getRate() {
+    return rate;
+  }
+
+  public void setRate(PastDowntimeRate rate) {
+    this.rate = rate;
+  }
+
+  public DebugTestDifficulty getDifficulty() {
+    return difficulty;
+  }
+
+  public void setDifficulty(DebugTestDifficulty difficulty) {
+    this.difficulty = difficulty;
+  }
+
+  public CodeComplexity getComplexity() {
+    return complexity;
+  }
+
+  public void setComplexity(CodeComplexity complexity) {
+    this.complexity = complexity;
+  }
+
+  public DocumentationGaps getGaps() {
+    return gaps;
+  }
+
+  public void setGaps(DocumentationGaps gaps) {
+    this.gaps = gaps;
+  }
+
+  public Esotericism getEsotericism() {
+    return esotericism;
+  }
+
+  public void setEsotericism(Esotericism esotericism) {
+    this.esotericism = esotericism;
   }
 
   @Override

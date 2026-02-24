@@ -108,6 +108,7 @@
             <th>Description</th>
             <th>Repo</th>
             <th>Maintainers</th>
+            <th>Downtime Risk</th>
         </tr>
         </thead>
         <tbody>
@@ -121,7 +122,15 @@
                 data-note="${fn:escapeXml(software.note)}"
                 data-repo-id="${software.repository.repositoryId}"
                 data-maintainer-csv="${fn:escapeXml(software.maintainerUsernameCsv)}"
-                data-url="${fn:escapeXml(software.homeUrl)}">
+                data-url="${fn:escapeXml(software.homeUrl)}"
+                data-risk="${fn:escapeXml(software.risk.value)}"
+                data-probability="${fn:escapeXml(software.probability.value)}"
+                data-impact="${fn:escapeXml(software.impact.value)}"
+                data-rate="${fn:escapeXml(software.rate.value)}"
+                data-difficulty="${fn:escapeXml(software.difficulty.value)}"
+                data-complexity="${fn:escapeXml(software.complexity.value)}"
+                data-gaps="${fn:escapeXml(software.gaps.value)}"
+                data-esotericism="${fn:escapeXml(software.esotericism.value)}">
                 <td>
                     <c:choose>
                         <c:when test="${not empty software.homeUrl}">
@@ -147,6 +156,10 @@
                 </td>
                 <td><c:out value="${software.repository.name}"/></td>
                 <td><c:out value="${software.maintainerUsernameCsv}"/></td>
+                <td>
+                    <a class="risk-dialog-opener" href="#"><c:out value="${software.risk}"/>
+                        (<c:out value="${software.risk.value}"/>)</a>
+                </td>
             </tr>
         </c:forEach>
         </tbody>
@@ -165,3 +178,125 @@
         </select>
     </div>
 </section>
+<div class="dialog" id="risk-dialog" title="Downtime Risk Assessment">
+    <section>
+        <input type="hidden" id="risk-software-id"/>
+        <a style="float: right;" target="_blank" href="https://acgdocs.acc.jlab.org/en/software-directory-guidance#software-risk-guidance">Guidance</a>
+        <ul class="key-value-list">
+                <li>
+                    <div class="li-key">
+                        <label>Risk Score</label>
+                    </div>
+                    <div class="li-value">
+                        <span id="risk-score-visible"></span>
+                        <select id="risk-score" style="display: none;">
+                            <c:forEach items="${riskList}" var="opt">
+                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </li>
+            </ul>
+            <fieldset>
+                <legend>Risk = Impact + Probability</legend>
+                <ul class="key-value-list">
+                    <li>
+                        <div class="li-key">
+                            <label>Ops Impact</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="impact">
+                                <c:forEach items="${impactList}" var="opt">
+                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label>Downtime Probability</label>
+                        </div>
+                        <div class="li-value">
+                            <span id="probability-visible"></span>
+                            <select id="probability" style="display: none;">
+                                <c:forEach items="${probabilityList}" var="opt">
+                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                </ul>
+                <div>Probability = AVG(Risk Factors)</div>
+            </fieldset>
+            &nbsp;
+            <fieldset>
+                <legend>Risk Factors</legend>
+                <ul class="key-value-list">
+                    <li>
+                        <div class="li-key">
+                            <label>Past Downtime Rate</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="rate">
+                                <c:forEach items="${rateList}" var="opt">
+                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label>Debug/Test Difficulty</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="difficulty">
+                                <c:forEach items="${difficultyList}" var="opt">
+                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label>Code Complexity</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="complexity">
+                                <c:forEach items="${complexityList}" var="opt">
+                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label>Documentation Gaps</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="gaps">
+                                <c:forEach items="${gapList}" var="opt">
+                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="li-key">
+                            <label>Esotericism</label>
+                        </div>
+                        <div class="li-value">
+                            <select id="esotericism">
+                                <c:forEach items="${esotericismList}" var="opt">
+                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                                </c:forEach>
+                            </select>
+                        </div>
+                    </li>
+                </ul>
+            </fieldset>
+        <div class="dialog-button-panel">
+            <button id="risk-update-button" type="button">Update</button>
+            <button class="dialog-close-button" type="button">OK</button>
+        </div>
+    </section>
+</div>
