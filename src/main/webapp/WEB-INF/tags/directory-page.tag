@@ -180,6 +180,7 @@
 </section>
 <div class="dialog" id="risk-dialog" title="Downtime Risk Assessment">
     <section>
+        <input type="hidden" id="risk-software-id"/>
         <a style="float: right;" target="_blank" href="https://acgdocs.acc.jlab.org/en/software-directory-guidance#software-risk-guidance">Guidance</a>
         <ul class="key-value-list">
                 <li>

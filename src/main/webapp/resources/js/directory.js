@@ -209,8 +209,66 @@ $(document).on("change", ".change-submit", function () {
     let formId = $(this).attr("form");
     document.getElementById(formId).submit();
 });
+$(document).on("click", "#risk-update-button", function() {
+    var softwareId = $("#risk-software-id").val(),
+        impact = $("#impact").val(),
+        rate = $("#rate").val(),
+        difficulty = $("#difficulty").val(),
+        complexity = $("#complexity").val(),
+        gaps = $("#gaps").val(),
+        esotericism = $("#esotericism").val(),
+        $updateButton = $("#risk-update-button"),
+        reloading = false;
+
+    $updateButton
+        .height($updateButton.height())
+        .width($updateButton.width())
+        .empty().append('<div class="button-indicator"></div>');
+    $(".dialog-close-button").attr("disabled", "disabled");
+    $(".ui-dialog-titlebar button").attr("disabled", "disabled");
+
+    var request = jQuery.ajax({
+        url: jlab.contextPath + "/ajax/edit-software-risk",
+        type: "POST",
+        data: {
+            softwareId: softwareId,
+            impact: impact,
+            rate: rate,
+            difficulty: difficulty,
+            complexity: complexity,
+            gaps: gaps,
+            esotericism: esotericism
+        },
+        dataType: "json"
+    });
+
+    request.done(function(json) {
+        if (json.stat === 'ok') {
+            reloading = true;
+            window.location.reload();
+        } else {
+            alert(json.error);
+        }
+    });
+
+    request.fail(function(xhr, textStatus) {
+        window.console && console.log('Unable to edit software; Text Status: ' + textStatus + ', Ready State: ' + xhr.readyState + ', HTTP Status Code: ' + xhr.status);
+        alert('Unable to Save: Server unavailable or unresponsive');
+    });
+
+    request.always(function() {
+        if (!reloading) {
+            $updateButton.empty().text("Update");
+            $updateButton.removeAttr("disabled");
+            $(".ui-dialog-titlebar button").removeAttr("disabled");
+
+        }
+    });
+});
 $(document).on("click", ".risk-dialog-opener", function () {
     let $tr = $(this).closest("tr");
+
+    $("#risk-software-id").val($tr.attr("data-id"));
 
     $("#risk-dialog").dialog("option", "title", $tr.attr("data-name") + " - Downtime Risk Assessment");
 

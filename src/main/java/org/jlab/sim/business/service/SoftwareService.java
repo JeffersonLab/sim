@@ -12,8 +12,7 @@ import java.util.List;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.entity.SoftwareTopic;
-import org.jlab.sim.persistence.enumeration.Include;
-import org.jlab.sim.persistence.enumeration.SoftwareType;
+import org.jlab.sim.persistence.enumeration.*;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.JPAService;
 
@@ -120,6 +119,37 @@ public class SoftwareService extends JPAService<Software> {
     em.flush();
 
     softwareTopicService.set(software, topicArray);
+  }
+
+  @RolesAllowed({"sim-admin", "acg"})
+  public void editSoftwareRisk(
+      BigInteger softwareId,
+      OpsImpact impact,
+      PastDowntimeRate rate,
+      DebugTestDifficulty difficulty,
+      CodeComplexity complexity,
+      DocumentationGaps gaps,
+      Esotericism esotericism)
+      throws UserFriendlyException {
+
+    if (softwareId == null) {
+      throw new UserFriendlyException("softwareId cannot be empty");
+    }
+
+    Software software = find(softwareId);
+
+    if (software == null) {
+      throw new UserFriendlyException("software not found with id: " + softwareId);
+    }
+
+    software.setImpact(impact);
+    software.setRate(rate);
+    software.setDifficulty(difficulty);
+    software.setComplexity(complexity);
+    software.setGaps(gaps);
+    software.setEsotericism(esotericism);
+
+    edit(software);
   }
 
   @RolesAllowed({"sim-admin", "acg"})

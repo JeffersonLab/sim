@@ -65,11 +65,11 @@ public class Software implements Serializable {
   private OpsImpact impact;
 
   @NotNull
-  @Column(name = "DOWN_PROBABILITY", nullable = false)
+  @Column(name = "DOWN_PROBABILITY", nullable = false, updatable = false)
   private DowntimeProbability probability;
 
   @NotNull
-  @Column(name = "DOWNTIME_RISK", nullable = false)
+  @Column(name = "DOWNTIME_RISK", nullable = false, updatable = false)
   private DowntimeRisk risk;
 
   @NotNull
