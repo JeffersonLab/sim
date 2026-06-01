@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Serial;
 import java.util.List;
 import org.jlab.sim.business.service.RepositoryService;
 import org.jlab.sim.persistence.entity.Repository;
@@ -19,6 +20,9 @@ import org.jlab.smoothness.business.service.JPAService;
     name = "Repositories",
     urlPatterns = {"/repositories"})
 public class Repositories extends HttpServlet {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @EJB RepositoryService repositoryService;
 

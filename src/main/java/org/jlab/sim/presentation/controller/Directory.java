@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Serial;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -32,6 +33,9 @@ import org.jlab.smoothness.presentation.util.ParamUtil;
     name = "Directory",
     urlPatterns = {"/directory"})
 public class Directory extends HttpServlet {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @EJB SoftwareService softwareService;
   @EJB RepositoryService repositoryService;

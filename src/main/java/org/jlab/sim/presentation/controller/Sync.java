@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Serial;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,9 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
     name = "Sync",
     urlPatterns = {"/repositories/sync"})
 public class Sync extends HttpServlet {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   @EJB RepositoryService repositoryService;
   @EJB SyncService syncService;

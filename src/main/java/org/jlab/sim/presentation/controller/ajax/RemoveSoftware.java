@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serial;
 import java.math.BigInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +24,9 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
     name = "RemoveSoftware",
     urlPatterns = {"/ajax/remove-software"})
 public class RemoveSoftware extends HttpServlet {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   private static final Logger logger = Logger.getLogger(RemoveSoftware.class.getName());
 

@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.Serial;
 
 /**
  * @author ryans
@@ -14,6 +15,9 @@ import java.io.IOException;
     name = "ContextRootController",
     urlPatterns = {""})
 public class ContextRootController extends HttpServlet {
+
+  @Serial
+  private static final long serialVersionUID = 1L;
 
   /**
    * Handles the HTTP <code>GET</code> method.
