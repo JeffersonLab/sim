@@ -16,8 +16,7 @@ import java.io.Serial;
     urlPatterns = {""})
 public class ContextRootController extends HttpServlet {
 
-  @Serial
-  private static final long serialVersionUID = 1L;
+  @Serial private static final long serialVersionUID = 1L;
 
   /**
    * Handles the HTTP <code>GET</code> method.

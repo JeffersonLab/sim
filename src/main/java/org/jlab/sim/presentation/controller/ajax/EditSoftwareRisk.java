@@ -26,8 +26,7 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
     urlPatterns = {"/ajax/edit-software-risk"})
 public class EditSoftwareRisk extends HttpServlet {
 
-  @Serial
-  private static final long serialVersionUID = 1L;
+  @Serial private static final long serialVersionUID = 1L;
 
   private static final Logger logger = Logger.getLogger(EditSoftwareRisk.class.getName());
 

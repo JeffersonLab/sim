@@ -25,8 +25,7 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
     urlPatterns = {"/ajax/remove-software"})
 public class RemoveSoftware extends HttpServlet {
 
-  @Serial
-  private static final long serialVersionUID = 1L;
+  @Serial private static final long serialVersionUID = 1L;
 
   private static final Logger logger = Logger.getLogger(RemoveSoftware.class.getName());
 

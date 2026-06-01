@@ -21,8 +21,7 @@ import org.jlab.smoothness.business.service.JPAService;
     urlPatterns = {"/repositories"})
 public class Repositories extends HttpServlet {
 
-  @Serial
-  private static final long serialVersionUID = 1L;
+  @Serial private static final long serialVersionUID = 1L;
 
   @EJB RepositoryService repositoryService;
 

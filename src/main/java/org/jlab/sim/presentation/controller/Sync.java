@@ -30,8 +30,7 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
     urlPatterns = {"/repositories/sync"})
 public class Sync extends HttpServlet {
 
-  @Serial
-  private static final long serialVersionUID = 1L;
+  @Serial private static final long serialVersionUID = 1L;
 
   @EJB RepositoryService repositoryService;
   @EJB SyncService syncService;

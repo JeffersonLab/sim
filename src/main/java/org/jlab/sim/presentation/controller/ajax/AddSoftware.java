@@ -27,8 +27,7 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
     urlPatterns = {"/ajax/add-software"})
 public class AddSoftware extends HttpServlet {
 
-  @Serial
-  private static final long serialVersionUID = 1L;
+  @Serial private static final long serialVersionUID = 1L;
 
   private static final Logger logger = Logger.getLogger(AddSoftware.class.getName());
 
