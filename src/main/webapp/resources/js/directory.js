@@ -171,12 +171,13 @@ $(document).on("dialogclose", "#table-row-dialog", function() {
 $(document).on("click", "#open-edit-row-dialog-button", function() {
     var $selectedRow = $(".editable-row-table tr.selected-row"),
         topicCsv = $selectedRow.attr("data-topic-csv") || "";
+        topicCsv = $selectedRow.attr("data-topic-csv") || "";
     $("#row-name").val($selectedRow.attr("data-name"));
     $("#row-type").val($selectedRow.attr("data-type"));
     $("#row-description").val($selectedRow.attr("data-description"));
     $("#row-note").val($selectedRow.attr("data-note"));
     $("#row-maintainers").val($selectedRow.attr("data-maintainer-csv"));
-    $("#row-repo").val($selectedRow.attr("data-repo-id"));
+    $("#row-topics").val(topicCsv.split(",")).trigger('change');
     $("#row-topics").val(topicCsv.split(",")).trigger('change');
     $("#row-url").val($selectedRow.attr("data-url"));
     $("#row-archived").val($selectedRow.attr("data-archived"));
