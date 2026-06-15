@@ -10,7 +10,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.entity.SoftwareTopic;
@@ -243,7 +242,8 @@ public class SoftwareService extends JPAService<Software> {
     if (username != null && !username.isEmpty()) {
       username = username.replaceAll("\\*", "%");
       username = "%" + username + "%";
-      filters.add(cb.like(cb.lower(root.get("maintainerUsernameCsv")), username.toLowerCase(Locale.US)));
+      filters.add(
+          cb.like(cb.lower(root.get("maintainerUsernameCsv")), username.toLowerCase(Locale.US)));
     }
 
     if (repository != null) {

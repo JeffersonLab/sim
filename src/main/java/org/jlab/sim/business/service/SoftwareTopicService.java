@@ -7,7 +7,6 @@ import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 import java.util.Locale;
-
 import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.entity.SoftwareTopic;
 import org.jlab.sim.persistence.entity.Topic;
