@@ -1,7 +1,10 @@
+import com.github.spotbugs.snom.SpotBugsTask
+
 plugins {
     id 'war'
     id "com.diffplug.spotless" version "7.2.1"
     id 'pmd'
+    id 'com.github.spotbugs' version '6.5.6'
 }
 description = 'Application Registry Manager app'
 group = 'org.jlab'
@@ -67,4 +70,32 @@ pmd {
     // category/java/performance.xml
     // category/java/multithreading.xml
     // category/java/design.xml
+}
+spotbugs {
+    excludeFilter = file("spotbugs-exclude.xml")
+    showProgress = true
+
+    // Allows the build to proceed to custom conditional throw
+    ignoreFailures = true
+}
+tasks.spotbugsMain {
+    reports.create("html") {
+        required = true
+        outputLocation = file("$buildDir/reports/spotbugs.html")
+        stylesheet = "fancy-hist.xsl"
+    }
+    reports.create("text") {
+        required = true
+        outputLocation = file("$buildDir/reports/spotbugs.text")
+    }
+}
+tasks.withType(SpotBugsTask).configureEach {
+    doLast {
+        def reportFile = reports.text.outputLocation.asFile.get()
+        if (reportFile.exists() && reportFile.length() > 0) {
+            logger.lifecycle("\n[SpotBugs Console Stream]\n" + reportFile.text)
+            // Manually break the build here so fails AFTER logging to stdout for CI
+            throw new GradleException("SpotBugs violations found. Check the console log above.")
+        }
+    }
 }

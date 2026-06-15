@@ -138,7 +138,7 @@ public class Directory extends HttpServlet {
       Include includeArchived) {
     DecimalFormat formatter = new DecimalFormat("###,###");
 
-    String selectionMessage = "All Software ";
+    StringBuilder selectionMessage = new StringBuilder("All Software ");
 
     List<String> filters = new ArrayList<>();
 
@@ -167,29 +167,30 @@ public class Directory extends HttpServlet {
     }
 
     if (!filters.isEmpty()) {
-      selectionMessage = filters.get(0);
+      selectionMessage = new StringBuilder(filters.get(0));
 
       for (int i = 1; i < filters.size(); i++) {
         String filter = filters.get(i);
-        selectionMessage += " and " + filter;
+        selectionMessage.append(" and ").append(filter);
       }
     }
 
     if (paginator.getTotalRecords() < paginator.getMaxPerPage() && paginator.getOffset() == 0) {
-      selectionMessage =
-          selectionMessage + " {" + formatter.format(paginator.getTotalRecords()) + "}";
+      selectionMessage
+          .append(" {")
+          .append(formatter.format(paginator.getTotalRecords()))
+          .append("}");
     } else {
-      selectionMessage =
-          selectionMessage
-              + " {"
-              + formatter.format(paginator.getStartNumber())
-              + " - "
-              + formatter.format(paginator.getEndNumber())
-              + " of "
-              + formatter.format(paginator.getTotalRecords())
-              + "}";
+      selectionMessage
+          .append(" {")
+          .append(formatter.format(paginator.getStartNumber()))
+          .append(" - ")
+          .append(formatter.format(paginator.getEndNumber()))
+          .append(" of ")
+          .append(formatter.format(paginator.getTotalRecords()))
+          .append("}");
     }
 
-    return selectionMessage;
+    return selectionMessage.toString();
   }
 }

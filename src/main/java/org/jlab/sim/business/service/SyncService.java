@@ -156,7 +156,9 @@ public class SyncService extends JPAService<Software> {
         throw new UserFriendlyException("Could not parse JSON", e);
       }
     } else {
-      throw new UserFriendlyException("Request failed with status code: " + response.statusCode());
+      throw new UserFriendlyException(
+          "Request failed with status code: "
+              + (response == null ? "NONE" : response.statusCode()));
     }
 
     return new PaginatedResult(softwareList, nextUrl);
@@ -294,7 +296,9 @@ public class SyncService extends JPAService<Software> {
         throw new UserFriendlyException("Could not parse JSON", e);
       }
     } else {
-      throw new UserFriendlyException("Request failed with status code: " + response.statusCode());
+      throw new UserFriendlyException(
+          "Request failed with status code: "
+              + (response == null ? "NONE" : response.statusCode()));
     }
 
     return new PaginatedResult(softwareList, nextUrl);
@@ -317,16 +321,18 @@ public class SyncService extends JPAService<Software> {
   }
 
   private SoftwareType getFromTopicList(List<String> topicList) {
-    SoftwareType type = SoftwareType.APP;
+    SoftwareType type;
 
     if (topicList.contains("app")) {
-      // break out of if/else
+      type = SoftwareType.APP;
     } else if (topicList.contains("lib")) {
       type = SoftwareType.LIB;
     } else if (topicList.contains("script")) {
       type = SoftwareType.SCRIPT;
     } else if (topicList.contains("plugin")) {
       type = SoftwareType.PLUGIN;
+    } else {
+      throw new IllegalArgumentException("Unknown type");
     }
 
     return type;
@@ -351,10 +357,18 @@ public class SyncService extends JPAService<Software> {
 
         final int NUM_COLUMNS = 5;
         if (cells.size() == NUM_COLUMNS) {
-          Element a = cells.first().select("a").first();
-          String name = a.text();
-          Attributes attributes = a.attributes();
-          String homeUrl = BASE_URL + attributes.get("href");
+          String name = "";
+          String homeUrl = "";
+          Element first = cells.first();
+          if (first != null) {
+            Element a = first.select("a").first();
+            if (a != null) {
+              name = a.text();
+              Attributes attributes = a.attributes();
+              homeUrl = BASE_URL + attributes.get("href");
+            }
+          }
+
           String maintainerUsernameCsv = cells.get(3).text();
           String description = cells.get(4).text();
 
@@ -410,10 +424,17 @@ public class SyncService extends JPAService<Software> {
 
         final int NUM_COLUMNS = 2;
         if (cells.size() == NUM_COLUMNS) {
-          Element a = cells.first().select("a").first();
-          String name = a.text();
-          Attributes attributes = a.attributes();
-          String homeUrl = BASE_URL + attributes.get("href");
+          String name = "";
+          String homeUrl = "";
+          Element first = cells.first();
+          if (first != null) {
+            Element a = first.select("a").first();
+            if (a != null) {
+              name = a.text();
+              Attributes attributes = a.attributes();
+              homeUrl = BASE_URL + attributes.get("href");
+            }
+          }
           String maintainerUsernameCsv = null;
           String description = cells.get(1).text();
 
@@ -480,7 +501,9 @@ public class SyncService extends JPAService<Software> {
         }
       }
     } else {
-      throw new UserFriendlyException("Request failed with status code: " + response.statusCode());
+      throw new UserFriendlyException(
+          "Request failed with status code: "
+              + (response == null ? "NONE" : response.statusCode()));
     }
 
     return softwareList;

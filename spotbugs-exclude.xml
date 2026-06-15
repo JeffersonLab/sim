@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <!-- @EJB Injected false positive -->
+        <Bug pattern="SE_BAD_FIELD" />
+        <Or>
+            <Class name="org.jlab.sim.presentation.controller.ajax.AddSoftware"/>
+            <Class name="org.jlab.sim.presentation.controller.ajax.EditSoftware"/>
+            <Class name="org.jlab.sim.presentation.controller.ajax.EditSoftwareRisk"/>
+            <Class name="org.jlab.sim.presentation.controller.ajax.RemoveSoftware"/>
+            <Class name="org.jlab.sim.presentation.controller.Directory"/>
+            <Class name="org.jlab.sim.presentation.controller.Repositories"/>
+            <Class name="org.jlab.sim.presentation.controller.Sync"/>
+        </Or>
+    </Match>
+    <Match>
+        <!-- @Entity objects composed of other entities false positive -->
+        <Or>
+            <Bug pattern="EI_EXPOSE_REP" />
+            <Bug pattern="EI_EXPOSE_REP2" />
+        </Or>
+        <Or>
+            <Class name="org.jlab.sim.persistence.entity.Software"/>
+            <Class name="org.jlab.sim.persistence.entity.SoftwareTopic"/>
+        </Or>
+    </Match>
+</FindBugsFilter>
