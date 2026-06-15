@@ -37,6 +37,8 @@ import org.jlab.smoothness.presentation.util.ParamUtil;
 public class Directory extends HttpServlet {
 
   @Serial private static final long serialVersionUID = 1L;
+  private static final String LOOSE_PARAMETER = "loose";
+  private static final String LOOSE_TRUE_VALUE = "Y";
 
   @EJB SoftwareService softwareService;
   @EJB RepositoryService repositoryService;
@@ -120,12 +122,15 @@ public class Directory extends HttpServlet {
     request.setAttribute("gapList", Arrays.asList(DocumentationGaps.values()));
     request.setAttribute("esotericismList", Arrays.asList(Esotericism.values()));
 
-    final String YES = "Y";
-    if (YES.equals(request.getParameter("loose"))) {
+    if (isLooseModeRequested(request)) {
       request.getRequestDispatcher("/WEB-INF/views/directory-loose.jsp").forward(request, response);
     } else {
       request.getRequestDispatcher("/WEB-INF/views/directory.jsp").forward(request, response);
     }
+  }
+
+  private boolean isLooseModeRequested(HttpServletRequest request) {
+    return LOOSE_TRUE_VALUE.equals(request.getParameter(LOOSE_PARAMETER));
   }
 
   private String createSelectionMessage(
