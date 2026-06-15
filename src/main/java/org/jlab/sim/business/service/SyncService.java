@@ -34,6 +34,8 @@ public class SyncService extends JPAService<Software> {
     super(Software.class);
   }
 
+  static final String DESCRIPTION = "description";
+
   @PermitAll
   public List<Software> fetch(Repository repository) throws UserFriendlyException {
     if (repository == null) {
@@ -127,8 +129,8 @@ public class SyncService extends JPAService<Software> {
 
           String description = null;
 
-          if (!item.isNull("description")) {
-            description = item.getString("description");
+          if (!item.isNull(DESCRIPTION)) {
+            description = item.getString(DESCRIPTION);
           }
 
           JsonArray topics = item.getJsonArray("topics");
@@ -265,8 +267,8 @@ public class SyncService extends JPAService<Software> {
 
           String description = null;
 
-          if (!item.isNull("description")) {
-            description = item.getString("description");
+          if (!item.isNull(DESCRIPTION)) {
+            description = item.getString(DESCRIPTION);
           }
 
           JsonArray topics = item.getJsonArray("topics");
@@ -359,7 +361,8 @@ public class SyncService extends JPAService<Software> {
       for (Element row : elements) {
         Elements cells = row.select("td");
 
-        if (cells.size() == 5) {
+        final int NUM_COLUMNS = 5;
+        if (cells.size() == NUM_COLUMNS) {
           Element a = cells.first().select("a").first();
           String name = a.text();
           Attributes attributes = a.attributes();
@@ -417,7 +420,8 @@ public class SyncService extends JPAService<Software> {
       for (Element row : elements) {
         Elements cells = row.select("td");
 
-        if (cells.size() == 2) {
+        final int NUM_COLUMNS = 2;
+        if (cells.size() == NUM_COLUMNS) {
           Element a = cells.first().select("a").first();
           String name = a.text();
           Attributes attributes = a.attributes();
@@ -463,8 +467,9 @@ public class SyncService extends JPAService<Software> {
           String line = scanner.nextLine();
           if (!line.startsWith("<pre>")) {
             String[] tokens = line.split("\\s+");
-            if (tokens.length > 8) {
-              String name = tokens[8];
+            final int USERNAME_INDEX = 8;
+            if (tokens.length > USERNAME_INDEX) {
+              String name = tokens[USERNAME_INDEX];
               String maintainerUsernameCsv = tokens[2];
 
               Software software =

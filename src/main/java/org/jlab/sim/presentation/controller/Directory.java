@@ -118,7 +118,8 @@ public class Directory extends HttpServlet {
     request.setAttribute("gapList", Arrays.asList(DocumentationGaps.values()));
     request.setAttribute("esotericismList", Arrays.asList(Esotericism.values()));
 
-    if ("Y".equals(request.getParameter("loose"))) {
+    final String YES = "Y";
+    if (YES.equals(request.getParameter("loose"))) {
       request.getRequestDispatcher("/WEB-INF/views/directory-loose.jsp").forward(request, response);
     } else {
       request.getRequestDispatcher("/WEB-INF/views/directory.jsp").forward(request, response);
