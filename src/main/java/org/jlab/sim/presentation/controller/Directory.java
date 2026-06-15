@@ -36,9 +36,9 @@ public class Directory extends HttpServlet {
 
   @Serial private static final long serialVersionUID = 1L;
 
-  @EJB SoftwareService softwareService;
-  @EJB RepositoryService repositoryService;
-  @EJB TopicService topicService;
+  @EJB SoftwareService softwareService; // NOPMD
+  @EJB RepositoryService repositoryService; // NOPMD
+  @EJB TopicService topicService; // NOPMD
 
   /**
    * Handles the HTTP <code>GET</code> method.

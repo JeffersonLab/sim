@@ -23,7 +23,7 @@ public class Repositories extends HttpServlet {
 
   @Serial private static final long serialVersionUID = 1L;
 
-  @EJB RepositoryService repositoryService;
+  @EJB RepositoryService repositoryService; // NOPMD
 
   /**
    * Handles the HTTP <code>GET</code> method.

@@ -32,9 +32,9 @@ public class Sync extends HttpServlet {
 
   @Serial private static final long serialVersionUID = 1L;
 
-  @EJB RepositoryService repositoryService;
-  @EJB SyncService syncService;
-  @EJB SoftwareService softwareService;
+  @EJB RepositoryService repositoryService; // NOPMD
+  @EJB SyncService syncService; // NOPMD
+  @EJB SoftwareService softwareService; // NOPMD
 
   /**
    * Handles the HTTP <code>GET</code> method.

@@ -31,7 +31,7 @@ public class EditSoftware extends HttpServlet {
 
   private static final Logger logger = Logger.getLogger(EditSoftware.class.getName());
 
-  @EJB SoftwareService softwareService;
+  @EJB SoftwareService softwareService; // NOPMD
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)

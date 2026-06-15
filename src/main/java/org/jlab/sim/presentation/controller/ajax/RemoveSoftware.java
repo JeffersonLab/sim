@@ -29,7 +29,7 @@ public class RemoveSoftware extends HttpServlet {
 
   private static final Logger logger = Logger.getLogger(RemoveSoftware.class.getName());
 
-  @EJB SoftwareService softwareService;
+  @EJB SoftwareService softwareService; // NOPMD
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
