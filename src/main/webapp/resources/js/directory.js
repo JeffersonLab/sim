@@ -123,8 +123,7 @@ jlab.editRow = function(removeSync) {
     });
 };
 jlab.removeRow = function() {
-    var name = $(".editable-row-table tr.selected-row td:first-child").text(),
-        id = $(".editable-row-table tr.selected-row").attr("data-id"),
+    var id = $(".editable-row-table tr.selected-row").attr("data-id"),
         reloading = false;
 
     $("#remove-row-button")
