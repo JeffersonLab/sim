@@ -168,8 +168,6 @@ public class SoftwareService extends JPAService<Software> {
       throw new UserFriendlyException("software not found with id: " + softwareId);
     }
 
-    System.err.println("removing with id: " + softwareId);
-
     for (SoftwareTopic st : software.getSoftwareTopicList()) {
       em.remove(st);
     }
@@ -178,6 +176,7 @@ public class SoftwareService extends JPAService<Software> {
   }
 
   @PermitAll
+  @Override
   public List<Software> findAll(OrderDirective... directives) {
     return super.findAll(directives);
   }
@@ -238,15 +237,16 @@ public class SoftwareService extends JPAService<Software> {
     List<Predicate> filters = new ArrayList<>();
 
     if (softwareName != null && !softwareName.isEmpty()) {
-      softwareName = softwareName.replaceAll("\\*", "%");
-      filters.add(cb.like(cb.lower(root.get("name")), softwareName.toLowerCase(Locale.US)));
+      String softwareNameEscaped = softwareName.replaceAll("\\*", "%");
+      filters.add(cb.like(cb.lower(root.get("name")), softwareNameEscaped.toLowerCase(Locale.US)));
     }
 
     if (username != null && !username.isEmpty()) {
-      username = username.replaceAll("\\*", "%");
-      username = "%" + username + "%";
+      String usernameEscaped = username.replaceAll("\\*", "%");
+      String usernameWrapped = "%" + usernameEscaped + "%";
       filters.add(
-          cb.like(cb.lower(root.get("maintainerUsernameCsv")), username.toLowerCase(Locale.US)));
+          cb.like(
+              cb.lower(root.get("maintainerUsernameCsv")), usernameWrapped.toLowerCase(Locale.US)));
     }
 
     if (repository != null) {

@@ -210,7 +210,7 @@ public class SyncService extends JPAService<Software> {
       throw new UserFriendlyException("GITHUB_ACCESS_TOKEN is not set");
     }
 
-    HttpResponse<String> response = null;
+    HttpResponse<String> response;
 
     try {
       HttpClient client = HttpClient.newHttpClient(); // NOPMD
@@ -432,7 +432,7 @@ public class SyncService extends JPAService<Software> {
 
     String url = "https://devweb.acc.jlab.org/llapp.php";
 
-    HttpResponse<String> response = null;
+    HttpResponse<String> response;
 
     try {
       HttpClient client = HttpClient.newHttpClient(); // NOPMD
@@ -487,7 +487,7 @@ public class SyncService extends JPAService<Software> {
   public SoftwareDiff diff(List<Software> localList, Map<String, Software> remoteMap) {
     SoftwareDiff diff = new SoftwareDiff();
 
-    LinkedHashMap<String, Software> addList = new LinkedHashMap<>(remoteMap);
+    Map<String, Software> addList = new LinkedHashMap<>(remoteMap);
 
     for (Software local : localList) {
       if (local.getName() == null) {

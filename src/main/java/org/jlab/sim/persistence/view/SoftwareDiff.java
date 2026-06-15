@@ -27,7 +27,7 @@ public class SoftwareDiff {
   }
 
   public boolean hasChanges() {
-    return removeList.size() > 0 || addList.size() > 0 || updateList.size() > 0;
+    return !removeList.isEmpty() || !addList.isEmpty() || !updateList.isEmpty();
   }
 
   public int getMatchCount() {

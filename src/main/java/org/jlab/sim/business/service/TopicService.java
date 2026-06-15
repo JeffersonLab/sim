@@ -30,7 +30,7 @@ public class TopicService extends JPAService<Topic> {
     List<Topic> topics = query.getResultList();
     Topic topic = null;
 
-    if (topics.size() > 0) {
+    if (!topics.isEmpty()) {
       topic = topics.get(0);
     }
 
