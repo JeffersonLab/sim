@@ -22,11 +22,14 @@ public class SoftwareService extends JPAService<Software> {
   @EJB RepositoryService repositoryService;
   @EJB SoftwareTopicService softwareTopicService;
 
+  static final String ACG_ROLE = "acg";
+  static final String ADMIN_ROLE = "sim-admin";
+
   public SoftwareService() {
     super(Software.class);
   }
 
-  @RolesAllowed({"sim-admin", "acg"})
+  @RolesAllowed({ADMIN_ROLE, ACG_ROLE})
   public void addSoftware(
       BigInteger repoId,
       String name,
@@ -67,7 +70,7 @@ public class SoftwareService extends JPAService<Software> {
     softwareTopicService.set(software, topicArray);
   }
 
-  @RolesAllowed({"sim-admin", "acg"})
+  @RolesAllowed({ADMIN_ROLE, ACG_ROLE})
   public void editSoftware(
       BigInteger softwareId,
       BigInteger repoId,
@@ -122,7 +125,7 @@ public class SoftwareService extends JPAService<Software> {
     softwareTopicService.set(software, topicArray);
   }
 
-  @RolesAllowed({"sim-admin", "acg"})
+  @RolesAllowed({ADMIN_ROLE, ACG_ROLE})
   public void editSoftwareRisk(
       BigInteger softwareId,
       OpsImpact impact,
@@ -153,7 +156,7 @@ public class SoftwareService extends JPAService<Software> {
     edit(software);
   }
 
-  @RolesAllowed({"sim-admin", "acg"})
+  @RolesAllowed({ADMIN_ROLE, ACG_ROLE})
   public void removeSoftware(BigInteger softwareId) throws UserFriendlyException {
     if (softwareId == null) {
       throw new UserFriendlyException("softwareId cannot be empty");

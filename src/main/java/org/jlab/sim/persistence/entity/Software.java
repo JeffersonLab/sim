@@ -14,12 +14,14 @@ import org.jlab.smoothness.persistence.util.YnStringToBoolean;
 public class Software implements Serializable {
   private static final long serialVersionUID = 1L;
 
+  static final String SOFTWAREID = "SOFTWARE_ID";
+
   @Id
-  @SequenceGenerator(name = "SoftwareId", sequenceName = "SOFTWARE_ID", allocationSize = 1)
+  @SequenceGenerator(name = "SoftwareId", sequenceName = SOFTWAREID, allocationSize = 1)
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SoftwareId")
   @Basic(optional = false)
   @NotNull
-  @Column(name = "SOFTWARE_ID", nullable = false, precision = 22, scale = 0)
+  @Column(name = SOFTWAREID, nullable = false, precision = 22, scale = 0)
   private BigInteger softwareId;
 
   @Basic(optional = false)
@@ -94,8 +96,8 @@ public class Software implements Serializable {
 
   @OneToMany(fetch = FetchType.EAGER)
   @JoinColumn(
-      name = "SOFTWARE_ID",
-      referencedColumnName = "SOFTWARE_ID",
+      name = SOFTWAREID,
+      referencedColumnName = SOFTWAREID,
       insertable = false,
       updatable = false)
   private List<SoftwareTopic> softwareTopicList;
