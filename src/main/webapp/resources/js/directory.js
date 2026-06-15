@@ -151,7 +151,7 @@ jlab.removeRow = function() {
 
     request.fail(function(xhr, textStatus) {
         window.console && console.log('Unable to remove software; Text Status: ' + textStatus + ', Ready State: ' + xhr.readyState + ', HTTP Status Code: ' + xhr.status);
-        alert('Unable to Remove Server unavailable or unresponsive');
+        alert('Unable to Remove: Server unavailable or unresponsive');
     });
 
     request.always(function() {
