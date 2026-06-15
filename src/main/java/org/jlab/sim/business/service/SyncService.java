@@ -29,6 +29,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 @Stateless
+// false positive on org.jsoup.select.Elements (the List is specialized! with select() method, etc.)
+// false positive on java.net.http.HttpClient (there is no close method pre Java 21)
+@SuppressWarnings({"PMD.LooseCoupling", "PMD.CloseResource"})
 public class SyncService extends JPAService<Software> {
   public SyncService() {
     super(Software.class);
@@ -76,7 +79,7 @@ public class SyncService extends JPAService<Software> {
     HttpResponse<String> response;
 
     try {
-      HttpClient client = HttpClient.newHttpClient(); // NOPMD
+      HttpClient client = HttpClient.newHttpClient();
       HttpRequest request =
           HttpRequest.newBuilder()
               .uri(URI.create(url))
@@ -85,7 +88,7 @@ public class SyncService extends JPAService<Software> {
 
       response = client.send(request, HttpResponse.BodyHandlers.ofString());
     } catch (IOException | InterruptedException e) {
-      throw new UserFriendlyException("Could not connect to GitHub");
+      throw new UserFriendlyException("Could not connect to GitHub", e);
     }
 
     if (response != null && response.statusCode() == 200) {
@@ -213,7 +216,7 @@ public class SyncService extends JPAService<Software> {
     HttpResponse<String> response;
 
     try {
-      HttpClient client = HttpClient.newHttpClient(); // NOPMD
+      HttpClient client = HttpClient.newHttpClient();
       HttpRequest request =
           HttpRequest.newBuilder()
               .uri(URI.create(url))
@@ -223,7 +226,7 @@ public class SyncService extends JPAService<Software> {
 
       response = client.send(request, HttpResponse.BodyHandlers.ofString());
     } catch (IOException | InterruptedException e) {
-      throw new UserFriendlyException("Could not connect to GitHub");
+      throw new UserFriendlyException("Could not connect to GitHub", e);
     }
 
     if (response != null && response.statusCode() == 200) {
@@ -435,12 +438,12 @@ public class SyncService extends JPAService<Software> {
     HttpResponse<String> response;
 
     try {
-      HttpClient client = HttpClient.newHttpClient(); // NOPMD
+      HttpClient client = HttpClient.newHttpClient();
       HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
 
       response = client.send(request, HttpResponse.BodyHandlers.ofString());
     } catch (IOException | InterruptedException e) {
-      throw new UserFriendlyException("Could not connect to llapp");
+      throw new UserFriendlyException("Could not connect to llapp", e);
     }
 
     if (response != null && response.statusCode() == 200) {

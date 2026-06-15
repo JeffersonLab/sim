@@ -19,11 +19,13 @@ import org.jlab.smoothness.business.service.JPAService;
 @WebServlet(
     name = "Repositories",
     urlPatterns = {"/repositories"})
+// false positive on @EJB lines (Injected EJB proxy IS Serializable)
+@SuppressWarnings({"PMD.NonSerializableClass"})
 public class Repositories extends HttpServlet {
 
   @Serial private static final long serialVersionUID = 1L;
 
-  @EJB RepositoryService repositoryService; // NOPMD
+  @EJB RepositoryService repositoryService;
 
   /**
    * Handles the HTTP <code>GET</code> method.

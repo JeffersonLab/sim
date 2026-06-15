@@ -50,7 +50,7 @@ public class SoftwareTopicService extends JPAService<SoftwareTopic> {
     q.executeUpdate();
   }
 
-  private void addTopics(Software software, String[] topicNameArray) {
+  private void addTopics(Software software, String... topicNameArray) {
     if (topicNameArray != null) {
       for (String topicName : topicNameArray) {
 
@@ -73,7 +73,7 @@ public class SoftwareTopicService extends JPAService<SoftwareTopic> {
   }
 
   @PermitAll
-  public void set(Software software, String[] topicNameArray) {
+  public void set(Software software, String... topicNameArray) {
 
     // First, we remove / clear any existing
     removeAllTopics(software);

@@ -12,6 +12,8 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jlab.sim.business.service.RepositoryService;
 import org.jlab.sim.business.service.SoftwareService;
 import org.jlab.sim.business.service.SyncService;
@@ -28,13 +30,17 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
 @WebServlet(
     name = "Sync",
     urlPatterns = {"/repositories/sync"})
+// false positive on @EJB lines (Injected EJB proxy IS Serializable)
+@SuppressWarnings({"PMD.NonSerializableClass"})
 public class Sync extends HttpServlet {
+
+  private static final Logger LOGGER = Logger.getLogger(Sync.class.getName());
 
   @Serial private static final long serialVersionUID = 1L;
 
-  @EJB RepositoryService repositoryService; // NOPMD
-  @EJB SyncService syncService; // NOPMD
-  @EJB SoftwareService softwareService; // NOPMD
+  @EJB RepositoryService repositoryService;
+  @EJB SyncService syncService;
+  @EJB SoftwareService softwareService;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -72,7 +78,7 @@ public class Sync extends HttpServlet {
 
       diff = syncService.diff(localList, remoteMap);
     } catch (UserFriendlyException e) {
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, e, e::getMessage);
       error = e.getMessage();
     }
 

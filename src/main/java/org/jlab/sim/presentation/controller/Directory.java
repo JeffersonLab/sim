@@ -32,13 +32,15 @@ import org.jlab.smoothness.presentation.util.ParamUtil;
 @WebServlet(
     name = "Directory",
     urlPatterns = {"/directory"})
+// false positive on @EJB lines (Injected EJB proxy IS Serializable)
+@SuppressWarnings({"PMD.NonSerializableClass"})
 public class Directory extends HttpServlet {
 
   @Serial private static final long serialVersionUID = 1L;
 
-  @EJB SoftwareService softwareService; // NOPMD
-  @EJB RepositoryService repositoryService; // NOPMD
-  @EJB TopicService topicService; // NOPMD
+  @EJB SoftwareService softwareService;
+  @EJB RepositoryService repositoryService;
+  @EJB TopicService topicService;
 
   /**
    * Handles the HTTP <code>GET</code> method.

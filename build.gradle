@@ -55,3 +55,16 @@ spotless {
         googleJavaFormat()
     }
 }
+pmd {
+    consoleOutput = true
+    ruleSets = [
+            "category/java/errorprone.xml",
+            "category/java/bestpractices.xml",
+            "category/java/security.xml"
+    ]
+
+    // category/java/codestyle.xml
+    // category/java/performance.xml
+    // category/java/multithreading.xml
+    // category/java/design.xml
+}

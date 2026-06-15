@@ -25,13 +25,15 @@ import org.jlab.smoothness.presentation.util.ParamConverter;
 @WebServlet(
     name = "AddSoftware",
     urlPatterns = {"/ajax/add-software"})
+// false positive on @EJB lines (Injected EJB proxy IS Serializable)
+@SuppressWarnings({"PMD.NonSerializableClass"})
 public class AddSoftware extends HttpServlet {
 
   @Serial private static final long serialVersionUID = 1L;
 
   private static final Logger logger = Logger.getLogger(AddSoftware.class.getName());
 
-  @EJB SoftwareService softwareService; // NOPMD
+  @EJB SoftwareService softwareService;
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
