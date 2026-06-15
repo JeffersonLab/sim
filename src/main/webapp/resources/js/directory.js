@@ -61,7 +61,7 @@ jlab.addRow = function() {
         }
     });
 };
-jlab.editRow = function(removeSync) {
+jlab.editRow = function() {
     var softwareId = $(".editable-row-table tr.selected-row").attr("data-id"),
         name = $("#row-name").val(),
         type = $("#row-type").val(),
