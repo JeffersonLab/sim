@@ -137,7 +137,7 @@ public class SyncService extends JPAService<Software> {
 
           for (int j = 0; j < topics.size(); j++) {
             String topic = topics.getString(j);
-            topicList.add(topic.toLowerCase());
+            topicList.add(topic.toLowerCase(Locale.US));
           }
 
           SoftwareType type = getFromTopicList(topicList);
@@ -275,7 +275,7 @@ public class SyncService extends JPAService<Software> {
 
           for (int j = 0; j < topics.size(); j++) {
             String topic = topics.getString(j);
-            topicList.add(topic.toLowerCase());
+            topicList.add(topic.toLowerCase(Locale.US));
           }
 
           SoftwareType type = getFromTopicList(topicList);

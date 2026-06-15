@@ -6,6 +6,8 @@ import jakarta.ejb.Stateless;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
+import java.util.Locale;
+
 import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.entity.SoftwareTopic;
 import org.jlab.sim.persistence.entity.Topic;
@@ -61,7 +63,7 @@ public class SoftwareTopicService extends JPAService<SoftwareTopic> {
 
         if (topic == null) {
           topic = new Topic();
-          topic.setName(topicName.toLowerCase());
+          topic.setName(topicName.toLowerCase(Locale.US));
           em.persist(topic);
           em.flush();
         }

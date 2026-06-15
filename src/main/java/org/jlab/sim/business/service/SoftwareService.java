@@ -9,6 +9,8 @@ import jakarta.persistence.criteria.*;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.entity.SoftwareTopic;
@@ -235,13 +237,13 @@ public class SoftwareService extends JPAService<Software> {
 
     if (softwareName != null && !softwareName.isEmpty()) {
       softwareName = softwareName.replaceAll("\\*", "%");
-      filters.add(cb.like(cb.lower(root.get("name")), softwareName.toLowerCase()));
+      filters.add(cb.like(cb.lower(root.get("name")), softwareName.toLowerCase(Locale.US)));
     }
 
     if (username != null && !username.isEmpty()) {
       username = username.replaceAll("\\*", "%");
       username = "%" + username + "%";
-      filters.add(cb.like(cb.lower(root.get("maintainerUsernameCsv")), username.toLowerCase()));
+      filters.add(cb.like(cb.lower(root.get("maintainerUsernameCsv")), username.toLowerCase(Locale.US)));
     }
 
     if (repository != null) {
