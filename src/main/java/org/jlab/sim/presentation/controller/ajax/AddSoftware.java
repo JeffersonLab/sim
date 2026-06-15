@@ -77,7 +77,8 @@ public class AddSoftware extends HttpServlet {
       error = "Unable to add Software";
       logger.log(Level.SEVERE, "Unable to add Software", e);
       Throwable rootCause = ExceptionUtil.getRootCause(e);
-      if ("OracleDatabaseException".equals(rootCause.getClass().getSimpleName())) {
+      final String ORACLE_EXCEPTION = "OracleDatabaseException";
+      if (ORACLE_EXCEPTION.equals(rootCause.getClass().getSimpleName())) {
         error = "Oracle Database Exception - make sure name doesn't already exist: " + name;
       }
     }

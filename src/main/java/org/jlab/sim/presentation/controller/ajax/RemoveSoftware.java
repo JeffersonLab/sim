@@ -55,7 +55,8 @@ public class RemoveSoftware extends HttpServlet {
       error = "Unable to remove Software";
       logger.log(Level.SEVERE, "Unable to remove Software", e);
       Throwable rootCause = ExceptionUtil.getRootCause(e);
-      if ("OracleDatabaseException".equals(rootCause.getClass().getSimpleName())) {
+      final String ORACLE_EXCEPTION = "OracleDatabaseException";
+      if (ORACLE_EXCEPTION.equals(rootCause.getClass().getSimpleName())) {
         error = "Oracle Database Exception - make sure name doesn't already exist: " + name;
       }
     }

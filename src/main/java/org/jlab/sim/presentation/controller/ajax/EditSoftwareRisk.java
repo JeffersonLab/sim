@@ -71,7 +71,8 @@ public class EditSoftwareRisk extends HttpServlet {
       error = "Unable to edit Software Risk";
       logger.log(Level.SEVERE, "Unable to edit Software Risk", e);
       Throwable rootCause = ExceptionUtil.getRootCause(e);
-      if ("OracleDatabaseException".equals(rootCause.getClass().getSimpleName())) {
+      final String ORACLE_EXCEPTION = "OracleDatabaseException";
+      if (ORACLE_EXCEPTION.equals(rootCause.getClass().getSimpleName())) {
         error = "Oracle Database Exception - make sure name doesn't already exist: " + name;
       }
     }

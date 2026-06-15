@@ -82,7 +82,8 @@ public class EditSoftware extends HttpServlet {
       error = "Unable to edit Software";
       logger.log(Level.SEVERE, "Unable to edit Software", e);
       Throwable rootCause = ExceptionUtil.getRootCause(e);
-      if ("OracleDatabaseException".equals(rootCause.getClass().getSimpleName())) {
+      final String ORACLE_EXCEPTION = "OracleDatabaseException";
+      if (ORACLE_EXCEPTION.equals(rootCause.getClass().getSimpleName())) {
         error = "Oracle Database Exception - make sure name doesn't already exist: " + name;
       }
     }
