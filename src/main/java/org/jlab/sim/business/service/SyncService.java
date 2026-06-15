@@ -42,32 +42,17 @@ public class SyncService extends JPAService<Software> {
       throw new UserFriendlyException("Repository is required");
     }
 
-    List<Software> softwareList = null;
-
-    switch (repository.getName()) {
-      case "CSUE":
-        softwareList = fetchCSUE(repository);
-        break;
-      case "CERTIFIED":
-        softwareList = fetchCertified(repository);
-        break;
-      case "GITHUB":
-        softwareList = fetchGitHub(repository);
-        break;
-      case "LLAPP":
-        softwareList = fetchLLAPP(repository);
-        break;
-      case "GITLAB":
-        softwareList = fetchGitLab(repository);
-        break;
-      default:
-        throw new UserFriendlyException("Unknown Repository: " + repository.getName());
-    }
-
-    return softwareList;
+    return switch (repository.getName()) {
+      case "CSUE" -> fetchCSUE(repository);
+      case "CERTIFIED" -> fetchCertified(repository);
+      case "GITHUB" -> fetchGitHub(repository);
+      case "LLAPP" -> fetchLLAPP(repository);
+      case "GITLAB" -> fetchGitLab(repository);
+      default -> throw new UserFriendlyException("Unknown Repository: " + repository.getName());
+    };
   }
 
-  class PaginatedResult {
+  static class PaginatedResult {
     public List<Software> softwareList;
     public String nextUrl;
 
@@ -88,10 +73,10 @@ public class SyncService extends JPAService<Software> {
       throw new UserFriendlyException("GITLAB_ACCESS_TOKEN is not set");
     }
 
-    HttpResponse<String> response = null;
+    HttpResponse<String> response;
 
     try {
-      HttpClient client = HttpClient.newHttpClient();
+      HttpClient client = HttpClient.newHttpClient(); // NOPMD
       HttpRequest request =
           HttpRequest.newBuilder()
               .uri(URI.create(url))
@@ -228,7 +213,7 @@ public class SyncService extends JPAService<Software> {
     HttpResponse<String> response = null;
 
     try {
-      HttpClient client = HttpClient.newHttpClient();
+      HttpClient client = HttpClient.newHttpClient(); // NOPMD
       HttpRequest request =
           HttpRequest.newBuilder()
               .uri(URI.create(url))
@@ -450,7 +435,7 @@ public class SyncService extends JPAService<Software> {
     HttpResponse<String> response = null;
 
     try {
-      HttpClient client = HttpClient.newHttpClient();
+      HttpClient client = HttpClient.newHttpClient(); // NOPMD
       HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
 
       response = client.send(request, HttpResponse.BodyHandlers.ofString());
