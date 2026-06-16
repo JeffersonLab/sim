@@ -66,12 +66,10 @@ public class Software implements Serializable {
   @Column(name = "OPS_IMPACT", nullable = false)
   private OpsImpact impact;
 
-  @NotNull
-  @Column(name = "DOWN_PROBABILITY", nullable = false, updatable = false)
+  @Column(name = "DOWN_PROBABILITY", updatable = false, insertable = false)
   private DowntimeProbability probability;
 
-  @NotNull
-  @Column(name = "DOWNTIME_RISK", nullable = false, updatable = false)
+  @Column(name = "DOWNTIME_RISK", updatable = false, insertable = false)
   private DowntimeRisk risk;
 
   @NotNull
@@ -124,6 +122,13 @@ public class Software implements Serializable {
     this.homeUrl = homeUrl;
     this.archived = archived;
     this.note = note;
+
+    this.complexity = CodeComplexity.Medium;
+    this.esotericism = Esotericism.Medium;
+    this.difficulty = DebugTestDifficulty.Medium;
+    this.gaps = DocumentationGaps.Medium;
+    this.rate = PastDowntimeRate.Medium;
+    this.impact = OpsImpact.Medium;
   }
 
   public BigInteger getSoftwareId() {

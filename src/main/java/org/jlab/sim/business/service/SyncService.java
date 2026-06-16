@@ -332,7 +332,7 @@ public class SyncService extends JPAService<Software> {
     } else if (topicList.contains("plugin")) {
       type = SoftwareType.PLUGIN;
     } else {
-      throw new IllegalArgumentException("Unknown type");
+      type = SoftwareType.APP;
     }
 
     return type;
