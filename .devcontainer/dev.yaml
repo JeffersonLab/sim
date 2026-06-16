@@ -4,23 +4,27 @@ services:
     extends:
       file: ../compose.yaml
       service: oracle
+    container_name: sim-oracle-devc
 
   keycloak:
     extends:
       file: ../compose.yaml
       service: keycloak
+    container_name: sim-keycloak-devc
 
   mailhog:
     extends:
       file: ../compose.yaml
       service: mailhog
+    container_name: sim-mailhog-devc
 
   puppet:
     extends:
       file: ../compose.yaml
       service: puppet
+    container_name: sim-puppet-devc
 
   dev:
     image: jeffersonlab/sim:latest
     hostname: dev
-    container_name: sim-dev
+    container_name: sim-dev-devc

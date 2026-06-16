@@ -3,25 +3,29 @@ services:
     extends:
       file: deps.yaml
       service: oracle
+    container_name: sim-oracle
 
   keycloak:
     extends:
       file: deps.yaml
       service: keycloak
+    container_name: sim-keycloak
 
   puppet:
     extends:
       file: deps.yaml
       service: puppet
+    container_name: sim-puppet
 
   mailhog:
     extends:
       file: deps.yaml
       service: mailhog
+    container_name: sim-mailhog
 
   sim:
     hostname: sim
-    container_name: sim
+    container_name: sim-dev
     user: dev
     ports:
       - "8443:8443"
