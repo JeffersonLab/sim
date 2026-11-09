@@ -150,7 +150,7 @@ public class SyncService extends JPAService<Software> {
       String description = null;
 
       if (!item.isNull(DESCRIPTION)) {
-        description = item.getString(DESCRIPTION);
+        description = normalizeLineEndings(item.getString(DESCRIPTION));
       }
 
       JsonArray topics = item.getJsonArray("topics");
@@ -178,6 +178,19 @@ public class SyncService extends JPAService<Software> {
     }
 
     return softwareList;
+  }
+
+  /**
+   * Replaces CRLF and CR line endings with LF. GitLab returns a description entered in its web form
+   * with CRLF line endings, but the sync page passes it through an HTML attribute, which the
+   * browser reads with LF line endings, so sim saves LF. Without this a synced description with a
+   * line break never matches.
+   *
+   * @param text The text
+   * @return The text with LF line endings
+   */
+  static String normalizeLineEndings(String text) {
+    return text.replace("\r\n", "\n").replace('\r', '\n');
   }
 
   private static final Pattern LINK_PATTERN = Pattern.compile("<([^>]+)>\\s*;\\s*rel=\"([^\"]+)\"");
