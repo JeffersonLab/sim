@@ -106,6 +106,13 @@ Further, the local DataSource must also leverage localhost port forwarding so th
 
 The [server](https://github.com/JeffersonLab/wildfly/blob/main/scripts/server-setup.sh) and [app](https://github.com/JeffersonLab/wildfly/blob/main/scripts/app-setup.sh) setup scripts can be used to setup a local instance of Wildfly.
 
+### Test
+Unit tests run with the build (`gradlew build`, or `gradlew test` alone).  Integration tests send requests to a running app and its services, and log in as the test accounts, so start them first with `docker compose -f build.yaml up -d --build --wait`, then run:
+```
+gradlew integrationTest
+```
+If the stack runs on other ports (see [Ports](https://github.com/JeffersonLab/sim#ports)), point the tests at them with `SIM_URL` (such as `https://localhost:48443/sim`) and `KEYCLOAK_URL` (such as `http://localhost:48081/auth`).
+
 ## Release
 1. Bump the version number in the VERSION file and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).
 2. The [CD](https://github.com/JeffersonLab/sim/blob/main/.github/workflows/cd.yaml) GitHub Action should run automatically invoking:

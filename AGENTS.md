@@ -14,24 +14,34 @@ project is, its settings, and how to set it up.
   first, and if a port is taken, set free ones in the worktree's `.env` (the `SIM_*_PORT`
   variables in `README.md`, "Ports"); never stop what holds it. Compose names the containers
   and volumes after the worktree's directory, so each worktree gets its own stack and data.
-- On every change, run `./gradlew build` (about 15 s cold, a second warm). It compiles for Java
-  17, runs `spotlessCheck` (google-java-format; `./gradlew spotlessApply` formats), PMD and
-  SpotBugs (`build/reports/spotbugs.html`; exclusions in `spotbugs-exclude.xml`), and builds
-  `build/libs/sim.war`. CI runs the same build. Fix lint findings rather than suppressing them.
-- There are no automated tests yet. Where a change's risk warrants one, add a JUnit test in
-  `src/test/java` (with its test dependencies in `build.gradle`) and check that
-  `./gradlew build` runs it; otherwise say how you checked the change.
+- On every change, run `./gradlew build` (about 15 s cold, a few seconds warm). It compiles for
+  Java 17, runs `spotlessCheck` (google-java-format; `./gradlew spotlessApply` formats), PMD and
+  SpotBugs on the app's code (`build/reports/spotbugs.html`; exclusions in
+  `spotbugs-exclude.xml`), runs the JUnit 5 unit tests in `src/test/java`, which need no
+  services, and builds `build/libs/sim.war`. CI runs the same build. Fix lint findings rather
+  than suppressing them.
+- Integration tests (`*IT` in `src/integration/java`) send requests to the running app and
+  Keycloak, logging in as the test accounts with their passwords: `./gradlew integrationTest`
+  (a few seconds). Neither `build` nor CI runs them, so run them yourself for a change to
+  behavior, pages or permissions, and add a case for what you change; for a bug fix, show it
+  failing against the app without the fix. On other ports, set `SIM_URL` (such as
+  `https://localhost:48443/sim`) and `KEYCLOAK_URL` (`http://localhost:48081/auth`). The tests
+  add software named `it-...` to the HOME_DIR repository and remove it afterwards.
 - Before opening a pull request, for a change to behavior or pages, rebuild and restart the app,
   since the container runs the image and not your working tree:
-  `docker compose -f build.yaml up -d --build --wait sim`. Then check the change in a browser
-  at `https://localhost:8443/sim` (or your `SIM_HTTPS_PORT`), and look for errors in
-  `docker compose -f build.yaml logs sim`.
+  `docker compose -f build.yaml up -d --build --wait sim`. Then run the integration tests,
+  check the change in a browser at `https://localhost:8443/sim` (or your `SIM_HTTPS_PORT`), and
+  look for errors in `docker compose -f build.yaml logs sim`.
 - Test data: `container/oracle/initdb.d` builds the schema, default data and settings when the
   Oracle container is created. `docker compose -f build.yaml down -v` deletes it; the next `up`
   rebuilds it. Schema and settings changes go there; there are no migrations, so give the SQL
   that existing databases need in the pull request.
 - Accounts (Keycloak `test-realm`, password `password`): `tbrown` and `jdoe` (`sim-admin`),
-  `jsmith` (`acg`, can edit software and apply syncs), and `jadams` (read only).
+  `jsmith` (`acg`, can edit software and apply syncs, but not the setup pages), and `jadams`
+  (`sim-user`, read only). `container/keycloak/initdb.d/03_customize.sh` adds the `acg` role and
+  the password login the tests use; keep it executable (git mode 755), or Keycloak skips it.
+  Keycloak runs it only when its container is created with new data:
+  `docker compose -f build.yaml up -d --force-recreate --renew-anon-volumes keycloak`.
 - Outside systems: Keycloak (login and the user directory), Oracle, Puppet Show (PDF and image
   export) and SMTP email run as containers; MailHog catches the email
   (`http://localhost:8025`). The Sync pages (`SyncService`) have no stand-in: they read the real
