@@ -212,6 +212,19 @@ public class Software implements Serializable {
     return maintainerUsernameCsv;
   }
 
+  /**
+   * The maintainers' usernames, for display one per line. The stored value is a comma-separated
+   * list, but a sync may copy in a list separated by spaces, so both separate names.
+   *
+   * @return the usernames in stored order, without blanks; empty if there are none
+   */
+  public List<String> getMaintainerUsernameList() {
+    if (maintainerUsernameCsv == null) {
+      return List.of();
+    }
+    return Arrays.stream(maintainerUsernameCsv.split("[,\\s]+")).filter(u -> !u.isEmpty()).toList();
+  }
+
   public boolean isArchived() {
     return archived;
   }
