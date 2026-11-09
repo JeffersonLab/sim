@@ -388,8 +388,7 @@ $(function(){
         autoOpen: false,
         minWidth: 640,
         width: 640,
-        minHeight: 760,
-        height: 760,
+        height: "auto",
         modal: true,
         draggable: false
     });

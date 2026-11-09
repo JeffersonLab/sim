@@ -65,8 +65,14 @@ td:nth-child(5) {
     font-weight: bold;
     cursor: help;
 }
+#risk-dialog fieldset {
+    position: relative;
+}
+/* On the Derived Level row: as a float it would push the wide key-value table below it */
 .dialog-links {
-    float: right;
+    position: absolute;
+    top: 9px;
+    right: 8px;
 }
 .limiting-factors {
     color: #666;
@@ -76,6 +82,10 @@ td:nth-child(5) {
     width: 400px;
     height: 60px;
     resize: none;
+}
+#risk-dialog section {
+    /* Room for the absolutely positioned .dialog-button-panel (24px tall, 16px padding) */
+    padding-bottom: 56px;
 }
 #assessment-footer {
     margin-top: 1em;
