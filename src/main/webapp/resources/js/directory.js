@@ -203,7 +203,73 @@ $(document).on("click", ".default-clear-panel", function () {
     $("#topic-select").val(null).trigger('change');
     $("#type-select").val('');
     $("#archived-select").val('');
+    $("#level-select").val('');
+    $("#attention-select").val('');
+    $("#fragile-select").val('');
+    $("#assessed-select").val('');
     return false;
+});
+/* The lookup tables of container/oracle/initdb.d/02_ddl.sql, which derives the stored values; these
+ * only preview the dialog's current inputs. Rows are Ops Impact 1-5, columns Code Complexity or
+ * Fragility 1-5. */
+jlab.risk = {
+    levelTable: [
+        [0, 0, 1, 2, 2],
+        [0, 0, 1, 2, 2],
+        [1, 1, 2, 3, 3],
+        [2, 2, 3, 3, 3],
+        [3, 3, 3, 3, 3]
+    ],
+    attentionTable: [
+        [1, 1, 1, 2, 2],
+        [1, 1, 2, 2, 3],
+        [1, 2, 2, 3, 3],
+        [2, 2, 3, 3, 4],
+        [2, 3, 3, 4, 4]
+    ],
+    factors: [
+        ["rate", "Past Downtime Rate"],
+        ["difficulty", "Debug/Test Difficulty"],
+        ["complexity", "Code Complexity"],
+        ["gaps", "Documentation Gaps"],
+        ["esotericism", "Esotericism"]
+    ],
+    label: function (selectId, value) {
+        return $("#" + selectId + " option[value='" + value + "']").text().trim();
+    },
+    refresh: function () {
+        var impact = parseInt($("#impact").val(), 10),
+            complexity = parseInt($("#complexity").val(), 10),
+            fragility = 0,
+            limiting = [],
+            override = $("#level-override").val(),
+            level, attention;
+
+        jlab.risk.factors.forEach(function (factor) {
+            var value = parseInt($("#" + factor[0]).val(), 10);
+            if (value > fragility) {
+                fragility = value;
+                limiting = [factor[1]];
+            } else if (value === fragility) {
+                limiting.push(factor[1]);
+            }
+        });
+
+        level = jlab.risk.levelTable[impact - 1][complexity - 1];
+        attention = jlab.risk.attentionTable[impact - 1][fragility - 1];
+
+        var levelText = jlab.risk.label("level-labels", level);
+        if (override !== "") {
+            levelText = levelText + " (overridden to " + jlab.risk.label("level-labels", override) + ")";
+        }
+        $("#level-visible").text(levelText);
+        $("#fragility-visible").text(jlab.risk.label("fragility-labels", fragility));
+        $("#limiting-factors").text(limiting.join(", "));
+        $("#attention-visible").text(jlab.risk.label("attention-labels", attention));
+    }
+};
+$(document).on("change", "#risk-dialog select", function () {
+    jlab.risk.refresh();
 });
 $(document).on("change", ".change-submit", function () {
     let formId = $(this).attr("form");
@@ -217,8 +283,15 @@ $(document).on("click", "#risk-update-button", function() {
         complexity = $("#complexity").val(),
         gaps = $("#gaps").val(),
         esotericism = $("#esotericism").val(),
+        levelOverride = $("#level-override").val(),
+        levelNote = $("#level-note").val(),
         $updateButton = $("#risk-update-button"),
         reloading = false;
+
+    if (levelOverride !== "" && levelNote.trim() === "") {
+        alert("A control level override needs a rationale");
+        return;
+    }
 
     $updateButton
         .height($updateButton.height())
@@ -237,7 +310,9 @@ $(document).on("click", "#risk-update-button", function() {
             difficulty: difficulty,
             complexity: complexity,
             gaps: gaps,
-            esotericism: esotericism
+            esotericism: esotericism,
+            levelOverride: levelOverride,
+            levelNote: levelNote
         },
         dataType: "json"
     });
@@ -270,12 +345,7 @@ $(document).on("click", ".risk-dialog-opener", function () {
 
     $("#risk-software-id").val($tr.attr("data-id"));
 
-    $("#risk-dialog").dialog("option", "title", $tr.attr("data-name") + " - Downtime Risk Assessment");
-
-    $("#risk-score").val($tr.attr("data-risk"));
-    $("#probability").val($tr.attr("data-probability"));
-    $("#risk-score-visible").text($("#risk-score option:selected").text());
-    $("#probability-visible").text($("#probability option:selected").text());
+    $("#risk-dialog").dialog("option", "title", $tr.attr("data-name") + " - Risk & SQA Assessment");
 
     $("#impact").val($tr.attr("data-impact"));
     $("#rate").val($tr.attr("data-rate"));
@@ -283,25 +353,25 @@ $(document).on("click", ".risk-dialog-opener", function () {
     $("#complexity").val($tr.attr("data-complexity"));
     $("#gaps").val($tr.attr("data-gaps"));
     $("#esotericism").val($tr.attr("data-esotericism"));
+    $("#level-override").val($tr.attr("data-level-override") || "");
+    $("#level-note").val($tr.attr("data-level-note") || "");
 
-    let editable = $("#logout-form").length;
+    jlab.risk.refresh();
+
+    if ($tr.attr("data-assessed-date")) {
+        $("#assessment-footer").text("Assessed by " + ($tr.attr("data-assessed-by") || "an unknown user")
+            + " on " + $tr.attr("data-assessed-date"));
+    } else {
+        $("#assessment-footer").text("Not assessed yet: the inputs are the defaults");
+    }
+
+    let editable = $("#logout-form").length,
+        $controls = $("#risk-update-button, #risk-dialog fieldset select, #level-note");
 
     if(editable) {
-        $("#risk-update-button").removeAttr("disabled");
-        $("#impact").removeAttr("disabled");
-        $("#rate").removeAttr("disabled");
-        $("#difficulty").removeAttr("disabled");
-        $("#complexity").removeAttr("disabled");
-        $("#gaps").removeAttr("disabled");
-        $("#esotericism").removeAttr("disabled");
+        $controls.removeAttr("disabled");
     } else {
-        $("#risk-update-button").attr("disabled", "disabled");
-        $("#impact").attr("disabled", "disabled");
-        $("#rate").attr("disabled", "disabled");
-        $("#difficulty").attr("disabled", "disabled");
-        $("#complexity").attr("disabled", "disabled");
-        $("#gaps").attr("disabled", "disabled");
-        $("#esotericism").attr("disabled", "disabled");
+        $controls.attr("disabled", "disabled");
     }
 
     $("#risk-dialog").dialog("open");
@@ -318,8 +388,8 @@ $(function(){
         autoOpen: false,
         minWidth: 640,
         width: 640,
-        minHeight: 580,
-        height: 580,
+        minHeight: 760,
+        height: 760,
         modal: true,
         draggable: false
     });

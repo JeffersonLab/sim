@@ -29,6 +29,7 @@ class PagesIT {
         "/directory?type=LIB",
         "/directory?archived=YES",
         "/directory?max=5&offset=5",
+        "/directory?level=2&attention=3&fragile=Y&assessed=N",
         "/repositories",
         "/help"
       })
@@ -47,6 +48,11 @@ class PagesIT {
     "/directory?offset=-1, 400",
     "/directory?offset=abc, 400",
     "/directory?max=abc, 400",
+    "/directory?level=7, 400",
+    "/directory?level=abc, 400",
+    "/directory?attention=0, 400",
+    "/directory?fragile=maybe, 400",
+    "/directory?assessed=bogus, 400",
     "/directory?repositoryId=999999, 400",
     "/repositories/sync, 400",
     "/repositories/sync?repositoryId=, 400",

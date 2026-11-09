@@ -34,8 +34,8 @@ project is, its settings, and how to set it up.
   look for errors in `docker compose -f build.yaml logs sim`.
 - Test data: `container/oracle/initdb.d` builds the schema, default data and settings when the
   Oracle container is created. `docker compose -f build.yaml down -v` deletes it; the next `up`
-  rebuilds it. Schema and settings changes go there; there are no migrations, so give the SQL
-  that existing databases need in the pull request.
+  rebuilds it. Schema and settings changes go there, and the SQL that existing databases need
+  goes in `container/oracle/upgrade/<next version>_<topic>.sql`, named in the pull request.
 - Accounts (Keycloak `test-realm`, password `password`): `tbrown` and `jdoe` (`sim-admin`),
   `jsmith` (`acg`, can edit software and apply syncs, but not the setup pages), and `jadams`
   (`sim-user`, read only). `container/keycloak/initdb.d/03_customize.sh` adds the `acg` role and

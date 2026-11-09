@@ -76,7 +76,7 @@ Wildfly must be pre-configured before the first deployment of the app. The [wild
 Uses the [Smoothness Environment Variables](https://github.com/JeffersonLab/smoothness#environment-variables).
 
 ### Database
-This application requires an Oracle 19+ database with the following [schema](https://github.com/JeffersonLab/sim/tree/main/container/oracle/initdb.d) installed.   The application server hosting this app must also be configured with a JNDI datasource.
+This application requires an Oracle 19+ database with the following [schema](https://github.com/JeffersonLab/sim/tree/main/container/oracle/initdb.d) installed.   A release that changes the schema comes with a script for existing databases in [container/oracle/upgrade](https://github.com/JeffersonLab/sim/tree/main/container/oracle/upgrade), named for the release; the release notes say when one is needed.   The application server hosting this app must also be configured with a JNDI datasource.
 
 ## Build
 This project is built with [Java 21](https://adoptium.net/) (compiled to Java 17 bytecode), and uses the [Gradle 9](https://gradle.org/) build tool to automatically download dependencies and build the project from source:

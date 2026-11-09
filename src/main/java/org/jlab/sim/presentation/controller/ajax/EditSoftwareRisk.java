@@ -31,6 +31,7 @@ public class EditSoftwareRisk extends HttpServlet {
   @Serial private static final long serialVersionUID = 1L;
 
   private static final Logger logger = Logger.getLogger(EditSoftwareRisk.class.getName());
+  private static final String FAIL = "fail";
 
   @EJB SoftwareService softwareService;
 
@@ -52,6 +53,15 @@ public class EditSoftwareRisk extends HttpServlet {
       Integer gapsValue = ParamConverter.convertInteger(request, "gaps");
       Integer esotericismValue = ParamConverter.convertInteger(request, "esotericism");
 
+      if (impactValue == null
+          || rateValue == null
+          || difficultyValue == null
+          || complexityValue == null
+          || gapsValue == null
+          || esotericismValue == null) {
+        throw new UserFriendlyException("Each risk input must be set");
+      }
+
       OpsImpact impact = OpsImpact.fromValue(impactValue);
       PastDowntimeRate rate = PastDowntimeRate.fromValue(rateValue);
       DebugTestDifficulty difficulty = DebugTestDifficulty.fromValue(difficultyValue);
@@ -59,17 +69,33 @@ public class EditSoftwareRisk extends HttpServlet {
       DocumentationGaps gaps = DocumentationGaps.fromValue(gapsValue);
       Esotericism esotericism = Esotericism.fromValue(esotericismValue);
 
-      // Since name is key in other repos, must delete and add new for name changes.
+      Integer overrideValue = ParamConverter.convertInteger(request, "levelOverride");
+      ControlLevel override = overrideValue == null ? null : ControlLevel.fromValue(overrideValue);
+      String note = request.getParameter("levelNote");
+
       softwareService.editSoftwareRisk(
-          softwareId, impact, rate, difficulty, complexity, gaps, esotericism);
+          softwareId,
+          impact,
+          rate,
+          difficulty,
+          complexity,
+          gaps,
+          esotericism,
+          override,
+          note,
+          request.getRemoteUser());
     } catch (UserFriendlyException e) {
-      stat = "fail";
+      stat = FAIL;
       error = "Unable to edit Software Risk: " + e.getUserMessage();
     } catch (EJBAccessException e) {
-      stat = "fail";
+      stat = FAIL;
       error = "Unable to edit Software: Not authenticated / authorized (do you need to re-login?)";
+    } catch (IllegalArgumentException e) {
+      // Such as a value that isn't a number, or not one of a level's
+      stat = FAIL;
+      error = "Unable to edit Software Risk: " + e.getMessage();
     } catch (RuntimeException e) {
-      stat = "fail";
+      stat = FAIL;
       error = "Unable to edit Software Risk";
       logger.log(Level.SEVERE, "Unable to edit Software Risk", e);
       Throwable rootCause = ExceptionUtil.getRootCause(e);

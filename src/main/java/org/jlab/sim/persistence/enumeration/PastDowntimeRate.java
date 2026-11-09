@@ -1,11 +1,11 @@
 package org.jlab.sim.persistence.enumeration;
 
 public enum PastDowntimeRate {
-  Marginal(1),
-  Low(2),
-  Medium(3),
-  High(4),
-  Critical(5);
+  Rare(1),
+  Few(2),
+  Some(3),
+  Many(4),
+  Frequent(5);
 
   private int value;
 
