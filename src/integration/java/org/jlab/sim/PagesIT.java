@@ -47,6 +47,7 @@ class PagesIT {
     "/directory?offset=-1, 400",
     "/directory?offset=abc, 400",
     "/directory?max=abc, 400",
+    "/directory?repositoryId=999999, 400",
     "/repositories/sync, 400",
     "/repositories/sync?repositoryId=, 400",
     "/repositories/sync?repositoryId=abc, 400",
