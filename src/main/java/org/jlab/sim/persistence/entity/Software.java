@@ -66,11 +66,32 @@ public class Software implements Serializable {
   @Column(name = "OPS_IMPACT", nullable = false)
   private OpsImpact impact;
 
-  @Column(name = "DOWN_PROBABILITY", updatable = false, insertable = false)
-  private DowntimeProbability probability;
+  /** Derived by the database from impact and complexity; see 02_ddl.sql */
+  @Column(name = "CONTROL_LEVEL", updatable = false, insertable = false)
+  private ControlLevel controlLevel;
 
-  @Column(name = "DOWNTIME_RISK", updatable = false, insertable = false)
-  private DowntimeRisk risk;
+  @Column(name = "CONTROL_LEVEL_OVERRIDE", nullable = true)
+  private ControlLevel controlLevelOverride;
+
+  @Size(max = 512)
+  @Column(name = "CONTROL_LEVEL_NOTE", nullable = true, length = 512)
+  private String controlLevelNote;
+
+  /** Derived by the database as the worst of the five risk factors; see 02_ddl.sql */
+  @Column(name = "FRAGILITY", updatable = false, insertable = false)
+  private Fragility fragility;
+
+  /** Derived by the database from impact and fragility; see 02_ddl.sql */
+  @Column(name = "ATTENTION", updatable = false, insertable = false)
+  private Attention attention;
+
+  @Size(max = 64)
+  @Column(name = "ASSESSED_BY", nullable = true, length = 64)
+  private String assessedBy;
+
+  @Column(name = "ASSESSED_DATE", nullable = true)
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date assessedDate;
 
   @NotNull
   @Column(name = "PAST_DOWNTIME", nullable = false)
@@ -127,7 +148,7 @@ public class Software implements Serializable {
     this.esotericism = Esotericism.Medium;
     this.difficulty = DebugTestDifficulty.Medium;
     this.gaps = DocumentationGaps.Medium;
-    this.rate = PastDowntimeRate.Medium;
+    this.rate = PastDowntimeRate.Some;
     this.impact = OpsImpact.Medium;
   }
 
@@ -248,12 +269,59 @@ public class Software implements Serializable {
     this.impact = impact;
   }
 
-  public DowntimeProbability getProbability() {
-    return probability;
+  /** The control level the database derived from impact and complexity, before any override. */
+  public ControlLevel getControlLevel() {
+    return controlLevel;
   }
 
-  public DowntimeRisk getRisk() {
-    return risk;
+  public ControlLevel getControlLevelOverride() {
+    return controlLevelOverride;
+  }
+
+  public void setControlLevelOverride(ControlLevel controlLevelOverride) {
+    this.controlLevelOverride = controlLevelOverride;
+  }
+
+  public String getControlLevelNote() {
+    return controlLevelNote;
+  }
+
+  public void setControlLevelNote(String controlLevelNote) {
+    this.controlLevelNote = controlLevelNote;
+  }
+
+  /** The control level that applies: the override if there is one, else the derived level. */
+  public ControlLevel getEffectiveControlLevel() {
+    return controlLevelOverride != null ? controlLevelOverride : controlLevel;
+  }
+
+  public Fragility getFragility() {
+    return fragility;
+  }
+
+  public Attention getAttention() {
+    return attention;
+  }
+
+  public String getAssessedBy() {
+    return assessedBy;
+  }
+
+  public void setAssessedBy(String assessedBy) {
+    this.assessedBy = assessedBy;
+  }
+
+  public Date getAssessedDate() {
+    return assessedDate;
+  }
+
+  public void setAssessedDate(Date assessedDate) {
+    this.assessedDate = assessedDate;
+  }
+
+  /** Whether somebody has assessed the risk, as opposed to the inputs still being the defaults. */
+  public boolean isAssessed() {
+    return assessedDate != null;
   }
 
   public PastDowntimeRate getRate() {

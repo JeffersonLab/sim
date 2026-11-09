@@ -85,6 +85,58 @@
                                 <div>(excluded by default)</div>
                             </div>
                         </li>
+                        <li>
+                            <div class="li-key">
+                                <label for="level-select">SQA Level</label>
+                            </div>
+                            <div class="li-value">
+                                <select id="level-select" name="level">
+                                    <option value="">&nbsp;</option>
+                                    <c:forEach items="${levelList}" var="opt">
+                                        <option value="${opt.value}"${param.level eq opt.value ? ' selected="selected"' : ''}>
+                                            <c:out value="${opt.value} ${opt}"/></option>
+                                    </c:forEach>
+                                </select>
+                                <div>(the override where there is one)</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="li-key">
+                                <label for="attention-select">Attention</label>
+                            </div>
+                            <div class="li-value">
+                                <select id="attention-select" name="attention">
+                                    <option value="">&nbsp;</option>
+                                    <c:forEach items="${attentionList}" var="opt">
+                                        <option value="${opt.value}"${param.attention eq opt.value ? ' selected="selected"' : ''}>
+                                            <c:out value="${opt}"/></option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="li-key">
+                                <label for="fragile-select">Risk Factors</label>
+                            </div>
+                            <div class="li-value">
+                                <select id="fragile-select" name="fragile">
+                                    <option value="">&nbsp;</option>
+                                    <option value="Y"${param.fragile eq 'Y' ? ' selected="selected"' : ''}>Any factor &#8805; 4</option>
+                                </select>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="li-key">
+                                <label for="assessed-select">Assessed</label>
+                            </div>
+                            <div class="li-value">
+                                <select id="assessed-select" name="assessed">
+                                    <option value="">&nbsp;</option>
+                                    <option value="N"${param.assessed eq 'N' ? ' selected="selected"' : ''}>Not assessed</option>
+                                    <option value="Y"${param.assessed eq 'Y' ? ' selected="selected"' : ''}>Assessed</option>
+                                </select>
+                            </div>
+                        </li>
                     </ul>
                 </fieldset>
             </div>
@@ -108,7 +160,8 @@
             <th>Description</th>
             <th>Repo</th>
             <th>Maintainers</th>
-            <th>Downtime Risk</th>
+            <th>SQA Level</th>
+            <th>Attention</th>
         </tr>
         </thead>
         <tbody>
@@ -123,8 +176,13 @@
                 data-repo-id="${software.repository.repositoryId}"
                 data-maintainer-csv="${fn:escapeXml(software.maintainerUsernameCsv)}"
                 data-url="${fn:escapeXml(software.homeUrl)}"
-                data-risk="${fn:escapeXml(software.risk.value)}"
-                data-probability="${fn:escapeXml(software.probability.value)}"
+                data-level="${software.controlLevel.value}"
+                data-level-override="${software.controlLevelOverride.value}"
+                data-level-note="${fn:escapeXml(software.controlLevelNote)}"
+                data-fragility="${software.fragility.value}"
+                data-attention="${software.attention.value}"
+                data-assessed-by="${fn:escapeXml(software.assessedBy)}"
+                data-assessed-date="<fmt:formatDate value="${software.assessedDate}" pattern="dd-MMM-yyyy HH:mm"/>"
                 data-impact="${fn:escapeXml(software.impact.value)}"
                 data-rate="${fn:escapeXml(software.rate.value)}"
                 data-difficulty="${fn:escapeXml(software.difficulty.value)}"
@@ -157,8 +215,16 @@
                 <td><c:out value="${software.repository.name}"/></td>
                 <td><c:out value="${software.maintainerUsernameCsv}"/></td>
                 <td>
-                    <a class="risk-dialog-opener" href="#"><c:out value="${software.risk}"/>
-                        (<c:out value="${software.risk.value}"/>)</a>
+                    <a class="risk-dialog-opener${software.assessed ? '' : ' not-assessed'}" href="#"><c:choose>
+                        <c:when test="${software.assessed}"><c:out value="${software.effectiveControlLevel.value} ${software.effectiveControlLevel}"/><c:if test="${not empty software.controlLevelOverride}"><span class="override-marker" title="Overridden from ${software.controlLevel.value} ${software.controlLevel}: ${fn:escapeXml(software.controlLevelNote)}">*</span></c:if></c:when>
+                        <c:otherwise>Not assessed</c:otherwise>
+                    </c:choose></a>
+                </td>
+                <td>
+                    <a class="risk-dialog-opener${software.assessed ? '' : ' not-assessed'}" href="#"><c:choose>
+                        <c:when test="${software.assessed}"><c:out value="${software.attention}"/></c:when>
+                        <c:otherwise>Not assessed</c:otherwise>
+                    </c:choose></a>
                 </td>
             </tr>
         </c:forEach>
@@ -178,122 +244,165 @@
         </select>
     </div>
 </section>
-<div class="dialog" id="risk-dialog" title="Downtime Risk Assessment">
+<div class="dialog" id="risk-dialog" title="Risk &amp; SQA Assessment">
     <section>
         <input type="hidden" id="risk-software-id"/>
-        <a style="float: right;" target="_blank" href="https://acgdocs.acc.jlab.org/en/software-directory-guidance#software-risk-guidance">Guidance</a>
-        <ul class="key-value-list">
+        <div class="dialog-links">
+            <a target="_blank" href="https://pages.jlab.org/acc/iac/docs/sqap/04-software-development-life-cycle/#43-software-control-levels">SQAP &sect;4.3</a>
+            |
+            <a target="_blank" href="https://acgdocs.acc.jlab.org/en/software-directory-guidance#software-risk-guidance">Guidance</a>
+        </div>
+        <select id="level-labels" style="display: none;">
+            <c:forEach items="${levelList}" var="opt">
+                <option value="${opt.value}"><c:out value="${opt.value} ${opt}"/></option>
+            </c:forEach>
+        </select>
+        <select id="attention-labels" style="display: none;">
+            <c:forEach items="${attentionList}" var="opt">
+                <option value="${opt.value}"><c:out value="${opt}"/></option>
+            </c:forEach>
+        </select>
+        <select id="fragility-labels" style="display: none;">
+            <c:forEach items="${fragilityList}" var="opt">
+                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+            </c:forEach>
+        </select>
+        <fieldset>
+            <legend>SQA Control Level = lookup(Impact, Complexity)</legend>
+            <ul class="key-value-list">
                 <li>
                     <div class="li-key">
-                        <label>Risk Score</label>
+                        <label>Derived Level</label>
                     </div>
                     <div class="li-value">
-                        <span id="risk-score-visible"></span>
-                        <select id="risk-score" style="display: none;">
-                            <c:forEach items="${riskList}" var="opt">
+                        <span id="level-visible"></span>
+                    </div>
+                </li>
+                <li>
+                    <div class="li-key">
+                        <label for="level-override">Override</label>
+                    </div>
+                    <div class="li-value">
+                        <select id="level-override">
+                            <option value="">None</option>
+                            <c:forEach items="${levelList}" var="opt">
+                                <option value="${opt.value}"><c:out value="${opt.value} ${opt}"/></option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <div class="li-key">
+                        <label for="level-note">Rationale</label>
+                    </div>
+                    <div class="li-value">
+                        <textarea id="level-note" maxlength="512" placeholder="Required with an override: the documented exception the SQAP allows"></textarea>
+                    </div>
+                </li>
+            </ul>
+        </fieldset>
+        &nbsp;
+        <fieldset>
+            <legend>Attention = lookup(Impact, Fragility)</legend>
+            <ul class="key-value-list">
+                <li>
+                    <div class="li-key">
+                        <label>Fragility</label>
+                    </div>
+                    <div class="li-value">
+                        <span id="fragility-visible"></span>
+                        <div class="limiting-factors">Worst risk factor: <span id="limiting-factors"></span></div>
+                    </div>
+                </li>
+                <li>
+                    <div class="li-key">
+                        <label>Attention</label>
+                    </div>
+                    <div class="li-value">
+                        <span id="attention-visible"></span>
+                    </div>
+                </li>
+            </ul>
+        </fieldset>
+        &nbsp;
+        <fieldset>
+            <legend>Risk Inputs</legend>
+            <ul class="key-value-list">
+                <li>
+                    <div class="li-key">
+                        <label for="impact">Ops Impact</label>
+                    </div>
+                    <div class="li-value">
+                        <select id="impact">
+                            <c:forEach items="${impactList}" var="opt">
+                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <div class="li-key">
+                        <label for="complexity">Code Complexity</label>
+                    </div>
+                    <div class="li-value">
+                        <select id="complexity">
+                            <c:forEach items="${complexityList}" var="opt">
+                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <div class="li-key">
+                        <label for="rate">Past Downtime Rate</label>
+                    </div>
+                    <div class="li-value">
+                        <select id="rate">
+                            <c:forEach items="${rateList}" var="opt">
+                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <div class="li-key">
+                        <label for="difficulty">Debug/Test Difficulty</label>
+                    </div>
+                    <div class="li-value">
+                        <select id="difficulty">
+                            <c:forEach items="${difficultyList}" var="opt">
+                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <div class="li-key">
+                        <label for="gaps">Documentation Gaps</label>
+                    </div>
+                    <div class="li-value">
+                        <select id="gaps">
+                            <c:forEach items="${gapList}" var="opt">
+                                <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
+                            </c:forEach>
+                        </select>
+                    </div>
+                </li>
+                <li>
+                    <div class="li-key">
+                        <label for="esotericism">Esotericism</label>
+                    </div>
+                    <div class="li-value">
+                        <select id="esotericism">
+                            <c:forEach items="${esotericismList}" var="opt">
                                 <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
                             </c:forEach>
                         </select>
                     </div>
                 </li>
             </ul>
-            <fieldset>
-                <legend>Risk = Impact + Probability</legend>
-                <ul class="key-value-list">
-                    <li>
-                        <div class="li-key">
-                            <label>Ops Impact</label>
-                        </div>
-                        <div class="li-value">
-                            <select id="impact">
-                                <c:forEach items="${impactList}" var="opt">
-                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="li-key">
-                            <label>Downtime Probability</label>
-                        </div>
-                        <div class="li-value">
-                            <span id="probability-visible"></span>
-                            <select id="probability" style="display: none;">
-                                <c:forEach items="${probabilityList}" var="opt">
-                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </li>
-                </ul>
-                <div>Probability = AVG(Risk Factors)</div>
-            </fieldset>
-            &nbsp;
-            <fieldset>
-                <legend>Risk Factors</legend>
-                <ul class="key-value-list">
-                    <li>
-                        <div class="li-key">
-                            <label>Past Downtime Rate</label>
-                        </div>
-                        <div class="li-value">
-                            <select id="rate">
-                                <c:forEach items="${rateList}" var="opt">
-                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="li-key">
-                            <label>Debug/Test Difficulty</label>
-                        </div>
-                        <div class="li-value">
-                            <select id="difficulty">
-                                <c:forEach items="${difficultyList}" var="opt">
-                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="li-key">
-                            <label>Code Complexity</label>
-                        </div>
-                        <div class="li-value">
-                            <select id="complexity">
-                                <c:forEach items="${complexityList}" var="opt">
-                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="li-key">
-                            <label>Documentation Gaps</label>
-                        </div>
-                        <div class="li-value">
-                            <select id="gaps">
-                                <c:forEach items="${gapList}" var="opt">
-                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="li-key">
-                            <label>Esotericism</label>
-                        </div>
-                        <div class="li-value">
-                            <select id="esotericism">
-                                <c:forEach items="${esotericismList}" var="opt">
-                                    <option value="${opt.value}"><c:out value="${opt} (${opt.value})"/></option>
-                                </c:forEach>
-                            </select>
-                        </div>
-                    </li>
-                </ul>
-            </fieldset>
+        </fieldset>
+        <div id="assessment-footer"></div>
         <div class="dialog-button-panel">
             <button id="risk-update-button" type="button">Update</button>
             <button class="dialog-close-button" type="button">OK</button>

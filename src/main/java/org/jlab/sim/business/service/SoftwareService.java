@@ -8,6 +8,8 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import org.jlab.sim.persistence.entity.Repository;
@@ -24,6 +26,7 @@ public class SoftwareService extends JPAService<Software> {
 
   static final String ACG_ROLE = "acg";
   static final String ADMIN_ROLE = "sim-admin";
+  private static final String ASSESSED_DATE = "assessedDate";
 
   public SoftwareService() {
     super(Software.class);
@@ -133,7 +136,10 @@ public class SoftwareService extends JPAService<Software> {
       DebugTestDifficulty difficulty,
       CodeComplexity complexity,
       DocumentationGaps gaps,
-      Esotericism esotericism)
+      Esotericism esotericism,
+      ControlLevel controlLevelOverride,
+      String controlLevelNote,
+      String assessedBy)
       throws UserFriendlyException {
 
     if (softwareId == null) {
@@ -146,12 +152,38 @@ public class SoftwareService extends JPAService<Software> {
       throw new UserFriendlyException("software not found with id: " + softwareId);
     }
 
+    if (impact == null
+        || rate == null
+        || difficulty == null
+        || complexity == null
+        || gaps == null
+        || esotericism == null) {
+      throw new UserFriendlyException("Each risk input must be set");
+    }
+
+    if (controlLevelOverride != null && (controlLevelNote == null || controlLevelNote.isBlank())) {
+      throw new UserFriendlyException("A control level override needs a rationale");
+    }
+
+    if (controlLevelNote != null && controlLevelNote.length() > 512) {
+      throw new UserFriendlyException("The rationale must be 512 characters or fewer");
+    }
+
+    if (assessedBy == null || assessedBy.isBlank()) {
+      throw new UserFriendlyException("The assessing user is unknown");
+    }
+
     software.setImpact(impact);
     software.setRate(rate);
     software.setDifficulty(difficulty);
     software.setComplexity(complexity);
     software.setGaps(gaps);
     software.setEsotericism(esotericism);
+    software.setControlLevelOverride(controlLevelOverride);
+    // The rationale belongs to the override
+    software.setControlLevelNote(controlLevelOverride == null ? null : controlLevelNote.trim());
+    software.setAssessedBy(assessedBy.length() > 64 ? assessedBy.substring(0, 64) : assessedBy);
+    software.setAssessedDate(new Date());
 
     edit(software);
   }
@@ -189,6 +221,10 @@ public class SoftwareService extends JPAService<Software> {
       SoftwareType type,
       String[] topicNameArray,
       Include includeArchived,
+      ControlLevel level,
+      Attention attention,
+      boolean fragile,
+      Boolean assessed,
       int offset,
       int max) {
     CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
@@ -206,7 +242,11 @@ public class SoftwareService extends JPAService<Software> {
             repository,
             type,
             topicNameArray,
-            includeArchived);
+            includeArchived,
+            level,
+            attention,
+            fragile,
+            assessed);
 
     if (!filters.isEmpty()) {
       cq.where(cb.and(filters.toArray(new Predicate[] {})));
@@ -233,7 +273,11 @@ public class SoftwareService extends JPAService<Software> {
       Repository repository,
       SoftwareType type,
       String[] topicNameArray,
-      Include includeArchived) {
+      Include includeArchived,
+      ControlLevel level,
+      Attention attention,
+      boolean fragile,
+      Boolean assessed) {
     List<Predicate> filters = new ArrayList<>();
 
     if (softwareName != null && !softwareName.isEmpty()) {
@@ -274,6 +318,29 @@ public class SoftwareService extends JPAService<Software> {
       filters.add(cb.equal(root.get("archived"), true));
     } // else Include.YES, which means don't filter at all
 
+    // Unassessed software shows no level, attention or fragility, so these filters leave it out
+    if (level != null) {
+      // The override, where there is one, is the level that applies
+      filters.add(
+          cb.equal(cb.coalesce(root.get("controlLevelOverride"), root.get("controlLevel")), level));
+      filters.add(cb.isNotNull(root.get(ASSESSED_DATE)));
+    }
+
+    if (attention != null) {
+      filters.add(cb.equal(root.get("attention"), attention));
+      filters.add(cb.isNotNull(root.get(ASSESSED_DATE)));
+    }
+
+    if (fragile) {
+      filters.add(root.get("fragility").in(Arrays.asList(Fragility.High, Fragility.Fragile)));
+      filters.add(cb.isNotNull(root.get(ASSESSED_DATE)));
+    }
+
+    if (assessed != null) {
+      filters.add(
+          assessed ? cb.isNotNull(root.get(ASSESSED_DATE)) : cb.isNull(root.get(ASSESSED_DATE)));
+    }
+
     return filters;
   }
 
@@ -284,7 +351,11 @@ public class SoftwareService extends JPAService<Software> {
       Repository repository,
       SoftwareType type,
       String[] topicNameArray,
-      Include includeArchived) {
+      Include includeArchived,
+      ControlLevel level,
+      Attention attention,
+      boolean fragile,
+      Boolean assessed) {
     CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
     CriteriaQuery<Long> cq = cb.createQuery(Long.class);
     Root<Software> root = cq.from(Software.class);
@@ -299,7 +370,11 @@ public class SoftwareService extends JPAService<Software> {
             repository,
             type,
             topicNameArray,
-            includeArchived);
+            includeArchived,
+            level,
+            attention,
+            fragile,
+            assessed);
 
     if (!filters.isEmpty()) {
       cq.where(cb.and(filters.toArray(new Predicate[] {})));

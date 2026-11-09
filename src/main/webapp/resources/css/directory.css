@@ -57,3 +57,28 @@ td:nth-child(5) {
     float: left;
     margin-left: 0;
 }
+.not-assessed {
+    font-style: italic;
+    color: #666;
+}
+.override-marker {
+    font-weight: bold;
+    cursor: help;
+}
+.dialog-links {
+    float: right;
+}
+.limiting-factors {
+    color: #666;
+    font-size: smaller;
+}
+#level-note {
+    width: 400px;
+    height: 60px;
+    resize: none;
+}
+#assessment-footer {
+    margin-top: 1em;
+    color: #666;
+    font-size: smaller;
+}

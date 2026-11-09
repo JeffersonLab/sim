@@ -1,11 +1,11 @@
 package org.jlab.sim.persistence.enumeration;
 
 public enum Esotericism {
-  Marginal(1),
+  Common(1),
   Low(2),
   Medium(3),
   High(4),
-  Critical(5);
+  Esoteric(5);
 
   private int value;
 

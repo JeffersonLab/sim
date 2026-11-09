@@ -62,6 +62,10 @@ public class Directory extends HttpServlet {
     SoftwareType type;
     BigInteger repositoryId;
     Include includeArchived;
+    ControlLevel level;
+    Attention attention;
+    boolean fragile;
+    Boolean assessed;
     int offset;
     Integer maxPerPage;
 
@@ -69,6 +73,10 @@ public class Directory extends HttpServlet {
       type = Parameter.convertSoftwareType(request, "type");
       repositoryId = ParamConverter.convertBigInteger(request, "repositoryId");
       includeArchived = Parameter.convertInclude(request, "archived");
+      level = Parameter.convertControlLevel(request, "level");
+      attention = Parameter.convertAttention(request, "attention");
+      fragile = Boolean.TRUE.equals(Parameter.convertYesNo(request, "fragile"));
+      assessed = Parameter.convertYesNo(request, "assessed");
       offset = ParamUtil.convertAndValidateNonNegativeInt(request, "offset", 0);
       maxPerPage = ParamConverter.convertInteger(request, "max");
     } catch (IllegalArgumentException e) {
@@ -108,18 +116,41 @@ public class Directory extends HttpServlet {
             type,
             topicNameArray,
             includeArchived,
+            level,
+            attention,
+            fragile,
+            assessed,
             offset,
             maxPerPage);
 
     long totalRecords =
         softwareService.countList(
-            softwareName, username, repository, type, topicNameArray, includeArchived);
+            softwareName,
+            username,
+            repository,
+            type,
+            topicNameArray,
+            includeArchived,
+            level,
+            attention,
+            fragile,
+            assessed);
 
     Paginator paginator = new Paginator(totalRecords, offset, maxPerPage);
 
     String selectionMessage =
         createSelectionMessage(
-            paginator, softwareName, username, repository, type, topicNameArray, includeArchived);
+            paginator,
+            softwareName,
+            username,
+            repository,
+            type,
+            topicNameArray,
+            includeArchived,
+            level,
+            attention,
+            fragile,
+            assessed);
 
     List<Topic> topicList = topicService.getAll();
 
@@ -130,9 +161,10 @@ public class Directory extends HttpServlet {
     request.setAttribute("includeList", includeList);
     request.setAttribute("softwareList", softwareList);
     request.setAttribute("paginator", paginator);
-    request.setAttribute("riskList", Arrays.asList(DowntimeRisk.values()));
+    request.setAttribute("levelList", Arrays.asList(ControlLevel.values()));
+    request.setAttribute("attentionList", Arrays.asList(Attention.values()));
+    request.setAttribute("fragilityList", Arrays.asList(Fragility.values()));
     request.setAttribute("impactList", Arrays.asList(OpsImpact.values()));
-    request.setAttribute("probabilityList", Arrays.asList(DowntimeProbability.values()));
     request.setAttribute("rateList", Arrays.asList(PastDowntimeRate.values()));
     request.setAttribute("difficultyList", Arrays.asList(DebugTestDifficulty.values()));
     request.setAttribute("complexityList", Arrays.asList(CodeComplexity.values()));
@@ -157,7 +189,11 @@ public class Directory extends HttpServlet {
       Repository repository,
       SoftwareType type,
       String[] topicNameArray,
-      Include includeArchived) {
+      Include includeArchived,
+      ControlLevel level,
+      Attention attention,
+      boolean fragile,
+      Boolean assessed) {
     DecimalFormat formatter = new DecimalFormat("###,###");
 
     StringBuilder selectionMessage = new StringBuilder("All Software ");
@@ -186,6 +222,22 @@ public class Directory extends HttpServlet {
 
     if (includeArchived != null) {
       filters.add("Include Archived \"" + includeArchived + "\"");
+    }
+
+    if (level != null) {
+      filters.add("SQA Level \"" + level.getValue() + " " + level + "\"");
+    }
+
+    if (attention != null) {
+      filters.add("Attention \"" + attention + "\"");
+    }
+
+    if (fragile) {
+      filters.add("Any Risk Factor \u2265 4");
+    }
+
+    if (assessed != null) {
+      filters.add(assessed ? "Assessed" : "Not Assessed");
     }
 
     if (!filters.isEmpty()) {
