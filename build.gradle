@@ -48,9 +48,10 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:5.13.4')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // Wildfly provides JSON-P to the app; the tests need an implementation
+    testImplementation 'org.eclipse.parsson:parsson:1.1.9'
 
-    integrationImplementation 'org.eclipse.parsson:parsson:1.1.9',
-                              'org.jsoup:jsoup:1.21.2'
+    integrationImplementation 'org.jsoup:jsoup:1.21.2'
 }
 tasks.named('test') {
     useJUnitPlatform()
