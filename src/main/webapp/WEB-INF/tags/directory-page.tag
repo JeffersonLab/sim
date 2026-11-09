@@ -247,11 +247,6 @@
 <div class="dialog" id="risk-dialog" title="Risk &amp; SQA Assessment">
     <section>
         <input type="hidden" id="risk-software-id"/>
-        <div class="dialog-links">
-            <a target="_blank" href="https://pages.jlab.org/acc/iac/docs/sqap/latest/04-software-development-life-cycle/#43-software-control-levels">SQAP &sect;4.3</a>
-            |
-            <a target="_blank" href="https://acgdocs.acc.jlab.org/en/software-directory-guidance#software-risk-guidance">Guidance</a>
-        </div>
         <select id="level-labels" style="display: none;">
             <c:forEach items="${levelList}" var="opt">
                 <option value="${opt.value}"><c:out value="${opt.value} ${opt}"/></option>
@@ -269,6 +264,11 @@
         </select>
         <fieldset>
             <legend>SQA Control Level = lookup(Impact, Complexity)</legend>
+            <div class="dialog-links">
+                <a target="_blank" href="https://pages.jlab.org/acc/iac/docs/sqap/latest/04-software-development-life-cycle/#43-software-control-levels">SQAP &sect;4.3</a>
+                |
+                <a target="_blank" href="https://acgdocs.acc.jlab.org/en/software-directory-guidance#software-risk-guidance">Guidance</a>
+            </div>
             <ul class="key-value-list">
                 <li>
                     <div class="li-key">
