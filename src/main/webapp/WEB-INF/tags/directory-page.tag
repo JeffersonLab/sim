@@ -213,7 +213,7 @@
                     </ul>
                 </td>
                 <td><c:out value="${software.repository.name}"/></td>
-                <td><c:out value="${software.maintainerUsernameCsv}"/></td>
+                <td class="maintainers"><c:forEach items="${software.maintainerUsernameList}" var="username"><div><c:out value="${username}"/></div></c:forEach></td>
                 <td>
                     <a class="risk-dialog-opener${software.assessed ? '' : ' not-assessed'}" href="#"><c:choose>
                         <c:when test="${software.assessed}"><c:out value="${software.effectiveControlLevel.value} ${software.effectiveControlLevel}"/><c:if test="${not empty software.controlLevelOverride}"><span class="override-marker" title="Overridden from ${software.controlLevel.value} ${software.controlLevel}: ${fn:escapeXml(software.controlLevelNote)}">*</span></c:if></c:when>

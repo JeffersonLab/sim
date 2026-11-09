@@ -76,6 +76,10 @@ class SoftwareIT {
     assertEquals(TOPIC_A + "," + TOPIC_B, row.attr("data-topic-csv"), "topics, sorted");
     assertEquals("Added by an integration test", row.attr("data-description"));
     assertEquals("jdoe,tbrown", row.attr("data-maintainer-csv"));
+    assertEquals(
+        List.of("jdoe", "tbrown"),
+        row.select("td.maintainers > div").eachText(),
+        "maintainers, one per line");
     assertEquals("https://example.com/" + name, row.attr("data-url"));
     assertEquals(repositoryId, row.attr("data-repo-id"));
     assertEquals("N", row.attr("data-archived"));

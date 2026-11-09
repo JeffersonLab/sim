@@ -10,8 +10,8 @@ td:nth-child(2) {
 td:nth-child(3) {
     word-break: break-word;
 }
-td:nth-child(5) {
-    word-break: break-word;
+td.maintainers {
+    white-space: nowrap;
 }
 #row-form input[type="text"] {
     width: 400px;

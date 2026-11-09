@@ -71,7 +71,7 @@
                                     </c:forEach>
                                 </ul>
                             </td>
-                            <td><c:out value="${software.maintainerUsernameCsv}"/></td>
+                            <td class="maintainers"><c:forEach items="${software.maintainerUsernameList}" var="username"><div><c:out value="${username}"/></div></c:forEach></td>
                             <td>
                                 <c:out value="${software.homeUrl}"/>
                                 <div>Archived: ${software.archived}</div>
@@ -139,7 +139,7 @@
                                     </c:otherwise>
                                 </c:choose>
                             </td>
-                            <td><c:out value="${software.maintainerUsernameCsv}"/></td>
+                            <td class="maintainers"><c:forEach items="${software.maintainerUsernameList}" var="username"><div><c:out value="${username}"/></div></c:forEach></td>
                             <td>
                                 <c:choose>
                                     <c:when test="${not homeUrlSync || software.homeUrl eq remoteMap[software.name].homeUrl}">
@@ -185,7 +185,7 @@
                                     </c:forEach>
                                 </ul>
                             </td>
-                            <td><c:out value="${software.maintainerUsernameCsv}"/></td>
+                            <td class="maintainers"><c:forEach items="${software.maintainerUsernameList}" var="username"><div><c:out value="${username}"/></div></c:forEach></td>
                             <td>
                                 <c:out value="${software.homeUrl}"/>
                                 <div>Archived: ${software.archived}</div>
@@ -207,7 +207,7 @@
                                     </c:forEach>
                                 </ul>
                             </td>
-                            <td><c:out value="${software.maintainerUsernameCsv}"/></td>
+                            <td class="maintainers"><c:forEach items="${software.maintainerUsernameList}" var="username"><div><c:out value="${username}"/></div></c:forEach></td>
                             <td>
                                 <c:out value="${software.homeUrl}"/>
                                 <div>Archived: ${software.archived}</div>

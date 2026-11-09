@@ -1,6 +1,9 @@
 td {
     word-break: break-word;
 }
+td.maintainers {
+    white-space: nowrap;
+}
 td:nth-child(1) {
     width: 150px;
 }
