@@ -35,3 +35,4 @@ insert into SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('EMAIL_
 
 -- SIM Specific
 insert into SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('SECRET_STORE_FILE_PATH', 'secrets/sim.properties', 'STRING', 'Path to the secrets file.  If relative, then relative to app server user home directory', 'SECRETS', 1);
+insert into SETTING (KEY, VALUE, TYPE, DESCRIPTION, TAG, WEIGHT) values ('GITLAB_SYNC_EXCLUDE_CSV', 'acc/scratch', 'CSV', 'CSV of GitLab paths the GitLab sync leaves out, each a group (with its subgroups and projects) or a project, such as acc/scratch or acc/ops/demo.  Not case sensitive.  To leave out none, set a path no project has.', 'SYNC', 1);

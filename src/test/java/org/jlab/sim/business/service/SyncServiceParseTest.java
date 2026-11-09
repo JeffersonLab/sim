@@ -72,7 +72,7 @@ class SyncServiceParseTest {
         ]
         """;
 
-    List<Software> softwareList = SyncService.parseGitLabProjects(json, REPOSITORY);
+    List<Software> softwareList = SyncService.parseGitLabProjects(json, REPOSITORY, List.of());
 
     assertEquals(2, softwareList.size());
 
@@ -103,7 +103,7 @@ class SyncServiceParseTest {
         ]
         """;
 
-    List<Software> remoteList = SyncService.parseGitLabProjects(json, REPOSITORY);
+    List<Software> remoteList = SyncService.parseGitLabProjects(json, REPOSITORY, List.of());
 
     assertEquals("FSD library\nfor apps\nand scripts\n", remoteList.get(0).getDescription());
 
@@ -125,11 +125,57 @@ class SyncServiceParseTest {
   }
 
   @Test
+  void excludedGitLabGroupsAndProjectsAreLeftOut() throws Exception {
+    String json =
+        """
+        [
+          {"name": "fsdlib", "path_with_namespace": "acc/ops/fsdlib",
+           "web_url": "https://code.jlab.org/acc/ops/fsdlib", "description": null,
+           "topics": [], "archived": false},
+          {"name": "try-this", "path_with_namespace": "acc/scratch/try-this",
+           "web_url": "https://code.jlab.org/acc/scratch/try-this", "description": null,
+           "topics": [], "archived": false},
+          {"name": "deep", "path_with_namespace": "acc/Scratch/jdoe/deep",
+           "web_url": "https://code.jlab.org/acc/Scratch/jdoe/deep", "description": null,
+           "topics": [], "archived": false},
+          {"name": "scratchpad", "path_with_namespace": "acc/scratchpad",
+           "web_url": "https://code.jlab.org/acc/scratchpad", "description": null,
+           "topics": [], "archived": false},
+          {"name": "demo", "path_with_namespace": "acc/ops/demo",
+           "web_url": "https://code.jlab.org/acc/ops/demo", "description": null,
+           "topics": [], "archived": false}
+        ]
+        """;
+
+    List<String> excluded =
+        SyncService.excludedGitLabPaths(List.of("acc/scratch", " /ACC/ops/demo/ ", ""));
+
+    assertEquals(List.of("acc/scratch", "acc/ops/demo"), excluded, "trimmed and lower case");
+
+    List<Software> softwareList = SyncService.parseGitLabProjects(json, REPOSITORY, excluded);
+
+    assertEquals(
+        List.of("fsdlib", "scratchpad"),
+        softwareList.stream().map(Software::getName).toList(),
+        "a group's projects and subgroups are left out, as is a listed project, but not a"
+            + " sibling whose name starts the same");
+  }
+
+  @Test
+  void noExcludeSettingExcludesNothing() {
+    assertEquals(List.of(), SyncService.excludedGitLabPaths(null));
+    assertFalse(SyncService.isExcludedGitLabPath("acc/scratch/x", List.of()));
+    assertFalse(
+        SyncService.isExcludedGitLabPath(null, List.of("acc/scratch")),
+        "a project without a path is kept");
+  }
+
+  @Test
   void emptyResultsAreNoSoftware() throws Exception {
     assertEquals(
         List.of(),
         SyncService.parseGitHubSearch("{\"total_count\": 0, \"items\": []}", REPOSITORY));
-    assertEquals(List.of(), SyncService.parseGitLabProjects("[]", REPOSITORY));
+    assertEquals(List.of(), SyncService.parseGitLabProjects("[]", REPOSITORY, List.of()));
   }
 
   @Test
@@ -145,7 +191,7 @@ class SyncServiceParseTest {
               UserFriendlyException.class,
               () -> {
                 if (json.startsWith("[{")) {
-                  SyncService.parseGitLabProjects(json, REPOSITORY);
+                  SyncService.parseGitLabProjects(json, REPOSITORY, List.of());
                 } else {
                   SyncService.parseGitHubSearch(json, REPOSITORY);
                 }
@@ -156,7 +202,9 @@ class SyncServiceParseTest {
 
     assertThrows(
         UserFriendlyException.class,
-        () -> SyncService.parseGitLabProjects("{\"message\": \"401 Unauthorized\"}", REPOSITORY));
+        () ->
+            SyncService.parseGitLabProjects(
+                "{\"message\": \"401 Unauthorized\"}", REPOSITORY, List.of()));
   }
 
   @Test

@@ -4,8 +4,10 @@ import jakarta.annotation.security.PermitAll;
 import jakarta.ejb.Stateless;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
+import jakarta.json.JsonValue;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
@@ -22,6 +24,7 @@ import org.jlab.sim.persistence.enumeration.SoftwareType;
 import org.jlab.sim.persistence.view.SoftwareDiff;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.JPAService;
+import org.jlab.smoothness.business.service.SettingsService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attributes;
 import org.jsoup.nodes.Document;
@@ -38,6 +41,9 @@ public class SyncService extends JPAService<Software> {
   }
 
   static final String DESCRIPTION = "description";
+
+  /** The setting that lists the GitLab groups and projects a sync leaves out. */
+  static final String GITLAB_SYNC_EXCLUDE_CSV = "GITLAB_SYNC_EXCLUDE_CSV";
 
   @PermitAll
   public List<Software> fetch(Repository repository) throws UserFriendlyException {
@@ -65,8 +71,8 @@ public class SyncService extends JPAService<Software> {
     }
   }
 
-  private PaginatedResult paginatedGitLabQuery(String url, Repository repository)
-      throws UserFriendlyException {
+  private PaginatedResult paginatedGitLabQuery(
+      String url, Repository repository, List<String> excludedPaths) throws UserFriendlyException {
     String accessToken = SecretStore.get("GITLAB_ACCESS_TOKEN");
 
     if (accessToken == null) {
@@ -95,25 +101,84 @@ public class SyncService extends JPAService<Software> {
     }
 
     return new PaginatedResult(
-        parseGitLabProjects(response.body(), repository), nextUrl(response.headers()));
+        parseGitLabProjects(response.body(), repository, excludedPaths),
+        nextUrl(response.headers()));
   }
 
   /**
-   * Parses a page of GitLab's group projects API (a JSON array of projects).
+   * Parses a page of GitLab's group projects API (a JSON array of projects), leaving out the
+   * excluded projects.
    *
    * @param json The response body
    * @param repository The repository the software is in
+   * @param excludedPaths The excluded group and project paths, from {@link #excludedGitLabPaths}
    * @return The software, with its topics and archived state
    * @throws UserFriendlyException If the JSON doesn't parse or lacks a field
    */
-  static List<Software> parseGitLabProjects(String json, Repository repository)
-      throws UserFriendlyException {
+  static List<Software> parseGitLabProjects(
+      String json, Repository repository, List<String> excludedPaths) throws UserFriendlyException {
     try (StringReader stringReader = new StringReader(json);
         JsonReader jsonReader = Json.createReader(stringReader)) {
-      return parseProjects(jsonReader.readArray(), "web_url", repository);
+      JsonArrayBuilder included = Json.createArrayBuilder();
+
+      for (JsonValue value : jsonReader.readArray()) {
+        String path = value.asJsonObject().getString("path_with_namespace", null);
+
+        if (!isExcludedGitLabPath(path, excludedPaths)) {
+          included.add(value);
+        }
+      }
+
+      return parseProjects(included.build(), "web_url", repository);
     } catch (Exception e) {
       throw new UserFriendlyException("Could not parse JSON", e);
     }
+  }
+
+  /**
+   * The GitLab paths a sync leaves out, from the {@value #GITLAB_SYNC_EXCLUDE_CSV} setting: each a
+   * group, with its subgroups and projects, or a project, such as {@code acc/scratch}.
+   *
+   * @param csv The setting's values, or null if there is no such setting
+   * @return The paths, lower case and without surrounding slashes or blanks
+   */
+  static List<String> excludedGitLabPaths(List<String> csv) {
+    List<String> paths = new ArrayList<>();
+
+    if (csv != null) {
+      for (String entry : csv) {
+        String path = entry.trim().replaceAll("^/+|/+$", "").toLowerCase(Locale.US);
+
+        if (!path.isEmpty()) {
+          paths.add(path);
+        }
+      }
+    }
+
+    return paths;
+  }
+
+  /**
+   * Whether a GitLab project is excluded: its path is an excluded path or inside one.
+   *
+   * @param pathWithNamespace The project's full path, such as {@code acc/scratch/test}, or null
+   * @param excludedPaths The excluded paths, from {@link #excludedGitLabPaths}
+   * @return true if the project is excluded
+   */
+  static boolean isExcludedGitLabPath(String pathWithNamespace, List<String> excludedPaths) {
+    if (pathWithNamespace == null) {
+      return false;
+    }
+
+    String path = pathWithNamespace.toLowerCase(Locale.US);
+
+    for (String excluded : excludedPaths) {
+      if (path.equals(excluded) || path.startsWith(excluded + "/")) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -232,8 +297,11 @@ public class SyncService extends JPAService<Software> {
     String url =
         "https://code.jlab.org/api/v4/groups/acc/projects?include_subgroups=Y&per_page=100";
 
+    List<String> excludedPaths =
+        excludedGitLabPaths(SettingsService.cachedSettings.csv(GITLAB_SYNC_EXCLUDE_CSV));
+
     do {
-      PaginatedResult result = paginatedGitLabQuery(url, repository);
+      PaginatedResult result = paginatedGitLabQuery(url, repository, excludedPaths);
       softwareList.addAll(result.softwareList);
       url = result.nextUrl;
     } while (url != null);
