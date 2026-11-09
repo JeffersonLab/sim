@@ -13,7 +13,7 @@ RUN if [ -z "${CUSTOM_CRT_URL}" ] ; then echo "No custom cert needed"; else \
        && export OPTIONAL_CERT_ARG=--cert=/etc/ssl/certs/ca-certificates.crt \
     ; fi
 COPY . /app
-RUN cd /app && gradle build -x test --no-watch-fs $OPTIONAL_CERT_ARG
+RUN cd /app && ./gradlew build -x test --no-watch-fs $OPTIONAL_CERT_ARG
 
 ################## Stage 1
 FROM ${RUN_IMAGE} AS runner
@@ -28,7 +28,7 @@ RUN /server-setup.sh /app-setup.env wildfly_start_and_wait \
      && /server-setup.sh /app-setup.env config_email \
      && /server-setup.sh /app-setup.env wildfly_reload \
      && /server-setup.sh /app-setup.env wildfly_stop \
-     && rm -rf /opt/wildfly/current/standalone/configuration/standalone_xml_history \
+     && rm -rf /opt/wildfly/current/standalone/configuration/standalone_xml_history
 USER dev
 COPY --from=builder /app/build/libs/* /opt/wildfly/current/standalone/deployments
 
