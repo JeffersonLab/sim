@@ -38,6 +38,26 @@ class PagesIT {
     assertTrue(page.title().startsWith("SIM - "), "title: " + page.title());
   }
 
+  @ParameterizedTest
+  @CsvSource({
+    "/directory?type=bogus, 400",
+    "/directory?type=lib, 400",
+    "/directory?repositoryId=abc, 400",
+    "/directory?archived=bogus, 400",
+    "/directory?offset=-1, 400",
+    "/directory?offset=abc, 400",
+    "/directory?max=abc, 400",
+    "/repositories/sync, 400",
+    "/repositories/sync?repositoryId=, 400",
+    "/repositories/sync?repositoryId=abc, 400",
+    "/repositories/sync?repositoryId=999999, 404"
+  })
+  void pageRejectsBadParameter(String path, int status) throws Exception {
+    HttpResponse<String> response = Sim.get(path, null);
+
+    assertEquals(status, response.statusCode(), path);
+  }
+
   @Test
   void rootRedirectsToDirectory() throws Exception {
     HttpResponse<String> response = Sim.get("/", null);
