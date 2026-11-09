@@ -2,41 +2,46 @@ services:
   oracle:
     image: gvenzl/oracle-xe:21.3.0
     hostname: oracle
-    container_name: sim-oracle
     ports:
-      - "1521:1521"
-      - "5500:5500"
+      - "127.0.0.1:${SIM_ORACLE_PORT:-1521}:1521"
+      - "127.0.0.1:${SIM_ORACLE_EM_PORT:-5500}:5500"
     environment:
       ORACLE_PASSWORD: testing
       TZ: 'America/New_York'
     volumes:
       - ./container/oracle/initdb.d:/container-entrypoint-initdb.d
+    healthcheck:
+      # Healthy once the last initdb.d script has added the settings, not just when the database opens
+      test: ["CMD-SHELL", "echo 'select count(*) from setting;' | sqlplus -s SIM_OWNER/password@//localhost/xepdb1 | grep -qE '^[[:space:]]*[1-9]'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 5m
+      start_interval: 5s
 
   keycloak:
     image: jeffersonlab/keycloak:2.6.0
     hostname: keycloak
-    container_name: sim-keycloak
     ports:
-      - "8081:8080"
-      - "9991:9990"
+      - "127.0.0.1:${SIM_KEYCLOAK_PORT:-8081}:8080"
+      - "127.0.0.1:${SIM_KEYCLOAK_MANAGEMENT_PORT:-9991}:9990"
     environment:
-      KC_FRONTEND_URL: 'http://localhost:8081/auth'
+      KC_FRONTEND_URL: 'http://localhost:${SIM_KEYCLOAK_PORT:-8081}/auth'
       KC_BACKEND_URL: 'http://keycloak:8080/auth'
       KC_HTTP_RELATIVE_PATH: '/auth'
       KC_BOOTSTRAP_ADMIN_USERNAME: 'admin'
       KC_BOOTSTRAP_ADMIN_PASSWORD: 'admin'
       KC_CLIENT_NAME: sim
       KC_RESOURCE: sim
-      KC_REDIRECT_URIS: '["https://localhost:8443/sim/*"]'
+      KC_REDIRECT_URIS: '["https://localhost:${SIM_HTTPS_PORT:-8443}/sim/*"]'
     volumes:
       - ./container/keycloak/initdb.d/03_customize.sh:/container-entrypoint-initdb.d/03_customize.sh
 
   puppet:
     image: jeffersonlab/puppet-show:3.0.2
     hostname: puppet
-    container_name: sim-puppet
     ports:
-      - "3000:3000"
+      - "127.0.0.1:${SIM_PUPPET_PORT:-3000}:3000"
     privileged: true
     environment:
       TZ: 'America/New_York'
@@ -44,9 +49,8 @@ services:
   mailhog:
     image: mailhog/mailhog:v1.0.1
     hostname: mailhog
-    container_name: sim-mailhog
     ports:
-      - "1025:1025"
-      - "8025:8025"
+      - "127.0.0.1:${SIM_SMTP_PORT:-1025}:1025"
+      - "127.0.0.1:${SIM_MAILHOG_PORT:-8025}:8025"
     environment:
       TZ: 'America/New_York'

@@ -35,6 +35,26 @@ http://localhost:8080/sim
 
 **Note**: Login with demo username "tbrown" and password "password".
 
+**Note**: The app container starts once Oracle has loaded the schema and Keycloak has created the test realm and users, about a minute after `docker compose up`.
+
+### Ports
+The containers publish these ports on the host, listening only on its local address (127.0.0.1), so other computers can't reach the test database, accounts, and management consoles.  To use them from another computer, forward them over SSH, such as `ssh -N -L 8443:localhost:8443 -L 8081:localhost:8081 <host>` for the app and Keycloak.  If another project already uses some of them, or you run a second copy of the app, set other ports in a `.env` file next to `compose.yaml`, which Compose reads, or in the environment:
+
+| Variable                     | Default | Port of                   |
+|------------------------------|---------|---------------------------|
+| SIM_HTTPS_PORT               | 8443    | sim (HTTPS)               |
+| SIM_HTTP_PORT                | 8080    | sim (HTTP)                |
+| SIM_MANAGEMENT_PORT          | 9990    | Wildfly management        |
+| SIM_KEYCLOAK_PORT            | 8081    | Keycloak                  |
+| SIM_KEYCLOAK_MANAGEMENT_PORT | 9991    | Keycloak management       |
+| SIM_ORACLE_PORT              | 1521    | Oracle                    |
+| SIM_ORACLE_EM_PORT           | 5500    | Oracle Enterprise Manager |
+| SIM_PUPPET_PORT              | 3000    | Puppet Show               |
+| SIM_SMTP_PORT                | 1025    | MailHog SMTP              |
+| SIM_MAILHOG_PORT             | 8025    | MailHog web UI            |
+
+Keycloak's login redirects and the app's links follow `SIM_KEYCLOAK_PORT` and `SIM_HTTPS_PORT`, and Wildfly listens for HTTPS on `SIM_HTTPS_PORT` inside the container too, so its redirects from HTTP to HTTPS reach it.  Compose names the containers, network, and images after the project's directory, such as `sim-oracle-1`, so a copy in another directory, such as a git worktree, gets its own.
+
 See: [Docker Compose Strategy](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c)
 
 ## Install

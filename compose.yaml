@@ -3,31 +3,39 @@ services:
     extends:
       file: deps.yaml
       service: oracle
-    container_name: sim-oracle
 
   keycloak:
     extends:
       file: deps.yaml
       service: keycloak
-    container_name: sim-keycloak
 
   puppet:
     extends:
       file: deps.yaml
       service: puppet
-    container_name: sim-puppet
 
   mailhog:
     extends:
       file: deps.yaml
       service: mailhog
-    container_name: sim-mailhog
 
   sim:
     hostname: sim
-    container_name: sim-dev
     user: dev
     ports:
-      - "8443:8443"
-      - "8080:8080"
-      - "9990:9990"
+      # Wildfly listens for HTTPS on the host's port, so its redirects to HTTPS (such as /sso's) reach it
+      - "127.0.0.1:${SIM_HTTPS_PORT:-8443}:${SIM_HTTPS_PORT:-8443}"
+      - "127.0.0.1:${SIM_HTTP_PORT:-8080}:8080"
+      - "127.0.0.1:${SIM_MANAGEMENT_PORT:-9990}:9990"
+    environment:
+      # The browser reaches Keycloak and the app on the host's ports
+      KEYCLOAK_FRONTEND_SERVER_URL: 'http://localhost:${SIM_KEYCLOAK_PORT:-8081}/auth'
+      FRONTEND_SERVER_URL: 'https://localhost:${SIM_HTTPS_PORT:-8443}'
+      PREPEND_JAVA_OPTS: '-Djboss.https.port=${SIM_HTTPS_PORT:-8443}'
+    depends_on:
+      # The app reads its settings from Oracle as it deploys, and a login before Keycloak's
+      # setup finishes gets a session without the user's roles
+      oracle:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy

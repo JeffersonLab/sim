@@ -9,10 +9,11 @@ project is, its settings, and how to set it up.
   Spotless, PMD and SpotBugs, so local checks match CI. Services: Oracle (ports 1521 and 5500),
   Keycloak (8081 and 9991), Puppet Show (3000), MailHog (1025 and 8025), and sim built from the
   working tree (8080, 8443 and 9990), all by `build.yaml`:
-  `docker compose -f build.yaml up -d --build`. The ports and container names (`sim-oracle`,
-  `sim-dev`, ...) are fixed, so only one stack runs per VM, and other projects (dtm, srm, ...)
-  use the same ports: check `ss -ltnp` and `docker ps` first, and if a port is taken, ask the
-  person you work with rather than stopping what holds it.
+  `docker compose -f build.yaml up -d --build --wait` (about a minute once the image is built).
+  Other projects (dtm, srm, ...) use the same default ports: check `ss -ltnp` and `docker ps`
+  first, and if a port is taken, set free ones in the worktree's `.env` (the `SIM_*_PORT`
+  variables in `README.md`, "Ports"); never stop what holds it. Compose names the containers
+  and volumes after the worktree's directory, so each worktree gets its own stack and data.
 - On every change, run `./gradlew build` (about 15 s cold, a second warm). It compiles for Java
   17, runs `spotlessCheck` (google-java-format; `./gradlew spotlessApply` formats), PMD and
   SpotBugs (`build/reports/spotbugs.html`; exclusions in `spotbugs-exclude.xml`), and builds
@@ -22,8 +23,9 @@ project is, its settings, and how to set it up.
   `./gradlew build` runs it; otherwise say how you checked the change.
 - Before opening a pull request, for a change to behavior or pages, rebuild and restart the app,
   since the container runs the image and not your working tree:
-  `docker compose -f build.yaml up -d --build sim`. Then check the change in a browser at
-  `http://localhost:8080/sim`, and look for errors in `docker compose -f build.yaml logs sim`.
+  `docker compose -f build.yaml up -d --build --wait sim`. Then check the change in a browser
+  at `https://localhost:8443/sim` (or your `SIM_HTTPS_PORT`), and look for errors in
+  `docker compose -f build.yaml logs sim`.
 - Test data: `container/oracle/initdb.d` builds the schema, default data and settings when the
   Oracle container is created. `docker compose -f build.yaml down -v` deletes it; the next `up`
   rebuilds it. Schema and settings changes go there; there are no migrations, so give the SQL
