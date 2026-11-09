@@ -18,6 +18,15 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.compilerArgs += ["-Xlint:deprecation", "-Xlint:unchecked"]
 }
+sourceSets {
+    integration {
+        java.srcDir "${projectDir}/src/integration/java"
+    }
+}
+configurations {
+    integrationImplementation.extendsFrom testImplementation
+    integrationRuntimeOnly.extendsFrom testRuntimeOnly
+}
 repositories {
     mavenCentral()
 }
@@ -35,6 +44,34 @@ dependencies {
     providedCompile 'jakarta.platform:jakarta.jakartaee-api:10.0.0',
                     'org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1',
                     'org.hibernate:hibernate-core:6.6.19.Final'
+
+    testImplementation platform('org.junit:junit-bom:5.13.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    integrationImplementation 'org.eclipse.parsson:parsson:1.1.9',
+                              'org.jsoup:jsoup:1.21.2'
+}
+tasks.named('test') {
+    useJUnitPlatform()
+}
+tasks.register('integrationTest', Test) {
+    description = 'Runs integration tests against a running app (docker compose -f build.yaml up).'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.integration.output.classesDirs
+    classpath = sourceSets.integration.runtimeClasspath
+
+    useJUnitPlatform()
+    shouldRunAfter tasks.named('test')
+
+    // The services may still be starting, and they are not up to date with the source files
+    outputs.upToDateWhen { false }
+
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat = "full"
+    }
 }
 tasks.named('jar') {
     enabled = false
@@ -61,6 +98,8 @@ spotless {
 pmd {
     // Pinned, so that a Gradle upgrade doesn't change the rules the build enforces
     toolVersion = '7.13.0'
+    // The app's code; its rules for tests, such as one assertion per test, don't suit these tests
+    sourceSets = [sourceSets.main]
     consoleOutput = true
     ruleSets = [
             "category/java/errorprone.xml",
@@ -89,6 +128,12 @@ tasks.spotbugsMain {
     reports.create("text") {
         required = true
         outputLocation = file("$buildDir/reports/spotbugs.text")
+    }
+}
+// Like PMD, SpotBugs checks the app's code, not the tests
+['spotbugsTest', 'spotbugsIntegration'].each { name ->
+    tasks.named(name) {
+        enabled = false
     }
 }
 tasks.withType(SpotBugsTask).configureEach {
