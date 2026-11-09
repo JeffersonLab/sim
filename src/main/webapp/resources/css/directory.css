@@ -13,6 +13,10 @@ td:nth-child(3) {
 td.maintainers {
     white-space: nowrap;
 }
+/* Keep "2 Significant" on one line; "Not assessed" may wrap, as under Attention */
+td.sqa-level .risk-dialog-opener:not(.not-assessed) {
+    white-space: nowrap;
+}
 #row-form input[type="text"] {
     width: 400px;
 }
