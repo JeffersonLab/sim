@@ -12,6 +12,7 @@ import java.util.Map;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.enumeration.SoftwareType;
+import org.jlab.sim.persistence.view.SoftwareDiff;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jsoup.Jsoup;
 import org.junit.jupiter.api.Test;
@@ -87,6 +88,40 @@ class SyncServiceParseTest {
     assertEquals(SoftwareType.APP, notes.getType(), "no type topic means app");
     assertEquals(List.of(), notes.getStringTopicList());
     assertTrue(notes.isArchived());
+  }
+
+  @Test
+  void multiLineDescriptionMatchesWhatSimSaved() throws Exception {
+    // GitLab returns a description entered in its web form with CRLF line endings; the sync page
+    // passes it through an HTML attribute, which the browser reads with LF line endings (sim#31)
+    String json =
+        """
+        [
+          {"name": "fsdlib", "web_url": "https://code.jlab.org/acc/ops/fsdlib",
+           "description": "FSD library\\r\\nfor apps\\rand scripts\\n", "topics": [],
+           "archived": false}
+        ]
+        """;
+
+    List<Software> remoteList = SyncService.parseGitLabProjects(json, REPOSITORY);
+
+    assertEquals("FSD library\nfor apps\nand scripts\n", remoteList.get(0).getDescription());
+
+    Software saved =
+        new Software(
+            REPOSITORY,
+            "fsdlib",
+            SoftwareType.APP,
+            "FSD library\nfor apps\nand scripts\n",
+            null,
+            "https://code.jlab.org/acc/ops/fsdlib",
+            false,
+            null);
+
+    SoftwareDiff diff = new SyncService().diff(List.of(saved), Map.of("fsdlib", remoteList.get(0)));
+
+    assertEquals(1, diff.getMatchList().size(), "matched, not updated again");
+    assertFalse(diff.hasChanges());
   }
 
   @Test
