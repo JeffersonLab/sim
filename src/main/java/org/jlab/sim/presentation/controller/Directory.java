@@ -92,6 +92,12 @@ public class Directory extends HttpServlet {
 
     if (repositoryId != null) {
       repository = repositoryService.find(repositoryId);
+
+      // Rather than list all software as if there were no filter
+      if (repository == null) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
     }
 
     List<Software> softwareList =
