@@ -82,6 +82,10 @@ td.sqa-level .risk-dialog-opener:not(.not-assessed) {
     color: #666;
     font-size: smaller;
 }
+/* Each select fills the value column, which the widest one sizes, so all match it */
+.risk-inputs select {
+    width: 100%;
+}
 #level-note {
     width: 400px;
     height: 60px;

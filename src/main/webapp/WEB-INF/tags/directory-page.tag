@@ -325,7 +325,7 @@
             </ul>
         </fieldset>
         &nbsp;
-        <fieldset>
+        <fieldset class="risk-inputs">
             <legend>Risk Inputs</legend>
             <ul class="key-value-list">
                 <li>
