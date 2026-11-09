@@ -59,6 +59,8 @@ spotless {
     }
 }
 pmd {
+    // Pinned, so that a Gradle upgrade doesn't change the rules the build enforces
+    toolVersion = '7.13.0'
     consoleOutput = true
     ruleSets = [
             "category/java/errorprone.xml",
