@@ -54,18 +54,34 @@ public class Sync extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
+    BigInteger repositoryId;
+
+    try {
+      repositoryId = ParamConverter.convertBigInteger(request, "repositoryId");
+    } catch (NumberFormatException e) {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+
+    if (repositoryId == null) {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
+
+    Repository repository = repositoryService.find(repositoryId);
+
+    if (repository == null) {
+      response.sendError(HttpServletResponse.SC_NOT_FOUND);
+      return;
+    }
+
     String error = null;
-    Repository repository = null;
     List<Software> localList = null;
     List<Software> remoteList = null;
     SoftwareDiff diff = null;
     Map<String, Software> remoteMap = new HashMap<>();
 
     try {
-      BigInteger repositoryId = ParamConverter.convertBigInteger(request, "repositoryId");
-
-      repository = repositoryService.find(repositoryId);
-
       remoteList = syncService.fetch(repository);
 
       for (Software software : remoteList) {

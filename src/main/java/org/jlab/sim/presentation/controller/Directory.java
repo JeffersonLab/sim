@@ -58,13 +58,24 @@ public class Directory extends HttpServlet {
 
     String softwareName = request.getParameter("softwareName");
     String username = request.getParameter("username");
-    SoftwareType type = Parameter.convertSoftwareType(request, "type");
     String[] topicNameArray = request.getParameterValues("topic");
-    BigInteger repositoryId = ParamConverter.convertBigInteger(request, "repositoryId");
-    Include includeArchived = Parameter.convertInclude(request, "archived");
+    SoftwareType type;
+    BigInteger repositoryId;
+    Include includeArchived;
+    int offset;
+    Integer maxPerPage;
 
-    int offset = ParamUtil.convertAndValidateNonNegativeInt(request, "offset", 0);
-    Integer maxPerPage = ParamConverter.convertInteger(request, "max");
+    try {
+      type = Parameter.convertSoftwareType(request, "type");
+      repositoryId = ParamConverter.convertBigInteger(request, "repositoryId");
+      includeArchived = Parameter.convertInclude(request, "archived");
+      offset = ParamUtil.convertAndValidateNonNegativeInt(request, "offset", 0);
+      maxPerPage = ParamConverter.convertInteger(request, "max");
+    } catch (IllegalArgumentException e) {
+      // Such as a type that isn't one, a number that doesn't parse, or a negative offset
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+      return;
+    }
 
     if (maxPerPage == null || maxPerPage > 100 || maxPerPage < 1) {
       maxPerPage = 10;
