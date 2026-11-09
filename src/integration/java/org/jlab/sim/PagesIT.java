@@ -90,6 +90,14 @@ class PagesIT {
   }
 
   @Test
+  void settingsListTheGitLabSyncExclusions() throws Exception {
+    String text = Sim.page("/setup/settings", Sim.token(Sim.ADMIN)).text();
+
+    assertTrue(text.contains("GITLAB_SYNC_EXCLUDE_CSV"), "the setting is listed");
+    assertTrue(text.contains("acc/scratch"), "it leaves out the scratch group by default");
+  }
+
+  @Test
   void anonymousSetupGoesToLogin() throws Exception {
     HttpResponse<String> response = Sim.get("/setup/settings", null);
 
