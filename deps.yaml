@@ -20,7 +20,7 @@ services:
       start_interval: 5s
 
   keycloak:
-    image: jeffersonlab/keycloak:2.6.0
+    image: jeffersonlab/keycloak:3.1.0
     hostname: keycloak
     ports:
       - "127.0.0.1:${SIM_KEYCLOAK_PORT:-8081}:8080"
