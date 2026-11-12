@@ -208,10 +208,17 @@
                 <td>
                     <div><c:out value="${software.description}"/></div>
                     <div class="note-div ${empty software.note ? '' : 'non-empty-note'}"><c:out value="${software.note}"/></div>
+                    <%-- Topics are an aside: show the first three, and the rest behind "+N more",
+                         unless only one would be hidden, which would save no room --%>
+                    <c:set var="topicCount" value="${fn:length(software.softwareTopicList)}"/>
+                    <c:set var="shownTopics" value="${topicCount ge 5 ? 3 : topicCount}"/>
                     <ul class="topic-list">
-                        <c:forEach items="${software.softwareTopicList}" var="softwareTopic">
-                            <li class="topic"><c:out value="${softwareTopic.topic.name}"/></li>
+                        <c:forEach items="${software.softwareTopicList}" var="softwareTopic" varStatus="topicStatus">
+                            <li class="topic${topicStatus.index ge shownTopics ? ' extra-topic' : ''}"><c:out value="${softwareTopic.topic.name}"/></li>
                         </c:forEach>
+                        <c:if test="${topicCount gt shownTopics}">
+                            <li><button type="button" class="topic-more" aria-expanded="false" data-more-text="+${topicCount - shownTopics} more">+${topicCount - shownTopics} more</button></li>
+                        </c:if>
                     </ul>
                 </td>
                 <td><c:out value="${software.repository.name}"/></td>

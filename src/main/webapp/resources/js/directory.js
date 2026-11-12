@@ -377,6 +377,14 @@ $(document).on("click", ".risk-dialog-opener", function () {
     $("#risk-dialog").dialog("open");
     return false;
 });
+$(document).on("click", ".topic-more", function () {
+    let $button = $(this),
+        expanded = $button.closest(".topic-list").toggleClass("expanded").hasClass("expanded");
+
+    $button.attr("aria-expanded", expanded ? "true" : "false")
+        .text(expanded ? "less" : $button.attr("data-more-text"));
+    return false;
+});
 $(function(){
     $("#row-topics").select2({
         tags: true
