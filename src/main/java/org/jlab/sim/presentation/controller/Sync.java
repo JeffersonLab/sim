@@ -20,6 +20,7 @@ import org.jlab.sim.business.service.SyncService;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.enumeration.Include;
+import org.jlab.sim.persistence.enumeration.SoftwareOrder;
 import org.jlab.sim.persistence.view.SoftwareDiff;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.presentation.util.ParamConverter;
@@ -100,6 +101,7 @@ public class Sync extends HttpServlet {
               null,
               false,
               null,
+              SoftwareOrder.NAME,
               0,
               Integer.MAX_VALUE);
 

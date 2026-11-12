@@ -225,6 +225,7 @@ public class SoftwareService extends JPAService<Software> {
       Attention attention,
       boolean fragile,
       Boolean assessed,
+      SoftwareOrder order,
       int offset,
       int max) {
     CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
@@ -253,9 +254,18 @@ public class SoftwareService extends JPAService<Software> {
     }
 
     List<Order> orders = new ArrayList<>();
-    Path<String> p0 = root.get("name");
-    Order o0 = cb.asc(p0);
-    orders.add(o0);
+    if (order == SoftwareOrder.IMPACT) {
+      // Unassessed software shows no impact or attention, so it comes after all that is assessed.
+      // Its inputs are still the defaults, which leaves it in name order.
+      orders.add(
+          cb.asc(
+              cb.<Integer>selectCase().when(cb.isNull(root.get(ASSESSED_DATE)), 1).otherwise(0)));
+      orders.add(cb.desc(root.get("impact")));
+      orders.add(cb.desc(root.get("attention")));
+    }
+    orders.add(cb.asc(root.get("name")));
+    // Two repositories may hold software of the same name, and pages need a fixed order
+    orders.add(cb.asc(root.get("softwareId")));
     cq.orderBy(orders);
     return getEntityManager()
         .createQuery(cq)

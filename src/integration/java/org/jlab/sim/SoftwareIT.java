@@ -85,6 +85,7 @@ class SoftwareIT {
     assertEquals("N", row.attr("data-archived"));
     assertEquals("3", row.attr("data-impact"), "new software scores Medium");
     assertEquals("", row.attr("data-assessed-date"), "new software is not assessed");
+    assertEquals("Not assessed", impactCell(row).text());
     assertEquals("Not assessed", levelCell(row).text());
     assertEquals("Not assessed", attentionCell(row).text());
 
@@ -142,6 +143,7 @@ class SoftwareIT {
     assertEquals("4", row.attr("data-attention"), "Impact 5 and Fragility 5 is Severe");
     assertEquals(Sim.EDITOR, row.attr("data-assessed-by"));
     assertFalse(row.attr("data-assessed-date").isEmpty(), "assessed date");
+    assertEquals("5 Critical", impactCell(row).text());
     assertEquals("2 Significant*", levelCell(row).text(), "the override, marked");
     assertEquals("Severe", attentionCell(row).text());
 
@@ -304,6 +306,42 @@ class SoftwareIT {
     assertTrue(message.contains("Not Assessed"), message);
   }
 
+  /**
+   * The directory lists the most important software first: assessed software by Ops Impact, then by
+   * Attention, then by name, and after it the software nobody has assessed.
+   */
+  @Test
+  void directoryListsHighestOpsImpactFirst() throws Exception {
+    String token = Sim.token(Sim.EDITOR);
+    String prefix = newName();
+    String unassessed = addNamed(token, prefix + "-a");
+    String mediumRobust = addNamed(token, prefix + "-b");
+    String critical = addNamed(token, prefix + "-c");
+    String mediumFragile = addNamed(token, prefix + "-d");
+    String criticalToo = addNamed(token, prefix + "-e");
+
+    // Impact, complexity and the other factors: attention is Low for 3 with 1, High for 3 with 5,
+    // and Moderate for 5 with 1
+    scoreNamed(token, mediumRobust, 3, 1);
+    scoreNamed(token, critical, 5, 1);
+    scoreNamed(token, mediumFragile, 3, 5);
+    scoreNamed(token, criticalToo, 5, 1);
+
+    String filter = "/directory?softwareName=" + Sim.encodeParam(prefix + "-*");
+
+    assertEquals(
+        List.of(critical, criticalToo, mediumFragile, mediumRobust, unassessed),
+        Sim.page(filter, null).select("tbody tr[data-name]").eachAttr("data-name"),
+        "Ops Impact, then Attention, then name, then unassessed");
+
+    assertEquals(
+        List.of(mediumFragile, mediumRobust),
+        Sim.page(filter + "&max=2&offset=2", null)
+            .select("tbody tr[data-name]")
+            .eachAttr("data-name"),
+        "the second page of two carries on in the same order");
+  }
+
   @Test
   void archivedSoftwareIsListedOnlyWhenIncluded() throws Exception {
     String name = newName();
@@ -356,6 +394,26 @@ class SoftwareIT {
     return name;
   }
 
+  /** Adds an app of this name, which the test's cleanup removes, and returns the name. */
+  private String addNamed(String token, String name) throws Exception {
+    added.add(name);
+    assertOk(add(token, name, "APP", "N"));
+    return name;
+  }
+
+  /** Scores the software of this name: Code Complexity 1, and the other four factors the same. */
+  private static void scoreNamed(String token, String name, int impact, int others)
+      throws Exception {
+    assertOk(
+        score(
+            token,
+            row(name).attr("data-id"),
+            impact,
+            1,
+            others,
+            List.of(Map.entry("levelOverride", ""), Map.entry("levelNote", ""))));
+  }
+
   private HttpResponse<String> add(
       String token, String name, String type, String archived, String... topics) throws Exception {
     List<Map.Entry<String, String>> form = new ArrayList<>();
@@ -396,12 +454,16 @@ class SoftwareIT {
     return Sim.post("/ajax/edit-software-risk", token, form);
   }
 
+  private static Element impactCell(Element row) {
+    return row.selectFirst("td.ops-impact");
+  }
+
   private static Element levelCell(Element row) {
-    return row.select("td").get(5);
+    return row.selectFirst("td.sqa-level");
   }
 
   private static Element attentionCell(Element row) {
-    return row.select("td").get(6);
+    return row.selectFirst("td.attention");
   }
 
   /** The software's row in the directory, or null if the directory doesn't list it. */
