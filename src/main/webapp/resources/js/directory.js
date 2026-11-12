@@ -191,7 +191,7 @@ $(document).on("table-row-edit", function() {
     jlab.editRow();
 });
 $(document).on("click", "#remove-row-button", function() {
-    var name = $(".editable-row-table tr.selected-row td:first-child").text().trim();
+    var name = $(".editable-row-table tr.selected-row").attr("data-name");
     if (confirm('Are you sure you want to remove ' + name + '?')) {
         jlab.removeRow();
     }

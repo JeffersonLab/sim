@@ -157,13 +157,9 @@
         <thead>
         <tr>
             <th>Name</th>
-            <th>Type</th>
             <th>Description</th>
-            <th>Repo</th>
             <th>Maintainers</th>
-            <th>Ops Impact</th>
-            <th>SQA Level</th>
-            <th>Attention</th>
+            <th>Risk &amp; SQA</th>
         </tr>
         </thead>
         <tbody>
@@ -191,7 +187,7 @@
                 data-complexity="${fn:escapeXml(software.complexity.value)}"
                 data-gaps="${fn:escapeXml(software.gaps.value)}"
                 data-esotericism="${fn:escapeXml(software.esotericism.value)}">
-                <td>
+                <td class="name">
                     <c:choose>
                         <c:when test="${not empty software.homeUrl}">
                             <a ${'Y' eq param.loose ? 'target="_parent"' : ''} href="${software.homeUrl}"><c:out value="${software.name}"/></a>
@@ -203,9 +199,9 @@
                     <c:if test="${software.archived}">
                         <span class="archived-symbol">🕸</span>
                     </c:if>
+                    <div class="name-meta"><span class="type"><c:out value="${software.type}"/></span> · <span class="repo"><c:out value="${software.repository.name}"/></span></div>
                 </td>
-                <td><c:out value="${software.type}"/></td>
-                <td>
+                <td class="description">
                     <div><c:out value="${software.description}"/></div>
                     <div class="note-div ${empty software.note ? '' : 'non-empty-note'}"><c:out value="${software.note}"/></div>
                     <ul class="topic-list">
@@ -214,23 +210,18 @@
                         </c:forEach>
                     </ul>
                 </td>
-                <td><c:out value="${software.repository.name}"/></td>
                 <td class="maintainers"><c:forEach items="${software.maintainerUsernameList}" var="username"><div><c:out value="${username}"/></div></c:forEach></td>
-                <td class="ops-impact">
+                <%-- One assessment gives all three, and one dialog edits it --%>
+                <td class="risk">
                     <a class="risk-dialog-opener${software.assessed ? '' : ' not-assessed'}" href="#"><c:choose>
-                        <c:when test="${software.assessed}"><c:out value="${software.impact.value} ${software.impact}"/></c:when>
-                        <c:otherwise>Not assessed</c:otherwise>
-                    </c:choose></a>
-                </td>
-                <td class="sqa-level">
-                    <a class="risk-dialog-opener${software.assessed ? '' : ' not-assessed'}" href="#"><c:choose>
-                        <c:when test="${software.assessed}"><c:out value="${software.effectiveControlLevel.value} ${software.effectiveControlLevel}"/><c:if test="${not empty software.controlLevelOverride}"><span class="override-marker" title="Overridden from ${software.controlLevel.value} ${software.controlLevel}: ${fn:escapeXml(software.controlLevelNote)}">*</span></c:if></c:when>
-                        <c:otherwise>Not assessed</c:otherwise>
-                    </c:choose></a>
-                </td>
-                <td class="attention">
-                    <a class="risk-dialog-opener${software.assessed ? '' : ' not-assessed'}" href="#"><c:choose>
-                        <c:when test="${software.assessed}"><c:out value="${software.attention}"/></c:when>
+                        <c:when test="${software.assessed}">
+                            <span class="risk-key">Ops Impact</span>
+                            <span class="ops-impact"><c:out value="${software.impact.value} ${software.impact}"/></span>
+                            <span class="risk-key">SQA Level</span>
+                            <span class="sqa-level"><c:out value="${software.effectiveControlLevel.value} ${software.effectiveControlLevel}"/><c:if test="${not empty software.controlLevelOverride}"><span class="override-marker" title="Overridden from ${software.controlLevel.value} ${software.controlLevel}: ${fn:escapeXml(software.controlLevelNote)}">*</span></c:if></span>
+                            <span class="risk-key">Attention</span>
+                            <span class="attention"><c:out value="${software.attention}"/></span>
+                        </c:when>
                         <c:otherwise>Not assessed</c:otherwise>
                     </c:choose></a>
                 </td>
