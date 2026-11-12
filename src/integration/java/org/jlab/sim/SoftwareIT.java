@@ -86,9 +86,9 @@ class SoftwareIT {
     assertEquals("N", row.attr("data-archived"));
     assertEquals("3", row.attr("data-impact"), "new software scores Medium");
     assertEquals("", row.attr("data-assessed-date"), "new software is not assessed");
-    assertEquals("Not assessed", impactCell(row).text());
-    assertEquals("Not assessed", levelCell(row).text());
-    assertEquals("Not assessed", attentionCell(row).text());
+    assertEquals("Not assessed", row.selectFirst("td.risk").text(), "said once, not per value");
+    assertNull(impactCell(row), "no values before an assessment");
+    assertEquals("LIB · HOME_DIR", row.selectFirst("td.name .name-meta").text());
 
     String softwareId = row.attr("data-id");
 
@@ -147,6 +147,10 @@ class SoftwareIT {
     assertEquals("5 Critical", impactCell(row).text());
     assertEquals("2 Significant*", levelCell(row).text(), "the override, marked");
     assertEquals("Severe", attentionCell(row).text());
+    assertEquals(
+        "Ops Impact 5 Critical SQA Level 2 Significant* Attention Severe",
+        row.selectFirst("td.risk").text(),
+        "each value labelled");
 
     // Dropping the override drops its rationale
     assertOk(
@@ -495,15 +499,15 @@ class SoftwareIT {
   }
 
   private static Element impactCell(Element row) {
-    return row.selectFirst("td.ops-impact");
+    return row.selectFirst("td.risk .ops-impact");
   }
 
   private static Element levelCell(Element row) {
-    return row.selectFirst("td.sqa-level");
+    return row.selectFirst("td.risk .sqa-level");
   }
 
   private static Element attentionCell(Element row) {
-    return row.selectFirst("td.attention");
+    return row.selectFirst("td.risk .attention");
   }
 
   /** The software's row in the directory, or null if the directory doesn't list it. */

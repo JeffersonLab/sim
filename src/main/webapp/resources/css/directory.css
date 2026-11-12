@@ -1,22 +1,35 @@
 table {
     width: 100%;
 }
-td:first-child {
+td.name {
     width: 200px;
 }
-td:nth-child(2) {
-    width: 75px;
+/* Type and repository, under the name */
+.name-meta {
+    color: #666;
+    font-size: smaller;
+    margin-top: 4px;
 }
-td:nth-child(3) {
+td.description {
     word-break: break-word;
 }
 td.maintainers {
     white-space: nowrap;
 }
-/* Keep "5 Critical" and "2 Significant" on one line; "Not assessed" may wrap, as under Attention */
-td.ops-impact .risk-dialog-opener:not(.not-assessed),
-td.sqa-level .risk-dialog-opener:not(.not-assessed) {
+/* Ops Impact, SQA Level and Attention, labelled, one per line, values lined up */
+td.risk {
     white-space: nowrap;
+}
+td.risk .risk-dialog-opener:not(.not-assessed) {
+    display: inline-grid;
+    grid-template-columns: auto auto;
+    column-gap: 8px;
+    row-gap: 2px;
+}
+td.risk .risk-key {
+    color: #666;
+    font-size: smaller;
+    align-self: center;
 }
 #row-form input[type="text"] {
     width: 400px;
