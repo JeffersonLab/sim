@@ -90,10 +90,11 @@
                                 <label for="level-select">SQA Level</label>
                             </div>
                             <div class="li-value">
+                                <%-- Compare as strings: EL turns a blank level= into 0 when compared with a number, selecting 0 Minimal --%>
                                 <select id="level-select" name="level">
                                     <option value="">&nbsp;</option>
                                     <c:forEach items="${levelList}" var="opt">
-                                        <option value="${opt.value}"${param.level eq opt.value ? ' selected="selected"' : ''}>
+                                        <option value="${opt.value}"${param.level eq ('' += opt.value) ? ' selected="selected"' : ''}>
                                             <c:out value="${opt.value} ${opt}"/></option>
                                     </c:forEach>
                                 </select>
@@ -108,7 +109,7 @@
                                 <select id="attention-select" name="attention">
                                     <option value="">&nbsp;</option>
                                     <c:forEach items="${attentionList}" var="opt">
-                                        <option value="${opt.value}"${param.attention eq opt.value ? ' selected="selected"' : ''}>
+                                        <option value="${opt.value}"${param.attention eq ('' += opt.value) ? ' selected="selected"' : ''}>
                                             <c:out value="${opt}"/></option>
                                     </c:forEach>
                                 </select>
