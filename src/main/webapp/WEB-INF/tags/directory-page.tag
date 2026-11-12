@@ -160,6 +160,7 @@
             <th>Description</th>
             <th>Repo</th>
             <th>Maintainers</th>
+            <th>Ops Impact</th>
             <th>SQA Level</th>
             <th>Attention</th>
         </tr>
@@ -214,13 +215,19 @@
                 </td>
                 <td><c:out value="${software.repository.name}"/></td>
                 <td class="maintainers"><c:forEach items="${software.maintainerUsernameList}" var="username"><div><c:out value="${username}"/></div></c:forEach></td>
+                <td class="ops-impact">
+                    <a class="risk-dialog-opener${software.assessed ? '' : ' not-assessed'}" href="#"><c:choose>
+                        <c:when test="${software.assessed}"><c:out value="${software.impact.value} ${software.impact}"/></c:when>
+                        <c:otherwise>Not assessed</c:otherwise>
+                    </c:choose></a>
+                </td>
                 <td class="sqa-level">
                     <a class="risk-dialog-opener${software.assessed ? '' : ' not-assessed'}" href="#"><c:choose>
                         <c:when test="${software.assessed}"><c:out value="${software.effectiveControlLevel.value} ${software.effectiveControlLevel}"/><c:if test="${not empty software.controlLevelOverride}"><span class="override-marker" title="Overridden from ${software.controlLevel.value} ${software.controlLevel}: ${fn:escapeXml(software.controlLevelNote)}">*</span></c:if></c:when>
                         <c:otherwise>Not assessed</c:otherwise>
                     </c:choose></a>
                 </td>
-                <td>
+                <td class="attention">
                     <a class="risk-dialog-opener${software.assessed ? '' : ' not-assessed'}" href="#"><c:choose>
                         <c:when test="${software.assessed}"><c:out value="${software.attention}"/></c:when>
                         <c:otherwise>Not assessed</c:otherwise>
