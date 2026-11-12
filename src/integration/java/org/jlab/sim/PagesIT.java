@@ -119,6 +119,30 @@ class PagesIT {
     assertFalse(directoryEditable(Sim.page("/directory?loose=Y", Sim.token(Sim.ADMIN))));
   }
 
+  /**
+   * The filter form submits a blank select as an empty parameter, such as {@code level=}; the page
+   * must keep it blank rather than select level 0, which Next and Previous would then submit.
+   */
+  @ParameterizedTest
+  @CsvSource({
+    "'level=&attention=', '', ''",
+    "'level=0&attention=', 0, ''",
+    "'level=2&attention=3', 2, 3",
+  })
+  void directoryFilterKeepsSelections(String query, String level, String attention)
+      throws Exception {
+    Document page = Sim.page("/directory?" + query, null);
+
+    assertEquals(level, selected(page, "#level-select"), query);
+    assertEquals(attention, selected(page, "#attention-select"), query);
+  }
+
+  private static String selected(Document page, String select) {
+    return page.select(select + " option[selected]").eachAttr("value").stream()
+        .reduce((a, b) -> a + "," + b)
+        .orElse("");
+  }
+
   private static boolean directoryEditable(Document page) {
     Element table = page.selectFirst("table.data-table");
 
