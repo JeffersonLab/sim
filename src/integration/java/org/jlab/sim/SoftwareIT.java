@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import jakarta.json.JsonObject;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -340,6 +341,45 @@ class SoftwareIT {
             .select("tbody tr[data-name]")
             .eachAttr("data-name"),
         "the second page of two carries on in the same order");
+  }
+
+  @Test
+  void directoryShowsThreeTopicsAndTheRestBehindMore() throws Exception {
+    String token = Sim.token(Sim.EDITOR);
+    // Topics the tests share, so that reruns don't add more; listed sorted by name
+    String[] topics = new String[7];
+    for (int i = 0; i < topics.length; i++) {
+      topics[i] = "integration-test-" + (char) ('a' + i);
+    }
+    String seven = newName();
+    String five = newName();
+    String four = newName();
+
+    assertOk(add(token, seven, "APP", "N", topics));
+    assertOk(add(token, five, "APP", "N", Arrays.copyOf(topics, 5)));
+    assertOk(add(token, four, "APP", "N", Arrays.copyOf(topics, 4)));
+
+    Element row = row(seven);
+    assertEquals(List.of(topics), row.select("li.topic").eachText(), "every topic is on the page");
+    assertEquals(
+        List.of(topics).subList(3, 7),
+        row.select("li.topic.extra-topic").eachText(),
+        "topics after the third are hidden");
+    Element more = row.selectFirst("button.topic-more");
+    assertNotNull(more, "more button");
+    assertEquals("+4 more", more.text());
+    assertEquals("+4 more", more.attr("data-more-text"));
+
+    row = row(five);
+    assertEquals(2, row.select("li.topic.extra-topic").size(), "two of five are hidden");
+    assertEquals("+2 more", row.selectFirst("button.topic-more").text());
+
+    row = row(four);
+    assertEquals(4, row.select("li.topic").size());
+    assertTrue(
+        row.select("li.topic.extra-topic").isEmpty(),
+        "four topics are all shown: hiding one would save no room");
+    assertNull(row.selectFirst("button.topic-more"), "no more button for four topics");
   }
 
   @Test

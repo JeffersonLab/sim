@@ -101,3 +101,35 @@ td.sqa-level .risk-dialog-opener:not(.not-assessed) {
     color: #666;
     font-size: smaller;
 }
+/* Topics are an aside here: smaller than sim.css's, which the Sync page keeps */
+td .topic-list {
+    margin: 6px 0 0;
+}
+td .topic-list .topic {
+    font-size: 0.85em;
+    padding: 2px 6px;
+    margin: 2px;
+}
+.topic-list:not(.expanded) .extra-topic {
+    display: none;
+}
+/* Looks like a topic, but quieter, so it reads as a control and not one more topic */
+.topic-more {
+    font: inherit;
+    font-size: 0.8em;
+    color: #0969da;
+    background-color: transparent;
+    border: 1px dashed #0969da;
+    border-radius: 8px;
+    padding: 1px 6px;
+    margin: 2px;
+    cursor: pointer;
+}
+@media print {
+    .topic-list:not(.expanded) .extra-topic {
+        display: inline;
+    }
+    .topic-more {
+        display: none;
+    }
+}
