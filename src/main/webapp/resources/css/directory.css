@@ -71,10 +71,6 @@ td.risk .risk-key {
     overflow: auto;
     height: 60px;
 }
-#risk-update-button {
-    float: left;
-    margin-left: 0;
-}
 .not-assessed {
     font-style: italic;
     color: #666;

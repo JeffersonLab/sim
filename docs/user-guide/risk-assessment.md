@@ -5,7 +5,8 @@
 Each piece of software has one assessment: six risk inputs, which give its Software Quality
 Assurance (SQA) control level and its attention band. Select the software's **Risk & SQA** cell
 in the [Directory](directory.md) to open the **Risk & SQA Assessment** dialog. Anyone can open it
-to read; members of the `acg` and `sim-admin` [roles](concepts.md#roles) can change it.
+to read; members of the `acg` and `sim-admin` [roles](concepts.md#roles) can change it. Everyone
+else sees only **Close**.
 
 The dialog links to the two documents that define the terms: **SQAP §4.3**, the Accelerator
 Controls Software Quality Assurance Plan's section on software control levels, and **Guidance**,
@@ -18,10 +19,10 @@ the group's software risk guidance, which defines each input's values.
 2. If the SQAP allows a documented exception to the derived level, pick the level in
    **Override** and give the reason in **Rationale**, up to 512 characters. An override needs a
    rationale.
-3. Select **Update**. SIM saves the inputs, records you and the time as the assessor, and reloads
-   the page. **OK** closes the dialog without saving.
+3. Select **Save**. SIM saves the inputs, records you and the time as the assessor, and reloads
+   the page. **Cancel**, the × in the title bar, or Esc closes the dialog without saving.
 
-To drop an override, set **Override** to **None** and select **Update**; the rationale goes with
+To drop an override, set **Override** to **None** and select **Save**; the rationale goes with
 it.
 
 The footer of the dialog says who last assessed the software, and when.
@@ -91,7 +92,7 @@ attention. Reassess the software when that happens.
 ## Not assessed
 
 New software has every input at 3, or **Some** for Past Downtime Rate, and shows **Not assessed**
-until someone selects **Update** in its dialog, even if they keep those values. Not-assessed
+until someone selects **Save** in its dialog, even if they keep those values. Not-assessed
 software comes last in the Directory, and the SQA Level, Attention and Risk Factors filters leave
 it out. To find the software still to be assessed, set the Directory's **Assessed** filter to
 **Not assessed**.

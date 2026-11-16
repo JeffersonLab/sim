@@ -114,6 +114,7 @@ class PagesIT {
 
     assertEquals(editable, directoryEditable(page), "table");
     assertEquals(editable, assessmentEditable(page), "assessment dialog");
+    assertEquals(editable ? "Save,Cancel" : "Close", assessmentButtons(page), "dialog buttons");
   }
 
   @Test
@@ -125,6 +126,8 @@ class PagesIT {
     assertFalse(assessmentEditable(anonymous));
     assertFalse(directoryEditable(loose));
     assertFalse(assessmentEditable(loose));
+    assertEquals("Close", assessmentButtons(anonymous));
+    assertEquals("Close", assessmentButtons(loose));
   }
 
   /**
@@ -159,12 +162,17 @@ class PagesIT {
     return table.hasClass("editable-row-table");
   }
 
-  /** directory.js enables the Risk &amp; SQA Assessment dialog's inputs and Update from this. */
+  /** directory.js enables the Risk &amp; SQA Assessment dialog's inputs from this. */
   private static boolean assessmentEditable(Document page) {
     Element dialog = page.selectFirst("#risk-dialog");
 
     assertTrue(dialog != null, "assessment dialog");
 
     return "Y".equals(dialog.attr("data-editable"));
+  }
+
+  /** The assessment dialog's buttons, so OK can't be read as save (#69). */
+  private static String assessmentButtons(Document page) {
+    return String.join(",", page.select("#risk-dialog .dialog-button-panel button").eachText());
   }
 }
