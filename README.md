@@ -5,10 +5,11 @@ A [Jakarta EE 10](https://en.wikipedia.org/wiki/Jakarta_EE) web application for 
 
 ---
 - [Overview](https://github.com/JeffersonLab/sim#overview)
+- [User Guide](https://github.com/JeffersonLab/sim/blob/main/docs/user-guide/README.md)
 - [Quick Start with Compose](https://github.com/JeffersonLab/sim#quick-start-with-compose)
 - [Install](https://github.com/JeffersonLab/sim#install)
 - [Configure](https://github.com/JeffersonLab/sim#configure)
-- [Build](https://github.com/JeffersonLab/smoothenss-sim#build)
+- [Build](https://github.com/JeffersonLab/sim#build)
 - [Develop](https://github.com/JeffersonLab/sim#develop)
 - [Release](https://github.com/JeffersonLab/sim#release)
 - [Deploy](https://github.com/JeffersonLab/sim#deploy)
@@ -17,6 +18,8 @@ A [Jakarta EE 10](https://en.wikipedia.org/wiki/Jakarta_EE) web application for 
 
 ## Overview
 A web app for managing a registry of software for the Accelerator Controls Group (ACG) at JLab.
+
+See the [User Guide](https://jeffersonlab.github.io/sim/latest/) for how to use it.
 
 ## Quick Start with Compose
 1. Grab project
@@ -92,6 +95,13 @@ gradlew build
 
 See: [Docker Development Quick Reference](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c#development-quick-reference)
 
+### User Guide website
+The [user guide](https://github.com/JeffersonLab/sim/tree/main/docs/user-guide) is Markdown, readable on GitHub, and also built into a website with [Zensical](https://zensical.org) ([zensical.toml](zensical.toml)). With [uv](https://docs.astral.sh/uv/getting-started/installation/) installed:
+```
+uv run --locked zensical build --strict
+```
+builds it into `site/`, as CI does; `--strict` fails on a link to a missing page or heading. `uv run --locked zensical serve` previews it at http://localhost:8000.
+
 ## Develop
 In order to iterate rapidly when making changes it's often useful to run the app directly on the local workstation, perhaps leveraging an IDE.  In this scenario run the service dependencies with:
 ```
@@ -119,6 +129,7 @@ If the stack runs on other ports (see [Ports](https://github.com/JeffersonLab/si
     - The [Create release](https://github.com/JeffersonLab/java-workflows/blob/main/.github/workflows/gh-release.yaml) GitHub Action to tag the source and create release notes summarizing any pull requests.   Edit the release notes to add any missing details.  A war file artifact is attached to the release.
     - The [Publish docker image](https://github.com/JeffersonLab/container-workflows/blob/main/.github/workflows/docker-publish.yaml) GitHub Action to create a new demo Docker image.
     - The [Deploy to JLab](https://github.com/JeffersonLab/general-workflows/blob/main/.github/workflows/jlab-deploy-app.yaml) GitHub Action to deploy to the JLab test environment.
+    - A job that publishes the [User Guide](https://jeffersonlab.github.io/sim/) to GitHub Pages, in a folder for the release and in `latest/`.
 
 ## Deploy
 The deploy to JLab's acctest is handled automatically via the release workflow.
