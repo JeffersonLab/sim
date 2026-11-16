@@ -19,6 +19,13 @@ services:
       file: deps.yaml
       service: mailhog
 
+  sync-stand-in:
+    image: nginx:1.27.5-alpine
+    hostname: sync-stand-in
+    volumes:
+      - ./container/sync-stand-in/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./container/sync-stand-in/www:/usr/share/nginx/html:ro
+
   sim:
     hostname: sim
     user: dev
@@ -32,6 +39,12 @@ services:
       KEYCLOAK_FRONTEND_SERVER_URL: 'http://localhost:${SIM_KEYCLOAK_PORT:-8081}/auth'
       FRONTEND_SERVER_URL: 'https://localhost:${SIM_HTTPS_PORT:-8443}'
       PREPEND_JAVA_OPTS: '-Djboss.https.port=${SIM_HTTPS_PORT:-8443}'
+      # The sync pages read the stand-in, not GitHub, GitLab or JLab's servers
+      SYNC_GITHUB_URL: 'http://sync-stand-in/github'
+      SYNC_GITLAB_URL: 'http://sync-stand-in/gitlab'
+      SYNC_CSUE_URL: 'http://sync-stand-in/csue'
+      SYNC_CERTIFIED_URL: 'http://sync-stand-in/certified'
+      SYNC_LLAPP_URL: 'http://sync-stand-in/llapp'
     depends_on:
       # The app reads its settings from Oracle as it deploys, and a login before Keycloak's
       # setup finishes gets a session without the user's roles
@@ -39,3 +52,5 @@ services:
         condition: service_healthy
       keycloak:
         condition: service_healthy
+      sync-stand-in:
+        condition: service_started

@@ -1,0 +1,27 @@
+{
+  "total_count": 4,
+  "incomplete_results": false,
+  "items": [
+    {
+      "name": "it-sync-no-description",
+      "html_url": "https://github.com/JeffersonLab/it-sync-no-description",
+      "description": null,
+      "topics": ["acg", "app", "java"],
+      "archived": false
+    },
+    {
+      "name": "it-sync-description",
+      "html_url": "https://github.com/JeffersonLab/it-sync-description",
+      "description": "From the source",
+      "topics": ["acg", "app"],
+      "archived": false
+    },
+    {
+      "name": "it-sync-new",
+      "html_url": "https://github.com/JeffersonLab/it-sync-new",
+      "description": "Only in the source",
+      "topics": ["acg", "lib"],
+      "archived": false
+    }
+  ]
+}

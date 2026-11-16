@@ -1,0 +1,13 @@
+{
+  "total_count": 4,
+  "incomplete_results": false,
+  "items": [
+    {
+      "name": "it-sync-archived",
+      "html_url": "https://github.com/JeffersonLab/it-sync-archived",
+      "description": "Archived at the source",
+      "topics": ["acg", "app"],
+      "archived": true
+    }
+  ]
+}
