@@ -250,7 +250,8 @@
         </select>
     </div>
 </section>
-<div class="dialog" id="risk-dialog" title="Risk &amp; SQA Assessment">
+<%-- Editable for the same people as the table: directory.js enables the inputs from this --%>
+<div class="dialog" id="risk-dialog" title="Risk &amp; SQA Assessment" data-editable="${readonly ? 'N' : 'Y'}">
     <section>
         <input type="hidden" id="risk-software-id"/>
         <select id="level-labels" style="display: none;">

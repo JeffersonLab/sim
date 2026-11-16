@@ -110,13 +110,21 @@ class PagesIT {
   @ParameterizedTest
   @CsvSource({Sim.ADMIN + ", true", Sim.EDITOR + ", true", Sim.USER + ", false"})
   void onlyEditorsGetEditableDirectory(String username, boolean editable) throws Exception {
-    assertEquals(editable, directoryEditable(Sim.page("/directory", Sim.token(username))));
+    Document page = Sim.page("/directory", Sim.token(username));
+
+    assertEquals(editable, directoryEditable(page), "table");
+    assertEquals(editable, assessmentEditable(page), "assessment dialog");
   }
 
   @Test
   void anonymousAndLooseDirectoryAreReadOnly() throws Exception {
-    assertFalse(directoryEditable(Sim.page("/directory", null)));
-    assertFalse(directoryEditable(Sim.page("/directory?loose=Y", Sim.token(Sim.ADMIN))));
+    Document anonymous = Sim.page("/directory", null);
+    Document loose = Sim.page("/directory?loose=Y", Sim.token(Sim.ADMIN));
+
+    assertFalse(directoryEditable(anonymous));
+    assertFalse(assessmentEditable(anonymous));
+    assertFalse(directoryEditable(loose));
+    assertFalse(assessmentEditable(loose));
   }
 
   /**
@@ -149,5 +157,14 @@ class PagesIT {
     assertTrue(table != null, "directory table");
 
     return table.hasClass("editable-row-table");
+  }
+
+  /** directory.js enables the Risk &amp; SQA Assessment dialog's inputs and Update from this. */
+  private static boolean assessmentEditable(Document page) {
+    Element dialog = page.selectFirst("#risk-dialog");
+
+    assertTrue(dialog != null, "assessment dialog");
+
+    return "Y".equals(dialog.attr("data-editable"));
   }
 }
