@@ -118,6 +118,10 @@ class PagesIT {
     assertEquals(editable, editOpenersOnEveryRow(page), "name, description and maintainers cells");
     assertEquals(editable ? "Add" : "", rowControls(page), "toolbar");
     assertEquals(
+        editable ? "Click a row to edit it" : "",
+        page.select("#editable-row-table-control-panel .row-edit-hint").text(),
+        "hint beside Add");
+    assertEquals(
         editable,
         page.selectFirst("#table-row-dialog #remove-software-button") != null,
         "Remove in the edit dialog");
@@ -138,6 +142,8 @@ class PagesIT {
     assertFalse(editOpenersOnEveryRow(loose));
     assertEquals("", rowControls(anonymous));
     assertEquals("", rowControls(loose));
+    assertTrue(anonymous.select(".row-edit-hint").isEmpty(), "no hint for anonymous");
+    assertTrue(loose.select(".row-edit-hint").isEmpty(), "no hint in the loose view");
   }
 
   /**
