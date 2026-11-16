@@ -410,9 +410,17 @@
             </ul>
         </fieldset>
         <div id="assessment-footer"></div>
+        <%-- Save and Cancel, as in the software dialog, so closing isn't mistaken for saving --%>
         <div class="dialog-button-panel">
-            <button id="risk-update-button" type="button">Update</button>
-            <button class="dialog-close-button" type="button">OK</button>
+            <c:choose>
+                <c:when test="${readonly}">
+                    <button class="dialog-close-button" type="button">Close</button>
+                </c:when>
+                <c:otherwise>
+                    <button id="risk-save-button" type="button">Save</button>
+                    <button class="dialog-close-button" type="button">Cancel</button>
+                </c:otherwise>
+            </c:choose>
         </div>
     </section>
 </div>

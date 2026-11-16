@@ -45,7 +45,7 @@ than the version you are using.
   type and repository, and anything else you know. See [Adding
   software](directory.md#adding-software).
 - **Assess its risk.** Select the software's **Risk & SQA** cell, set the six inputs, and select
-  **Update**. See [Risk and SQA assessment](risk-assessment.md).
+  **Save**. See [Risk and SQA assessment](risk-assessment.md).
 - **Bring in new software from GitHub or GitLab.** On **Repositories**, select the arrow on the
   repository's row, check the differences, and apply them. See [Repositories and
   sync](sync.md).

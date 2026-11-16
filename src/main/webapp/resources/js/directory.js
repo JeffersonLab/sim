@@ -275,7 +275,7 @@ $(document).on("change", ".change-submit", function () {
     let formId = $(this).attr("form");
     document.getElementById(formId).submit();
 });
-$(document).on("click", "#risk-update-button", function() {
+$(document).on("click", "#risk-save-button", function() {
     var softwareId = $("#risk-software-id").val(),
         impact = $("#impact").val(),
         rate = $("#rate").val(),
@@ -285,7 +285,7 @@ $(document).on("click", "#risk-update-button", function() {
         esotericism = $("#esotericism").val(),
         levelOverride = $("#level-override").val(),
         levelNote = $("#level-note").val(),
-        $updateButton = $("#risk-update-button"),
+        $saveButton = $("#risk-save-button"),
         reloading = false;
 
     if (levelOverride !== "" && levelNote.trim() === "") {
@@ -293,9 +293,9 @@ $(document).on("click", "#risk-update-button", function() {
         return;
     }
 
-    $updateButton
-        .height($updateButton.height())
-        .width($updateButton.width())
+    $saveButton
+        .height($saveButton.height())
+        .width($saveButton.width())
         .empty().append('<div class="button-indicator"></div>');
     $(".dialog-close-button").attr("disabled", "disabled");
     $(".ui-dialog-titlebar button").attr("disabled", "disabled");
@@ -333,8 +333,8 @@ $(document).on("click", "#risk-update-button", function() {
 
     request.always(function() {
         if (!reloading) {
-            $updateButton.empty().text("Update");
-            $updateButton.removeAttr("disabled");
+            $saveButton.empty().text("Save");
+            $(".dialog-close-button").removeAttr("disabled");
             $(".ui-dialog-titlebar button").removeAttr("disabled");
 
         }
@@ -366,7 +366,7 @@ $(document).on("click", ".risk-dialog-opener", function () {
     }
 
     let editable = $("#risk-dialog").attr("data-editable") === "Y",
-        $controls = $("#risk-update-button, #risk-dialog fieldset select, #level-note");
+        $controls = $("#risk-dialog fieldset select, #level-note");
 
     if(editable) {
         $controls.removeAttr("disabled");
