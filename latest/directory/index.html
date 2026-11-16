@@ -767,9 +767,8 @@ level or attention for software nobody has assessed.</p>
 The <strong>Software</strong> link beside each repository on the <a href="../sync/#the-repositories-tab">Repositories</a>
 tab opens the Directory filtered to that repository.</p>
 <h2 id="editing-software">Editing software<a class="headerlink" href="#editing-software" title="Permanent link">&para;</a></h2>
-<p>Members of the <code>acg</code> and <code>sim-admin</code> <a href="../concepts/#roles">roles</a> see <strong>Add</strong>, <strong>Edit</strong> and
-<strong>Remove</strong> buttons above the table. To edit or remove software, select its row first; <strong>Unselect</strong>
-clears the selection.</p>
+<p>Members of the <code>acg</code> and <code>sim-admin</code> <a href="../concepts/#roles">roles</a> see an <strong>Add</strong> button above the
+table. To edit or remove software, select its row, as the hint beside <strong>Add</strong> says.</p>
 <h3 id="adding-software">Adding software<a class="headerlink" href="#adding-software" title="Permanent link">&para;</a></h3>
 <p>Select <strong>Add</strong>, fill in the dialog, and select <strong>Save</strong>:</p>
 <ul>
@@ -783,17 +782,21 @@ clears the selection.</p>
 repository</a> is usually added by its sync instead; software you add by hand to a synced
 repository shows as <strong>Remove</strong> on its next sync unless the source lists it too.</p>
 <h3 id="editing">Editing<a class="headerlink" href="#editing" title="Permanent link">&para;</a></h3>
-<p>Select the row, then <strong>Edit</strong>; or, quicker when you have many to fill in, select the row's
-<strong>Description</strong> or <strong>Maintainers</strong> cell, which selects the row and opens the same dialog. Links
-and buttons in those cells, such as <strong>+N more</strong>, still do what they do, and dragging to select
-text in them doesn't open the dialog. You can change everything but the name and the repository; to
+<p>Select the row's <strong>Name</strong>, <strong>Description</strong> or <strong>Maintainers</strong> cell to open the edit dialog. Links
+and buttons in those cells, such as the name's link to its home page and <strong>+N more</strong>, still do
+what they do, and dragging to select text in them doesn't open the dialog. The <strong>Risk &amp; SQA</strong>
+cell opens the <a href="../risk-assessment/">assessment</a> instead. You can change everything but the name and the repository; to
 change either, add the software again and remove the old entry. Saving replaces the topics with
 the ones in the dialog.</p>
 <p>A sync may later change what you edit: see <a href="../sync/#what-a-sync-changes">What a sync changes</a>.
 The note is never synced, so it is the place for anything you want kept.</p>
 <h3 id="removing">Removing<a class="headerlink" href="#removing" title="Permanent link">&para;</a></h3>
-<p>Select the row, then <strong>Remove</strong>, and confirm. The software, with its topics and its assessment,
-is deleted; it can't be restored, only added again.</p>
+<p>Archive retired software rather than removing it: it stays on record with its assessment, out of
+the Directory unless <strong>Include Archived</strong> asks for it; see <a href="../concepts/#archived-software">Archived
+software</a>.
+Remove is for software added by mistake, or the old entry of software you renamed or moved.</p>
+<p>Open the row's edit dialog, select <strong>Remove</strong> at its bottom left, and confirm. The software, with
+its topics and its assessment, is deleted; it can't be restored, only added again.</p>
 <h2 id="embedding-the-directory">Embedding the Directory<a class="headerlink" href="#embedding-the-directory" title="Permanent link">&para;</a></h2>
 <p><code>/sim/directory?loose=Y</code> shows the Directory on its own, without SIM's header and tabs, to embed
 in another page, such as a wiki, in a frame. It is always read-only, its software links open in
