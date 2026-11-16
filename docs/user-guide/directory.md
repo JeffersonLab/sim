@@ -51,7 +51,7 @@ tab opens the Directory filtered to that repository.
 ## Editing software
 
 Members of the `acg` and `sim-admin` [roles](concepts.md#roles) see an **Add** button above the
-table, and can select a row to edit or remove its software.
+table. To edit or remove software, select its row, as the hint beside **Add** says.
 
 ### Adding software
 

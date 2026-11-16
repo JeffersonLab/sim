@@ -27,6 +27,12 @@ td.maintainers {
 .editable-row-table td.risk {
     cursor: default;
 }
+/* Beside Add, so editors know a row click opens Edit */
+.row-edit-hint {
+    color: #666;
+    font-style: italic;
+    margin-left: 8px;
+}
 /* The toolbar is Add only: rows aren't selected, so Unselect would never be enabled */
 #unselect-all-button {
     display: none;

@@ -152,6 +152,8 @@
     <c:if test="${not readonly}">
         <%-- Add only: a click on a row opens Edit, which also offers Remove (directory.js) --%>
         <s:editable-row-table-controls excludeEdit="true" excludeDelete="true">
+            <%-- The hover highlight and tooltips show only on hover, and never on a touch screen --%>
+            <span class="row-edit-hint">Click a row to edit it</span>
         </s:editable-row-table-controls>
     </c:if>
     <c:set var="editOpener" value="${readonly ? '' : ' edit-opener'}"/>
