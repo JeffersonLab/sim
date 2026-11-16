@@ -150,11 +150,12 @@
     <div class="message-box"><c:out value="${selectionMessage}"/></div>
     <c:set var="readonly" value="${'Y' eq param.loose or !(pageContext.request.isUserInRole('acg') or pageContext.request.isUserInRole('sim-admin'))}"/>
     <c:if test="${not readonly}">
-        <s:editable-row-table-controls>
+        <%-- Add only: a click on a row opens Edit, which also offers Remove (directory.js) --%>
+        <s:editable-row-table-controls excludeEdit="true" excludeDelete="true">
         </s:editable-row-table-controls>
     </c:if>
     <c:set var="editOpener" value="${readonly ? '' : ' edit-opener'}"/>
-    <table class="data-table ${readonly ? '' : 'uniselect-table editable-row-table'}">
+    <table class="data-table ${readonly ? '' : 'editable-row-table'}">
         <thead>
         <tr>
             <th>Name</th>
@@ -165,7 +166,7 @@
         </thead>
         <tbody>
         <c:forEach var="software" items="${softwareList}">
-            <%-- For editors, a click on the Description or Maintainers cell opens Edit for its row (directory.js) --%>
+            <%-- For editors, a click on the Name, Description or Maintainers cell opens Edit for its row (directory.js) --%>
             <tr data-id="${software.softwareId}"
                 data-archived="${software.archived ? 'Y' : 'N'}"
                 data-name="${fn:escapeXml(software.name)}"
@@ -189,10 +190,10 @@
                 data-complexity="${fn:escapeXml(software.complexity.value)}"
                 data-gaps="${fn:escapeXml(software.gaps.value)}"
                 data-esotericism="${fn:escapeXml(software.esotericism.value)}">
-                <td class="name">
+                <td class="name${editOpener}"<c:if test="${not readonly}"> title="Click to edit"</c:if>>
                     <c:choose>
                         <c:when test="${not empty software.homeUrl}">
-                            <a ${'Y' eq param.loose ? 'target="_parent"' : ''} href="${software.homeUrl}"><c:out value="${software.name}"/></a>
+                            <a ${'Y' eq param.loose ? 'target="_parent"' : ''} href="${software.homeUrl}" title="Open home page"><c:out value="${software.name}"/></a>
                         </c:when>
                         <c:otherwise>
                             <c:out value="${software.name}"/>

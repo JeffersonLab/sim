@@ -16,12 +16,30 @@ td.description {
 td.maintainers {
     white-space: nowrap;
 }
-/* An editor's Description and Maintainers cells open the edit dialog. Smoothness turns off text
+/* An editor's Name, Description and Maintainers cells open the edit dialog. Smoothness turns off text
    selection in an editable table; allow it here, where directory.js leaves a drag to select text alone */
 .editable-row-table td.edit-opener {
     cursor: pointer;
     user-select: text;
     -webkit-user-select: text;
+}
+/* The Risk & SQA cell opens the assessment from its link, not Edit */
+.editable-row-table td.risk {
+    cursor: default;
+}
+/* The toolbar is Add only: rows aren't selected, so Unselect would never be enabled */
+#unselect-all-button {
+    display: none;
+}
+/* In the Edit dialog only, at the left of the row of Save and Cancel, which smoothness places at
+   the bottom across the whole dialog: lift it above that row so it takes the click */
+#remove-software-button {
+    display: none;
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    z-index: 1;
+    min-width: 68px;
 }
 /* Ops Impact, SQA Level and Attention, labelled, one per line, values lined up */
 td.risk {

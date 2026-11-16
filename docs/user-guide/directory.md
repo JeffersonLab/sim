@@ -50,9 +50,8 @@ tab opens the Directory filtered to that repository.
 
 ## Editing software
 
-Members of the `acg` and `sim-admin` [roles](concepts.md#roles) see **Add**, **Edit** and
-**Remove** buttons above the table. To edit or remove software, select its row first; **Unselect**
-clears the selection.
+Members of the `acg` and `sim-admin` [roles](concepts.md#roles) see an **Add** button above the
+table, and can select a row to edit or remove its software.
 
 ### Adding software
 
@@ -70,10 +69,10 @@ repository shows as **Remove** on its next sync unless the source lists it too.
 
 ### Editing
 
-Select the row, then **Edit**; or, quicker when you have many to fill in, select the row's
-**Description** or **Maintainers** cell, which selects the row and opens the same dialog. Links
-and buttons in those cells, such as **+N more**, still do what they do, and dragging to select
-text in them doesn't open the dialog. You can change everything but the name and the repository; to
+Select the row's **Name**, **Description** or **Maintainers** cell to open the edit dialog. Links
+and buttons in those cells, such as the name's link to its home page and **+N more**, still do
+what they do, and dragging to select text in them doesn't open the dialog. The **Risk & SQA**
+cell opens the [assessment](risk-assessment.md) instead. You can change everything but the name and the repository; to
 change either, add the software again and remove the old entry. Saving replaces the topics with
 the ones in the dialog.
 
@@ -82,8 +81,13 @@ The note is never synced, so it is the place for anything you want kept.
 
 ### Removing
 
-Select the row, then **Remove**, and confirm. The software, with its topics and its assessment,
-is deleted; it can't be restored, only added again.
+Archive retired software rather than removing it: it stays on record with its assessment, out of
+the Directory unless **Include Archived** asks for it; see [Archived
+software](concepts.md#archived-software).
+Remove is for software added by mistake, or the old entry of software you renamed or moved.
+
+Open the row's edit dialog, select **Remove** at its bottom left, and confirm. The software, with
+its topics and its assessment, is deleted; it can't be restored, only added again.
 
 ## Embedding the Directory
 
