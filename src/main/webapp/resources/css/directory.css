@@ -16,6 +16,13 @@ td.description {
 td.maintainers {
     white-space: nowrap;
 }
+/* An editor's Description and Maintainers cells open the edit dialog. Smoothness turns off text
+   selection in an editable table; allow it here, where directory.js leaves a drag to select text alone */
+.editable-row-table td.edit-opener {
+    cursor: pointer;
+    user-select: text;
+    -webkit-user-select: text;
+}
 /* Ops Impact, SQA Level and Attention, labelled, one per line, values lined up */
 td.risk {
     white-space: nowrap;

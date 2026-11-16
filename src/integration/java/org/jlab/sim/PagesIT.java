@@ -115,6 +115,7 @@ class PagesIT {
     assertEquals(editable, directoryEditable(page), "table");
     assertEquals(editable, assessmentEditable(page), "assessment dialog");
     assertEquals(editable ? "Save,Cancel" : "Close", assessmentButtons(page), "dialog buttons");
+    assertEquals(editable, editOpenersOnEveryRow(page), "description and maintainers cells");
   }
 
   @Test
@@ -128,6 +129,8 @@ class PagesIT {
     assertFalse(assessmentEditable(loose));
     assertEquals("Close", assessmentButtons(anonymous));
     assertEquals("Close", assessmentButtons(loose));
+    assertFalse(editOpenersOnEveryRow(anonymous));
+    assertFalse(editOpenersOnEveryRow(loose));
   }
 
   /**
@@ -169,6 +172,27 @@ class PagesIT {
     assertTrue(dialog != null, "assessment dialog");
 
     return "Y".equals(dialog.attr("data-editable"));
+  }
+
+  /**
+   * Whether each row's Description and Maintainers cells, and only those, are marked to open the
+   * edit dialog with a tooltip (#70); directory.js handles the click. Fails if only some are.
+   */
+  private static boolean editOpenersOnEveryRow(Document page) {
+    int rows = page.select("table.data-table tbody tr").size();
+    int openers = page.select("table.data-table tbody td.edit-opener").size();
+    int expected = 2 * rows;
+
+    assertTrue(rows > 0, "directory rows");
+    assertTrue(openers == 0 || openers == expected, openers + " openers for " + rows + " rows");
+    assertEquals(
+        openers,
+        page.select(
+                "tbody td.description.edit-opener[title], tbody td.maintainers.edit-opener[title]")
+            .size(),
+        "only the description and maintainers cells, with a tooltip");
+
+    return openers == expected;
   }
 
   /** The assessment dialog's buttons, so OK can't be read as save (#69). */
