@@ -70,7 +70,10 @@ repository shows as **Remove** on its next sync unless the source lists it too.
 
 ### Editing
 
-Select the row, then **Edit**. You can change everything but the name and the repository; to
+Select the row, then **Edit**; or, quicker when you have many to fill in, select the row's
+**Description** or **Maintainers** cell, which selects the row and opens the same dialog. Links
+and buttons in those cells, such as **+N more**, still do what they do, and dragging to select
+text in them doesn't open the dialog. You can change everything but the name and the repository; to
 change either, add the software again and remove the old entry. Saving replaces the topics with
 the ones in the dialog.
 

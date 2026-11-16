@@ -184,6 +184,15 @@ $(document).on("click", "#open-edit-row-dialog-button", function() {
     $("#row-name").attr("disabled", "disabled");
     $("#row-repo").attr("disabled", "disabled");
 });
+/* A click on an editor's Description or Maintainers cell selects its row and opens Edit for it,
+ * except on a link or button in the cell, or after dragging to select text */
+$(document).on("click", ".editable-row-table td.edit-opener", function(e) {
+    if ($(e.target).closest("a, button").length > 0 || window.getSelection().toString() !== "") {
+        return;
+    }
+    $(this).closest("tr").trigger("click");
+    $("#open-edit-row-dialog-button").trigger("click");
+});
 $(document).on("table-row-add", function() {
     jlab.addRow();
 });

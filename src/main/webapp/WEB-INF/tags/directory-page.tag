@@ -153,6 +153,7 @@
         <s:editable-row-table-controls>
         </s:editable-row-table-controls>
     </c:if>
+    <c:set var="editOpener" value="${readonly ? '' : ' edit-opener'}"/>
     <table class="data-table ${readonly ? '' : 'uniselect-table editable-row-table'}">
         <thead>
         <tr>
@@ -164,6 +165,7 @@
         </thead>
         <tbody>
         <c:forEach var="software" items="${softwareList}">
+            <%-- For editors, a click on the Description or Maintainers cell opens Edit for its row (directory.js) --%>
             <tr data-id="${software.softwareId}"
                 data-archived="${software.archived ? 'Y' : 'N'}"
                 data-name="${fn:escapeXml(software.name)}"
@@ -201,7 +203,7 @@
                     </c:if>
                     <div class="name-meta"><span class="type"><c:out value="${software.type}"/></span> · <span class="repo"><c:out value="${software.repository.name}"/></span></div>
                 </td>
-                <td class="description">
+                <td class="description${editOpener}"<c:if test="${not readonly}"> title="Click to edit"</c:if>>
                     <div><c:out value="${software.description}"/></div>
                     <div class="note-div ${empty software.note ? '' : 'non-empty-note'}"><c:out value="${software.note}"/></div>
                     <%-- Topics are an aside: show the first three, and the rest behind "+N more",
@@ -217,7 +219,7 @@
                         </c:if>
                     </ul>
                 </td>
-                <td class="maintainers"><c:forEach items="${software.maintainerUsernameList}" var="username"><div><c:out value="${username}"/></div></c:forEach></td>
+                <td class="maintainers${editOpener}"<c:if test="${not readonly}"> title="Click to edit"</c:if>><c:forEach items="${software.maintainerUsernameList}" var="username"><div><c:out value="${username}"/></div></c:forEach></td>
                 <%-- One assessment gives all three, and one dialog edits it --%>
                 <td class="risk">
                     <a class="risk-dialog-opener${software.assessed ? '' : ' not-assessed'}" href="#"><c:choose>
