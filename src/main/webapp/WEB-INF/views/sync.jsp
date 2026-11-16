@@ -82,6 +82,8 @@
                         </tr>
                     </c:forEach>
                     <c:forEach var="software" items="${diff.updateList}">
+                        <c:set value="${not empty fn:trim(remoteMap[software.name].description)}"
+                               var="descriptionSync"/>
                         <c:set value="${not empty remoteMap[software.name].homeUrl}"
                                var="homeUrlSync"/>
                         <c:set value="${not empty remoteMap[software.name].stringTopicCsv}"
@@ -93,14 +95,14 @@
                             data-archived="${fn:escapeXml(archivedSync ? remoteMap[software.name].archived : software.archived)}"
                             data-type="${fn:escapeXml(software.type)}"
                             data-topic-csv="${fn:escapeXml(topicSync ? remoteMap[software.name].stringTopicCsv : software.topicCsv)}"
-                            data-description="${fn:escapeXml(remoteMap[software.name].description)}"
+                            data-description="${fn:escapeXml(descriptionSync ? remoteMap[software.name].description : software.description)}"
                             data-maintainer="${fn:escapeXml(software.maintainerUsernameCsv)}"
                             data-url="${fn:escapeXml(homeUrlSync ? remoteMap[software.name].homeUrl : software.homeUrl)}">
                             <td><c:out value="${software.name}"/></td>
                             <td><c:out value="${software.type}"/></td>
                             <td>
                                 <c:choose>
-                                    <c:when test="${software.description eq remoteMap[software.name].description}">
+                                    <c:when test="${not descriptionSync || software.description eq remoteMap[software.name].description}">
                                         <c:out value="${software.description}"/>
                                     </c:when>
                                     <c:otherwise>

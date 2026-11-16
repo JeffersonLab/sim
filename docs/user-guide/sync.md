@@ -65,9 +65,7 @@ Like any new software, it starts [not assessed](risk-assessment.md#not-assessed)
 
 A sync compares, and **Update** copies from the source:
 
-- the **description**. The comparison skips it when the source has none, but **Update** copies
-  it anyway, so updating software for another reason, such as its topics, empties a description
-  that only SIM has;
+- the **description**, when the source has one;
 - the **topics**, when the source has any;
 - the **home URL**, when the source has one;
 - the **archived** flag, from GitHub and GitLab only.
