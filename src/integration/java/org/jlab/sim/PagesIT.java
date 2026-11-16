@@ -115,7 +115,12 @@ class PagesIT {
     assertEquals(editable, directoryEditable(page), "table");
     assertEquals(editable, assessmentEditable(page), "assessment dialog");
     assertEquals(editable ? "Save,Cancel" : "Close", assessmentButtons(page), "dialog buttons");
-    assertEquals(editable, editOpenersOnEveryRow(page), "description and maintainers cells");
+    assertEquals(editable, editOpenersOnEveryRow(page), "name, description and maintainers cells");
+    assertEquals(editable ? "Add" : "", rowControls(page), "toolbar");
+    assertEquals(
+        editable,
+        page.selectFirst("#table-row-dialog #remove-software-button") != null,
+        "Remove in the edit dialog");
   }
 
   @Test
@@ -131,6 +136,8 @@ class PagesIT {
     assertEquals("Close", assessmentButtons(loose));
     assertFalse(editOpenersOnEveryRow(anonymous));
     assertFalse(editOpenersOnEveryRow(loose));
+    assertEquals("", rowControls(anonymous));
+    assertEquals("", rowControls(loose));
   }
 
   /**
@@ -175,24 +182,38 @@ class PagesIT {
   }
 
   /**
-   * Whether each row's Description and Maintainers cells, and only those, are marked to open the
-   * edit dialog with a tooltip (#70); directory.js handles the click. Fails if only some are.
+   * Whether each row's Name, Description and Maintainers cells, and only those, are marked to open
+   * the edit dialog with a tooltip (#70); directory.js handles the click. Fails if only some are.
    */
   private static boolean editOpenersOnEveryRow(Document page) {
     int rows = page.select("table.data-table tbody tr").size();
     int openers = page.select("table.data-table tbody td.edit-opener").size();
-    int expected = 2 * rows;
+    int expected = 3 * rows;
 
     assertTrue(rows > 0, "directory rows");
     assertTrue(openers == 0 || openers == expected, openers + " openers for " + rows + " rows");
     assertEquals(
         openers,
         page.select(
-                "tbody td.description.edit-opener[title], tbody td.maintainers.edit-opener[title]")
+                "tbody td.name.edit-opener[title], tbody td.description.edit-opener[title],"
+                    + " tbody td.maintainers.edit-opener[title]")
             .size(),
-        "only the description and maintainers cells, with a tooltip");
+        "only the name, description and maintainers cells, with a tooltip");
+    assertFalse(
+        page.selectFirst("table.data-table").hasClass("uniselect-table"), "rows aren't selected");
 
     return openers == expected;
+  }
+
+  /**
+   * The visible buttons above the directory table: Add only, since a row click opens Edit and
+   * Remove is in its dialog. Unselect is always in smoothness's markup; directory.css hides it.
+   */
+  private static String rowControls(Document page) {
+    return String.join(
+        ",",
+        page.select("#editable-row-table-control-panel button:not(#unselect-all-button)")
+            .eachText());
   }
 
   /** The assessment dialog's buttons, so OK can't be read as save (#69). */

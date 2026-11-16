@@ -114,6 +114,11 @@
                         </li>
                     </ul>
                 </form>
+                <%-- For the editors directory-page.tag lets edit, shown only when editing, set apart
+                     from Save and Cancel (directory.css) --%>
+                <c:if test="${'Y' ne param.loose and (pageContext.request.isUserInRole('acg') or pageContext.request.isUserInRole('sim-admin'))}">
+                    <button type="button" id="remove-software-button" title="Delete this software for good">Remove</button>
+                </c:if>
             </section>
         </s:editable-row-table-dialog>
     </jsp:body>         

@@ -3,6 +3,8 @@ jlab.editableRowTable = jlab.editableRowTable || {};
 jlab.editableRowTable.entity = 'Software';
 jlab.editableRowTable.dialog.width = 650;
 jlab.editableRowTable.dialog.height = 650;
+/* The row the Edit dialog is open for; null while adding */
+jlab.editingRow = null;
 jlab.addRow = function() {
     var name = $("#row-name").val(),
         type = $("#row-type").val(),
@@ -62,7 +64,7 @@ jlab.addRow = function() {
     });
 };
 jlab.editRow = function() {
-    var softwareId = $(".editable-row-table tr.selected-row").attr("data-id"),
+    var softwareId = jlab.editingRow.attr("data-id"),
         name = $("#row-name").val(),
         type = $("#row-type").val(),
         topicArray = $("#row-topics").val(),
@@ -123,13 +125,14 @@ jlab.editRow = function() {
     });
 };
 jlab.removeRow = function() {
-    var id = $(".editable-row-table tr.selected-row").attr("data-id"),
+    var id = jlab.editingRow.attr("data-id"),
         reloading = false;
 
-    $("#remove-row-button")
-        .height($("#remove-row-button").height())
-        .width($("#remove-row-button").width())
+    $("#remove-software-button")
+        .height($("#remove-software-button").height())
+        .width($("#remove-software-button").width())
         .empty().append('<div class="button-indicator"></div>');
+    $("#table-row-dialog button, .ui-dialog-titlebar button").attr("disabled", "disabled");
 
     var request = jQuery.ajax({
         url: jlab.contextPath + "/ajax/remove-software",
@@ -156,7 +159,8 @@ jlab.removeRow = function() {
 
     request.always(function() {
         if (!reloading) {
-            $("#remove-row-button").empty().text("Remove");
+            $("#remove-software-button").empty().text("Remove");
+            $("#table-row-dialog button, .ui-dialog-titlebar button").removeAttr("disabled");
         }
     });
 };
@@ -167,31 +171,40 @@ $(document).on("dialogclose", "#table-row-dialog", function() {
 
     $("#row-name").removeAttr("disabled");
     $("#row-repo").removeAttr("disabled");
+
+    $("#remove-software-button").hide();
+    jlab.editingRow = null;
 });
-$(document).on("click", "#open-edit-row-dialog-button", function() {
-    var $selectedRow = $(".editable-row-table tr.selected-row"),
-        topicCsv = $selectedRow.attr("data-topic-csv") || "";
-    $("#row-name").val($selectedRow.attr("data-name"));
-    $("#row-type").val($selectedRow.attr("data-type"));
-    $("#row-description").val($selectedRow.attr("data-description"));
-    $("#row-note").val($selectedRow.attr("data-note"));
-    $("#row-maintainers").val($selectedRow.attr("data-maintainer-csv"));
-    $("#row-repo").val($selectedRow.attr("data-repo-id"));
+jlab.openEditDialog = function($row) {
+    var topicCsv = $row.attr("data-topic-csv") || "";
+
+    jlab.editingRow = $row;
+
+    $("#row-name").val($row.attr("data-name"));
+    $("#row-type").val($row.attr("data-type"));
+    $("#row-description").val($row.attr("data-description"));
+    $("#row-note").val($row.attr("data-note"));
+    $("#row-maintainers").val($row.attr("data-maintainer-csv"));
+    $("#row-repo").val($row.attr("data-repo-id"));
     $("#row-topics").val(topicCsv.split(",")).trigger('change');
-    $("#row-url").val($selectedRow.attr("data-url"));
-    $("#row-archived").val($selectedRow.attr("data-archived"));
+    $("#row-url").val($row.attr("data-url"));
+    $("#row-archived").val($row.attr("data-archived"));
 
     $("#row-name").attr("disabled", "disabled");
     $("#row-repo").attr("disabled", "disabled");
-});
-/* A click on an editor's Description or Maintainers cell selects its row and opens Edit for it,
- * except on a link or button in the cell, or after dragging to select text */
+
+    $("#remove-software-button").show();
+
+    $("#table-row-dialog").dialog("option", "title", "Edit " + jlab.editableRowTable.entity).dialog("open");
+};
+/* A click on an editor's Name, Description or Maintainers cell opens Edit for its row, except on a
+ * link or button in the cell, or after dragging to select text. There is no row selection: Remove
+ * is in the Edit dialog, since archiving is usually what's wanted */
 $(document).on("click", ".editable-row-table td.edit-opener", function(e) {
     if ($(e.target).closest("a, button").length > 0 || window.getSelection().toString() !== "") {
         return;
     }
-    $(this).closest("tr").trigger("click");
-    $("#open-edit-row-dialog-button").trigger("click");
+    jlab.openEditDialog($(this).closest("tr"));
 });
 $(document).on("table-row-add", function() {
     jlab.addRow();
@@ -199,9 +212,10 @@ $(document).on("table-row-add", function() {
 $(document).on("table-row-edit", function() {
     jlab.editRow();
 });
-$(document).on("click", "#remove-row-button", function() {
-    var name = $(".editable-row-table tr.selected-row").attr("data-name");
-    if (confirm('Are you sure you want to remove ' + name + '?')) {
+$(document).on("click", "#remove-software-button", function() {
+    var name = jlab.editingRow.attr("data-name");
+    if (confirm('Remove ' + name + ' for good, with its topics and assessment?\n\n'
+            + 'To retire software, set Archived to Yes instead.')) {
         jlab.removeRow();
     }
 });
