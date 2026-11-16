@@ -619,7 +619,8 @@
 <p>Each piece of software has one assessment: six risk inputs, which give its Software Quality
 Assurance (SQA) control level and its attention band. Select the software's <strong>Risk &amp; SQA</strong> cell
 in the <a href="../directory/">Directory</a> to open the <strong>Risk &amp; SQA Assessment</strong> dialog. Anyone can open it
-to read; members of the <code>acg</code> and <code>sim-admin</code> <a href="../concepts/#roles">roles</a> can change it.</p>
+to read; members of the <code>acg</code> and <code>sim-admin</code> <a href="../concepts/#roles">roles</a> can change it. Everyone
+else sees only <strong>Close</strong>.</p>
 <p>The dialog links to the two documents that define the terms: <strong>SQAP §4.3</strong>, the Accelerator
 Controls Software Quality Assurance Plan's section on software control levels, and <strong>Guidance</strong>,
 the group's software risk guidance, which defines each input's values.</p>
@@ -630,10 +631,10 @@ the group's software risk guidance, which defines each input's values.</p>
 <li>If the SQAP allows a documented exception to the derived level, pick the level in
    <strong>Override</strong> and give the reason in <strong>Rationale</strong>, up to 512 characters. An override needs a
    rationale.</li>
-<li>Select <strong>Update</strong>. SIM saves the inputs, records you and the time as the assessor, and reloads
-   the page. <strong>OK</strong> closes the dialog without saving.</li>
+<li>Select <strong>Save</strong>. SIM saves the inputs, records you and the time as the assessor, and reloads
+   the page. <strong>Cancel</strong>, the × in the title bar, or Esc closes the dialog without saving.</li>
 </ol>
-<p>To drop an override, set <strong>Override</strong> to <strong>None</strong> and select <strong>Update</strong>; the rationale goes with
+<p>To drop an override, set <strong>Override</strong> to <strong>None</strong> and select <strong>Save</strong>; the rationale goes with
 it.</p>
 <p>The footer of the dialog says who last assessed the software, and when.</p>
 <h2 id="risk-inputs">Risk inputs<a class="headerlink" href="#risk-inputs" title="Permanent link">&para;</a></h2>
@@ -840,7 +841,7 @@ adding tests or training a second maintainer lowers a factor, and with it the fr
 attention. Reassess the software when that happens.</p>
 <h2 id="not-assessed">Not assessed<a class="headerlink" href="#not-assessed" title="Permanent link">&para;</a></h2>
 <p>New software has every input at 3, or <strong>Some</strong> for Past Downtime Rate, and shows <strong>Not assessed</strong>
-until someone selects <strong>Update</strong> in its dialog, even if they keep those values. Not-assessed
+until someone selects <strong>Save</strong> in its dialog, even if they keep those values. Not-assessed
 software comes last in the Directory, and the SQA Level, Attention and Risk Factors filters leave
 it out. To find the software still to be assessed, set the Directory's <strong>Assessed</strong> filter to
 <strong>Not assessed</strong>.</p>
