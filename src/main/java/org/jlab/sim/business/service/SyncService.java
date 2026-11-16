@@ -42,6 +42,38 @@ public class SyncService extends JPAService<Software> {
 
   static final String DESCRIPTION = "description";
 
+  /*
+   * Each source's address. An environment variable of the same name replaces it, so that a test
+   * stack can point the syncs at a stand-in instead of the real sources.
+   */
+  static final String SYNC_GITHUB_URL = "SYNC_GITHUB_URL";
+  static final String SYNC_GITLAB_URL = "SYNC_GITLAB_URL";
+  static final String SYNC_CSUE_URL = "SYNC_CSUE_URL";
+  static final String SYNC_CERTIFIED_URL = "SYNC_CERTIFIED_URL";
+  static final String SYNC_LLAPP_URL = "SYNC_LLAPP_URL";
+
+  /**
+   * A source's address: the environment variable's value if it is set, or the default.
+   *
+   * @param variable The environment variable, such as {@value #SYNC_GITHUB_URL}
+   * @param defaultUrl The real source's address
+   * @return The address
+   */
+  static String sourceUrl(String variable, String defaultUrl) {
+    return orDefault(System.getenv(variable), defaultUrl);
+  }
+
+  /**
+   * The value, or the default if the value is null or blank.
+   *
+   * @param value The value
+   * @param defaultValue The default
+   * @return The value or the default
+   */
+  static String orDefault(String value, String defaultValue) {
+    return value == null || value.isBlank() ? defaultValue : value.trim();
+  }
+
   /** The setting that lists the GitLab groups and projects a sync leaves out. */
   static final String GITLAB_SYNC_EXCLUDE_CSV = "GITLAB_SYNC_EXCLUDE_CSV";
 
@@ -295,7 +327,9 @@ public class SyncService extends JPAService<Software> {
     List<Software> softwareList = new ArrayList<>();
 
     String url =
-        "https://code.jlab.org/api/v4/groups/acc/projects?include_subgroups=Y&per_page=100";
+        sourceUrl(
+            SYNC_GITLAB_URL,
+            "https://code.jlab.org/api/v4/groups/acc/projects?include_subgroups=Y&per_page=100");
 
     List<String> excludedPaths =
         excludedGitLabPaths(SettingsService.cachedSettings.csv(GITLAB_SYNC_EXCLUDE_CSV));
@@ -347,7 +381,9 @@ public class SyncService extends JPAService<Software> {
     List<Software> softwareList = new ArrayList<>();
 
     String url =
-        "https://api.github.com/search/repositories?per_page=100&q=topic%3Aacg+org%3AJeffersonLab";
+        sourceUrl(
+            SYNC_GITHUB_URL,
+            "https://api.github.com/search/repositories?per_page=100&q=topic%3Aacg+org%3AJeffersonLab");
 
     do {
       PaginatedResult result = paginatedGitHubQuery(url, repository);
@@ -384,7 +420,8 @@ public class SyncService extends JPAService<Software> {
   }
 
   private List<Software> fetchCSUE(Repository repository) throws UserFriendlyException {
-    String url = "https://opweb.acc.jlab.org/CSUEApps/csueTools/csueAppsWeb.php";
+    String url =
+        sourceUrl(SYNC_CSUE_URL, "https://opweb.acc.jlab.org/CSUEApps/csueTools/csueAppsWeb.php");
 
     try {
       return parseCSUE(Jsoup.connect(url).get(), repository);
@@ -462,7 +499,11 @@ public class SyncService extends JPAService<Software> {
   private List<Software> fetchCertifiedType(Repository repository, String param, SoftwareType type)
       throws UserFriendlyException {
     try {
-      String url = "https://devweb.acc.jlab.org/controls_web/cjs/CSD/csd_db.php?type=" + param;
+      String url =
+          sourceUrl(
+                  SYNC_CERTIFIED_URL, "https://devweb.acc.jlab.org/controls_web/cjs/CSD/csd_db.php")
+              + "?type="
+              + param;
 
       return parseCertified(Jsoup.connect(url).get(), repository, type);
     } catch (IOException e) {
@@ -519,7 +560,7 @@ public class SyncService extends JPAService<Software> {
   }
 
   private List<Software> fetchLLAPP(Repository repository) throws UserFriendlyException {
-    String url = "https://devweb.acc.jlab.org/llapp.php";
+    String url = sourceUrl(SYNC_LLAPP_URL, "https://devweb.acc.jlab.org/llapp.php");
 
     HttpResponse<String> response;
 

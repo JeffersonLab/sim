@@ -352,4 +352,11 @@ class SyncServiceParseTest {
     assertEquals(List.of(), SyncService.parseLLAPP("", REPOSITORY));
     assertEquals(List.of(), SyncService.parseLLAPP("<pre>total 0\n", REPOSITORY));
   }
+
+  @Test
+  void sourceUrlOverrideFallsBackToTheDefaultWhenUnsetOrBlank() {
+    assertEquals("https://real", SyncService.orDefault(null, "https://real"));
+    assertEquals("https://real", SyncService.orDefault(" ", "https://real"));
+    assertEquals("http://stand-in", SyncService.orDefault(" http://stand-in ", "https://real"));
+  }
 }

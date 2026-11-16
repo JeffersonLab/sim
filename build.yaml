@@ -19,6 +19,11 @@ services:
       file: compose.yaml
       service: mailhog
 
+  sync-stand-in:
+    extends:
+      file: compose.yaml
+      service: sync-stand-in
+
   sim:
     extends:
       file: compose.yaml

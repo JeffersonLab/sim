@@ -78,6 +78,18 @@ Wildfly must be pre-configured before the first deployment of the app. The [wild
 ### Runtime
 Uses the [Smoothness Environment Variables](https://github.com/JeffersonLab/smoothness#environment-variables).
 
+The sync pages read each source from its usual address. An environment variable replaces it, such as to read a stand-in:
+
+| Variable           | Default                                                                                    |
+|--------------------|--------------------------------------------------------------------------------------------|
+| SYNC_GITHUB_URL    | https://api.github.com/search/repositories?per_page=100&q=topic%3Aacg+org%3AJeffersonLab   |
+| SYNC_GITLAB_URL    | https://code.jlab.org/api/v4/groups/acc/projects?include_subgroups=Y&per_page=100          |
+| SYNC_CSUE_URL      | https://opweb.acc.jlab.org/CSUEApps/csueTools/csueAppsWeb.php                              |
+| SYNC_CERTIFIED_URL | https://devweb.acc.jlab.org/controls_web/cjs/CSD/csd_db.php (the sync adds `?type=app`, `lib` or `script`) |
+| SYNC_LLAPP_URL     | https://devweb.acc.jlab.org/llapp.php                                                      |
+
+The Compose stacks set them to the `sync-stand-in` container, which serves fixed data from [container/sync-stand-in](https://github.com/JeffersonLab/sim/tree/main/container/sync-stand-in), so their syncs never reach GitHub, GitLab or JLab's servers.
+
 ### Database
 This application requires an Oracle 19+ database with the following [schema](https://github.com/JeffersonLab/sim/tree/main/container/oracle/initdb.d) installed.   A release that changes the schema comes with a script for existing databases in [container/oracle/upgrade](https://github.com/JeffersonLab/sim/tree/main/container/oracle/upgrade), named for the release; the release notes say when one is needed.   The application server hosting this app must also be configured with a JNDI datasource.
 
@@ -123,7 +135,7 @@ Unit tests run with the build (`gradlew build`, or `gradlew test` alone).  Integ
 ```
 gradlew integrationTest
 ```
-If the stack runs on other ports (see [Ports](https://github.com/JeffersonLab/sim#ports)), point the tests at them with `SIM_URL` (such as `https://localhost:48443/sim`) and `KEYCLOAK_URL` (such as `http://localhost:48081/auth`).
+The sync tests (`SyncIT`) expect the stand-in's data in [container/sync-stand-in](https://github.com/JeffersonLab/sim/tree/main/container/sync-stand-in).  If the stack runs on other ports (see [Ports](https://github.com/JeffersonLab/sim#ports)), point the tests at them with `SIM_URL` (such as `https://localhost:48443/sim`) and `KEYCLOAK_URL` (such as `http://localhost:48081/auth`).
 
 ## Release
 1. Bump the version number in the VERSION file and commit and push to GitHub (using [Semantic Versioning](https://semver.org/)).

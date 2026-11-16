@@ -44,11 +44,12 @@ project is, its settings, and how to set it up.
   `docker compose -f build.yaml up -d --force-recreate --renew-anon-volumes keycloak`.
 - Outside systems: Keycloak (login and the user directory), Oracle, Puppet Show (PDF and image
   export) and SMTP email run as containers; MailHog catches the email
-  (`http://localhost:8025`). The Sync pages (`SyncService`) have no stand-in: they read the real
-  GitHub API, `code.jlab.org`'s GitLab API, and JLab's internal `opweb` and `devweb` pages,
-  which the VM may not reach. The tokens in `container/app/sim.properties` are placeholders;
-  never put real ones there or in a commit. Never point the app at JLab's servers or production
-  databases.
+  (`http://localhost:8025`). The Sync pages (`SyncService`) read a stand-in, the
+  `sync-stand-in` container (`container/sync-stand-in`), through the `SYNC_*_URL` variables
+  in `compose.yaml`; without them they read the real GitHub API, `code.jlab.org`'s GitLab API,
+  and JLab's internal `opweb` and `devweb` pages. `SyncIT` expects the stand-in's data: change
+  both together. The tokens in `container/app/sim.properties` are placeholders; never put real
+  ones there or in a commit. Never point the app at JLab's servers or production databases.
 - User guide (`docs/user-guide`): it is also a Zensical website (`zensical.toml`, tools pinned by
   `uv.lock`). On a change to it, run `uv run --locked zensical build --strict`, as CI's
   `user-guide` job does; link within the guide by relative path, and outside it by full URL.
