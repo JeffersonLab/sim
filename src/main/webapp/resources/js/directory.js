@@ -365,7 +365,7 @@ $(document).on("click", ".risk-dialog-opener", function () {
         $("#assessment-footer").text("Not assessed yet: the inputs are the defaults");
     }
 
-    let editable = $("#logout-form").length,
+    let editable = $("#risk-dialog").attr("data-editable") === "Y",
         $controls = $("#risk-update-button, #risk-dialog fieldset select, #level-note");
 
     if(editable) {
