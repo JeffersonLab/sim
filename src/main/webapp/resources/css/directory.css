@@ -173,3 +173,65 @@ td .topic-list .topic {
         display: none;
     }
 }
+
+/* The checklist's line in the Risk & SQA cell, under the assessment's three */
+td.risk .elements-dialog-opener {
+    display: block;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid #ddd;
+}
+td.risk .elements-dialog-opener .risk-key {
+    margin-right: 8px;
+}
+td.risk .gap-count {
+    color: #a33;
+}
+#elements-dialog section {
+    position: relative;
+    /* Room for the absolutely positioned .dialog-button-panel, as in the assessment dialog */
+    padding-bottom: 56px;
+}
+#elements-dialog .dialog-links {
+    top: 0;
+    right: 0;
+}
+#elements-intro {
+    margin: 0 6em 8px 0;
+}
+#elements-scroll {
+    max-height: 55vh;
+    overflow-y: auto;
+}
+#elements-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+#elements-table th {
+    position: sticky;
+    top: 0;
+    background-color: white;
+}
+#elements-table th {
+    text-align: left;
+    padding: 4px 8px;
+    border-bottom: 2px solid #ccc;
+}
+#elements-table td {
+    vertical-align: top;
+    padding: 6px 8px;
+    border-bottom: 1px solid #ddd;
+}
+#elements-table .element-meta,
+#elements-table .element-recorded,
+#elements-footer {
+    color: #666;
+    font-size: smaller;
+}
+#elements-table .element-link,
+#elements-table .element-note {
+    width: 200px;
+}
+#elements-footer {
+    margin-top: 1em;
+}

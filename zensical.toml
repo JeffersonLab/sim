@@ -17,6 +17,7 @@ nav = [
   { "Concepts" = "concepts.md" },
   { "Directory" = "directory.md" },
   { "Risk and SQA assessment" = "risk-assessment.md" },
+  { "SQA elements" = "sqa-elements.md" },
   { "Repositories and sync" = "sync.md" },
   { "Administration" = "administration.md" },
 ]

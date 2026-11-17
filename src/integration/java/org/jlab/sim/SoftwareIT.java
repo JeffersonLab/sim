@@ -6,10 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import jakarta.json.JsonValue;
+import java.io.StringReader;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -148,7 +153,7 @@ class SoftwareIT {
     assertEquals("2 Significant*", levelCell(row).text(), "the override, marked");
     assertEquals("Severe", attentionCell(row).text());
     assertEquals(
-        "Ops Impact 5 Critical SQA Level 2 Significant* Attention Severe",
+        "Ops Impact 5 Critical SQA Level 2 Significant* Attention Severe SQA Elements Not recorded",
         row.selectFirst("td.risk").text(),
         "each value labelled");
 
@@ -431,6 +436,205 @@ class SoftwareIT {
     assertNotNull(row(name), "the software is still listed");
   }
 
+  /**
+   * An editor records which SQA elements a product has, and the directory counts the required ones
+   * that are met. The elements are the SQAP's, by their ids, which never change.
+   */
+  @Test
+  void editorRecordsSqaElementsAndTheDirectoryCountsThem() throws Exception {
+    String token = Sim.token(Sim.EDITOR);
+    String name = newName();
+    assertOk(add(token, name, "APP", "N"));
+    String softwareId = row(name).attr("data-id");
+
+    assertNull(elementsCell(row(name)), "unassessed software has no level to choose elements by");
+
+    // Impact 3 and Complexity 3: level 2 Significant
+    assertOk(
+        score(
+            token,
+            softwareId,
+            3,
+            3,
+            3,
+            List.of(Map.entry("levelOverride", ""), Map.entry("levelNote", ""))));
+
+    assertEquals("Not recorded", elementsCell(row(name)).text(), "nothing recorded is not a gap");
+    Map<String, JsonObject> checklist = checklist(row(name));
+    long required =
+        checklist.values().stream()
+            .filter(item -> "REQUIRED".equals(item.getString("requirement")))
+            .count();
+    assertEquals("REQUIRED", checklist.get("user-guide").getString("requirement"));
+    assertEquals("RECOMMENDED", checklist.get("test-plan").getString("requirement"));
+    assertFalse(checklist.get("user-guide").containsKey("status"));
+
+    assertOk(
+        record(
+            token,
+            softwareId,
+            new String[] {"version-control", "MET", "https://example.com/repo", ""},
+            new String[] {"user-guide", "GAP", "https://example.com/issues/1", " Being written "},
+            new String[] {"requirements-specification", "NOT_APPLICABLE", "", "A wrapper script"},
+            new String[] {"test-plan", "MET", "", ""}));
+
+    // Not applicable leaves one fewer required element, and a recommended one is outside the count
+    assertEquals(
+        "1 of " + (required - 1) + " (1 gap)", elementsCell(row(name)).text(), "required met");
+    checklist = checklist(row(name));
+    JsonObject versionControl = checklist.get("version-control");
+    assertEquals("MET", versionControl.getString("status"));
+    assertEquals("https://example.com/repo", versionControl.getString("link"));
+    assertEquals(Sim.EDITOR, versionControl.getString("by"));
+    assertEquals("Being written", checklist.get("user-guide").getString("note"));
+    assertEquals("A wrapper script", checklist.get("requirements-specification").getString("note"));
+
+    // A status that didn't change keeps who recorded it; one that did is the new recorder's, and
+    // a blank status clears what was recorded. Elements left out stay as they are.
+    assertOk(
+        record(
+            Sim.token(Sim.ADMIN),
+            softwareId,
+            new String[] {"version-control", "MET", "https://example.com/repo", ""},
+            new String[] {"user-guide", "MET", "https://example.com/guide", ""},
+            new String[] {"requirements-specification", "", "", ""}));
+
+    assertEquals("2 of " + required, elementsCell(row(name)).text());
+    checklist = checklist(row(name));
+    assertEquals(Sim.EDITOR, checklist.get("version-control").getString("by"));
+    assertEquals(Sim.ADMIN, checklist.get("user-guide").getString("by"));
+    assertFalse(checklist.get("requirements-specification").containsKey("status"));
+    assertEquals("MET", checklist.get("test-plan").getString("status"));
+
+    // The checklist follows the level: 0 Minimal asks for neither a User Guide nor a Test Plan,
+    // and what was recorded of them comes back with the level
+    assertOk(
+        score(
+            token,
+            softwareId,
+            3,
+            3,
+            3,
+            List.of(Map.entry("levelOverride", "0"), Map.entry("levelNote", "An exception"))));
+    checklist = checklist(row(name));
+    assertFalse(checklist.containsKey("user-guide"));
+    assertEquals("RECOMMENDED", checklist.get("version-control").getString("requirement"));
+    assertOk(
+        score(
+            token,
+            softwareId,
+            3,
+            3,
+            3,
+            List.of(Map.entry("levelOverride", ""), Map.entry("levelNote", ""))));
+    assertEquals("MET", checklist(row(name)).get("user-guide").getString("status"));
+  }
+
+  @Test
+  void notApplicableNeedsANoteAndALinkAWebAddress() throws Exception {
+    String token = Sim.token(Sim.EDITOR);
+    String name = newName();
+    assertOk(add(token, name, "APP", "N"));
+    String softwareId = row(name).attr("data-id");
+    // Impact 4 and Complexity 1: level 2 Significant, which requires a User Guide
+    scoreNamed(token, name, 4, 3);
+
+    assertFail(
+        record(token, softwareId, new String[] {"user-guide", "NOT_APPLICABLE", "", " "}),
+        "\"User Guide\" needs a note saying why it is not applicable");
+    assertFail(
+        record(token, softwareId, new String[] {"user-guide", "MET", "javascript:alert(1)", ""}),
+        "needs a link that starts with http:// or https://");
+    assertFail(
+        record(token, softwareId, new String[] {"user-guide", "", "https://example.com", ""}),
+        "needs a status to keep its link or note");
+    assertFail(
+        record(token, softwareId, new String[] {"user-guide", "DONE", "", ""}),
+        "Unable to record SQA Elements");
+    assertFail(
+        record(token, softwareId, new String[] {"no-such-element", "MET", "", ""}),
+        "Unknown SQA element: no-such-element");
+    // One bad element fails them all
+    assertFail(
+        record(
+            token,
+            softwareId,
+            new String[] {"version-control", "MET", "", ""},
+            new String[] {"user-guide", "NOT_APPLICABLE", "", ""}),
+        "not applicable");
+    assertFail(
+        Sim.post(
+            "/ajax/edit-software-elements",
+            token,
+            List.of(
+                Map.entry("softwareId", softwareId),
+                Map.entry("elementId[]", "user-guide"),
+                Map.entry("status[]", "MET"))),
+        "Each element needs a status, a link and a note");
+
+    assertEquals("Not recorded", elementsCell(row(name)).text(), "nothing was saved");
+  }
+
+  @Test
+  void userAndAnonymousCannotRecordSqaElements() throws Exception {
+    String name = newName();
+    assertOk(add(Sim.token(Sim.EDITOR), name, "APP", "N"));
+    String softwareId = row(name).attr("data-id");
+    scoreNamed(Sim.token(Sim.EDITOR), name, 4, 3);
+
+    for (String token : new String[] {Sim.token(Sim.USER), null}) {
+      assertFail(
+          record(token, softwareId, new String[] {"user-guide", "MET", "", ""}),
+          "Not authenticated / authorized");
+    }
+
+    assertEquals("Not recorded", elementsCell(row(name)).text(), "nothing was saved");
+  }
+
+  @Test
+  void directoryFiltersByAGapInAnSqaElement() throws Exception {
+    String token = Sim.token(Sim.EDITOR);
+    String withGap = newName();
+    String without = newName();
+    assertOk(add(token, withGap, "APP", "N"));
+    assertOk(add(token, without, "APP", "N"));
+    String softwareId = row(withGap).attr("data-id");
+    // Impact 4 and Complexity 1: level 2 Significant, which requires a User Guide
+    scoreNamed(token, withGap, 4, 3);
+    scoreNamed(token, without, 4, 3);
+
+    assertOk(record(token, softwareId, new String[] {"user-guide", "GAP", "", ""}));
+    assertOk(
+        record(
+            token,
+            row(without).attr("data-id"),
+            new String[] {"user-guide", "MET", "https://example.com/guide", ""}));
+
+    assertNotNull(row(withGap, "&gap=user-guide"));
+    assertNotNull(row(withGap, "&gap=ANY"));
+    assertNull(row(withGap, "&gap=version-control"));
+    assertNull(row(without, "&gap=user-guide"));
+    assertNull(row(without, "&gap=ANY"));
+
+    String message = Sim.page("/directory?gap=user-guide", null).select(".message-box").text();
+    assertTrue(message.contains("Gap in \"User Guide\""), message);
+    message = Sim.page("/directory?gap=ANY", null).select(".message-box").text();
+    assertTrue(message.contains("Gap in any SQA Element"), message);
+    assertEquals(400, Sim.get("/directory?gap=no-such-element", null).statusCode());
+
+    // A gap recorded at another level is not on the checklist: 0 Minimal asks for no User Guide
+    assertOk(
+        score(
+            token,
+            softwareId,
+            4,
+            1,
+            3,
+            List.of(Map.entry("levelOverride", "0"), Map.entry("levelNote", "An exception"))));
+    assertNull(row(withGap, "&gap=user-guide"));
+    assertNull(row(withGap, "&gap=ANY"));
+  }
+
   /** A name nobody else uses, which the test's cleanup removes. */
   private String newName() {
     String name = "it-" + UUID.randomUUID().toString().substring(0, 8);
@@ -496,6 +700,37 @@ class SoftwareIT {
     form.addAll(overrideParams);
 
     return Sim.post("/ajax/edit-software-risk", token, form);
+  }
+
+  /** Records SQA elements for software: each is an id, a status, a link and a note. */
+  private static HttpResponse<String> record(String token, String softwareId, String[]... elements)
+      throws Exception {
+    List<Map.Entry<String, String>> form = new ArrayList<>();
+    form.add(Map.entry("softwareId", softwareId));
+    for (String[] element : elements) {
+      form.add(Map.entry("elementId[]", element[0]));
+      form.add(Map.entry("status[]", element[1]));
+      form.add(Map.entry("link[]", element[2]));
+      form.add(Map.entry("note[]", element[3]));
+    }
+
+    return Sim.post("/ajax/edit-software-elements", token, form);
+  }
+
+  /** The row's checklist, as the dialog reads it: its elements by id. */
+  private static Map<String, JsonObject> checklist(Element row) {
+    Map<String, JsonObject> checklist = new LinkedHashMap<>();
+    try (JsonReader reader = Json.createReader(new StringReader(row.attr("data-checklist")))) {
+      for (JsonValue item : reader.readArray()) {
+        checklist.put(item.asJsonObject().getString("id"), item.asJsonObject());
+      }
+    }
+    return checklist;
+  }
+
+  /** The count of required SQA elements met; null for software that has no checklist. */
+  private static Element elementsCell(Element row) {
+    return row.selectFirst("td.risk .sqa-elements");
   }
 
   private static Element impactCell(Element row) {

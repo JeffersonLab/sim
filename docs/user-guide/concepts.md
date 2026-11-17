@@ -78,12 +78,18 @@ From them SIM works out:
 Software starts **Not assessed**, with every input at its middle value, until someone saves an
 assessment. See [Risk and SQA assessment](risk-assessment.md).
 
+## SQA elements
+
+The SQAP asks for certain **SQA elements** at each control level, such as a User Guide or version
+control. Assessed software has a checklist of the elements its level requires or recommends, each
+**Met**, a **Gap**, **Not applicable** or not recorded. See [SQA elements](sqa-elements.md).
+
 ## Roles
 
 | Who | Can |
 |---|---|
-| Anyone, logged in or not | View the Directory, the Repositories tab, the sync pages, each assessment, and the Help tab. |
-| Members of the `acg` role | Also add, edit and remove software, save assessments, and apply syncs. |
+| Anyone, logged in or not | View the Directory, the Repositories tab, the sync pages, each assessment and checklist of SQA elements, and the Help tab. |
+| Members of the `acg` role | Also add, edit and remove software, save assessments and checklists, and apply syncs. |
 | Members of the `sim-admin` role | All of the above, and the **Setup** tab. |
 
 Roles come from the lab's identity provider (Keycloak). Log in with the link at the top right of

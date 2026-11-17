@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.Locale;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
+import org.jlab.sim.persistence.entity.SoftwareElement;
 import org.jlab.sim.persistence.entity.SoftwareTopic;
+import org.jlab.sim.persistence.entity.SqaElement;
 import org.jlab.sim.persistence.enumeration.*;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.JPAService;
@@ -27,6 +29,8 @@ public class SoftwareService extends JPAService<Software> {
   static final String ACG_ROLE = "acg";
   static final String ADMIN_ROLE = "sim-admin";
   private static final String ASSESSED_DATE = "assessedDate";
+  private static final String SOFTWARE_ID = "softwareId";
+  private static final String ELEMENT_ID = "elementId";
 
   public SoftwareService() {
     super(Software.class);
@@ -225,6 +229,7 @@ public class SoftwareService extends JPAService<Software> {
       Attention attention,
       boolean fragile,
       Boolean assessed,
+      String gapElementId,
       SoftwareOrder order,
       int offset,
       int max) {
@@ -247,7 +252,8 @@ public class SoftwareService extends JPAService<Software> {
             level,
             attention,
             fragile,
-            assessed);
+            assessed,
+            gapElementId);
 
     if (!filters.isEmpty()) {
       cq.where(cb.and(filters.toArray(new Predicate[] {})));
@@ -265,7 +271,7 @@ public class SoftwareService extends JPAService<Software> {
     }
     orders.add(cb.asc(root.get("name")));
     // Two repositories may hold software of the same name, and pages need a fixed order
-    orders.add(cb.asc(root.get("softwareId")));
+    orders.add(cb.asc(root.get(SOFTWARE_ID)));
     cq.orderBy(orders);
     return getEntityManager()
         .createQuery(cq)
@@ -287,7 +293,8 @@ public class SoftwareService extends JPAService<Software> {
       ControlLevel level,
       Attention attention,
       boolean fragile,
-      Boolean assessed) {
+      Boolean assessed,
+      String gapElementId) {
     List<Predicate> filters = new ArrayList<>();
 
     if (softwareName != null && !softwareName.isEmpty()) {
@@ -316,9 +323,9 @@ public class SoftwareService extends JPAService<Software> {
       for (String topicName : topicNameArray) {
         Subquery<BigInteger> subquery = cq.subquery(BigInteger.class);
         Root<SoftwareTopic> subqueryRoot = subquery.from(SoftwareTopic.class);
-        subquery.select(subqueryRoot.get("software").get("softwareId"));
+        subquery.select(subqueryRoot.get("software").get(SOFTWARE_ID));
         subquery.where(cb.equal(subqueryRoot.get("topic").get("name"), topicName));
-        filters.add(cb.in(root.get("softwareId")).value(subquery));
+        filters.add(cb.in(root.get(SOFTWARE_ID)).value(subquery));
       }
     }
 
@@ -351,6 +358,38 @@ public class SoftwareService extends JPAService<Software> {
           assessed ? cb.isNotNull(root.get(ASSESSED_DATE)) : cb.isNull(root.get(ASSESSED_DATE)));
     }
 
+    if (gapElementId != null) {
+      // An element recorded as a gap, among those the software's level requires or recommends:
+      // one recorded at another level is not on the checklist now
+      Subquery<String> subquery = cq.subquery(String.class);
+      Root<SoftwareElement> recorded = subquery.from(SoftwareElement.class);
+      Root<SqaElement> element = subquery.from(SqaElement.class);
+      Expression<ControlLevel> effective =
+          cb.coalesce(root.get("controlLevelOverride"), root.get("controlLevel"));
+
+      List<Predicate> onChecklist = new ArrayList<>();
+      for (ControlLevel controlLevel : ControlLevel.values()) {
+        onChecklist.add(
+            cb.and(
+                cb.equal(effective, controlLevel),
+                cb.isNotNull(element.get("level" + controlLevel.getValue()))));
+      }
+
+      List<Predicate> gap = new ArrayList<>();
+      gap.add(cb.equal(recorded.get("id").get(SOFTWARE_ID), root.get(SOFTWARE_ID)));
+      gap.add(cb.equal(recorded.get("status"), ElementStatus.GAP));
+      gap.add(cb.equal(element.get(ELEMENT_ID), recorded.get("id").get(ELEMENT_ID)));
+      gap.add(cb.or(onChecklist.toArray(new Predicate[] {})));
+      if (!SqaElementService.ANY_ELEMENT.equals(gapElementId)) {
+        gap.add(cb.equal(element.get(ELEMENT_ID), gapElementId));
+      }
+
+      subquery.select(recorded.get("id").get(ELEMENT_ID));
+      subquery.where(cb.and(gap.toArray(new Predicate[] {})));
+      filters.add(cb.exists(subquery));
+      filters.add(cb.isNotNull(root.get(ASSESSED_DATE)));
+    }
+
     return filters;
   }
 
@@ -365,7 +404,8 @@ public class SoftwareService extends JPAService<Software> {
       ControlLevel level,
       Attention attention,
       boolean fragile,
-      Boolean assessed) {
+      Boolean assessed,
+      String gapElementId) {
     CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
     CriteriaQuery<Long> cq = cb.createQuery(Long.class);
     Root<Software> root = cq.from(Software.class);
@@ -384,7 +424,8 @@ public class SoftwareService extends JPAService<Software> {
             level,
             attention,
             fragile,
-            assessed);
+            assessed,
+            gapElementId);
 
     if (!filters.isEmpty()) {
       cq.where(cb.and(filters.toArray(new Predicate[] {})));

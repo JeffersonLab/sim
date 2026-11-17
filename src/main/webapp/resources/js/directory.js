@@ -214,7 +214,7 @@ $(document).on("table-row-edit", function() {
 });
 $(document).on("click", "#remove-software-button", function() {
     var name = jlab.editingRow.attr("data-name");
-    if (confirm('Remove ' + name + ' for good, with its topics and assessment?\n\n'
+    if (confirm('Remove ' + name + ' for good, with its topics, assessment and SQA elements?\n\n'
             + 'To retire software, set Archived to Yes instead.')) {
         jlab.removeRow();
     }
@@ -230,6 +230,7 @@ $(document).on("click", ".default-clear-panel", function () {
     $("#attention-select").val('');
     $("#fragile-select").val('');
     $("#assessed-select").val('');
+    $("#gap-select").val('');
     return false;
 });
 /* The lookup tables of container/oracle/initdb.d/02_ddl.sql, which derives the stored values; these
@@ -400,6 +401,123 @@ $(document).on("click", ".risk-dialog-opener", function () {
     $("#risk-dialog").dialog("open");
     return false;
 });
+/* The checklist dialog: the row's data-checklist lists its elements in order, each with its
+ * requirement and what was recorded (Directory.java); the dialog has a row for every element */
+$(document).on("click", ".elements-dialog-opener", function () {
+    let $tr = $(this).closest("tr"),
+        checklist = JSON.parse($tr.attr("data-checklist") || "[]"),
+        $tbody = $("#elements-table tbody"),
+        editable = $("#elements-dialog").attr("data-editable") === "Y",
+        level = $tr.attr("data-level-override") || $tr.attr("data-level");
+
+    $("#elements-software-id").val($tr.attr("data-id"));
+    $("#elements-dialog").dialog("option", "title", $tr.attr("data-name") + " - SQA Elements");
+    $("#elements-level").text(jlab.risk.label("level-labels", level));
+
+    $tbody.find(".element-row").removeClass("on-checklist").hide();
+
+    checklist.forEach(function (item) {
+        let $row = $tbody.find(".element-row").filter(function () {
+            return $(this).attr("data-element-id") === item.id;
+        });
+
+        $row.find(".element-requirement").text(item.requirement === "REQUIRED" ? "Required" : "Recommended");
+        $row.find(".element-status").val(item.status || "");
+        $row.find(".element-link").val(item.link || "");
+        $row.find(".element-note").val(item.note || "");
+        $row.find(".element-recorded").text(item.status ? "by " + item.by + " on " + item.date : "");
+        $row.toggleClass("recommended", item.requirement !== "REQUIRED");
+        /* In the checklist's order: required elements first */
+        $row.addClass("on-checklist").appendTo($tbody).show();
+    });
+
+    let $controls = $("#elements-table select, #elements-table input");
+
+    if (editable) {
+        $controls.removeAttr("disabled");
+    } else {
+        $controls.attr("disabled", "disabled");
+    }
+
+    $("#elements-dialog").dialog("open");
+    return false;
+});
+$(document).on("click", "#elements-save-button", function () {
+    var softwareId = $("#elements-software-id").val(),
+        elementId = [],
+        status = [],
+        link = [],
+        note = [],
+        problem = null,
+        $saveButton = $("#elements-save-button"),
+        reloading = false;
+
+    $("#elements-table .element-row.on-checklist").each(function () {
+        let $row = $(this),
+            rowStatus = $row.find(".element-status").val(),
+            rowLink = $row.find(".element-link").val().trim(),
+            rowNote = $row.find(".element-note").val().trim(),
+            name = '"' + $row.attr("data-element-name") + '"';
+
+        if (rowStatus === "NOT_APPLICABLE" && rowNote === "") {
+            problem = problem || name + " needs a note saying why it is not applicable";
+        } else if (rowStatus === "" && (rowLink !== "" || rowNote !== "")) {
+            problem = problem || name + " needs a status to keep its link or note";
+        }
+
+        elementId.push($row.attr("data-element-id"));
+        status.push(rowStatus);
+        link.push(rowLink);
+        note.push(rowNote);
+    });
+
+    if (problem !== null) {
+        alert(problem);
+        return;
+    }
+
+    $saveButton
+        .height($saveButton.height())
+        .width($saveButton.width())
+        .empty().append('<div class="button-indicator"></div>');
+    $(".dialog-close-button").attr("disabled", "disabled");
+    $(".ui-dialog-titlebar button").attr("disabled", "disabled");
+
+    var request = jQuery.ajax({
+        url: jlab.contextPath + "/ajax/edit-software-elements",
+        type: "POST",
+        data: {
+            softwareId: softwareId,
+            elementId: elementId,
+            status: status,
+            link: link,
+            note: note
+        },
+        dataType: "json"
+    });
+
+    request.done(function(json) {
+        if (json.stat === 'ok') {
+            reloading = true;
+            window.location.reload();
+        } else {
+            alert(json.error);
+        }
+    });
+
+    request.fail(function(xhr, textStatus) {
+        window.console && console.log('Unable to record SQA elements; Text Status: ' + textStatus + ', Ready State: ' + xhr.readyState + ', HTTP Status Code: ' + xhr.status);
+        alert('Unable to Save: Server unavailable or unresponsive');
+    });
+
+    request.always(function() {
+        if (!reloading) {
+            $saveButton.empty().text("Save");
+            $(".dialog-close-button").removeAttr("disabled");
+            $(".ui-dialog-titlebar button").removeAttr("disabled");
+        }
+    });
+});
 $(document).on("click", ".topic-more", function () {
     let $button = $(this),
         expanded = $button.closest(".topic-list").toggleClass("expanded").hasClass("expanded");
@@ -419,6 +537,15 @@ $(function(){
         autoOpen: false,
         minWidth: 640,
         width: 640,
+        height: "auto",
+        modal: true,
+        draggable: false
+    });
+
+    $("#elements-dialog").dialog({
+        autoOpen: false,
+        minWidth: 900,
+        width: 900,
         height: "auto",
         modal: true,
         draggable: false
