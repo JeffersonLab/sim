@@ -83,6 +83,29 @@ class PagesIT {
     }
   }
 
+  /** The SQA elements a repository provides for all its software, with the basis of each. */
+  @Test
+  void repositoriesListsTheSqaElementsEachProvides() throws Exception {
+    Document page = Sim.page("/repositories", null);
+
+    String gitlab =
+        page.select("tr:has(td:first-child:contains(GITLAB)) td.provided-elements").text();
+    assertTrue(gitlab.contains("Version control"), gitlab);
+    assertTrue(gitlab.contains("Every project is a Git repository on code.jlab.org."), gitlab);
+    assertTrue(gitlab.contains("Issue Tracking"), gitlab);
+
+    String csue = page.select("tr:has(td:first-child:contains(CSUE)) td.provided-elements").text();
+    assertTrue(csue.contains("Version control"), csue);
+    assertFalse(csue.contains("Issue Tracking"), csue);
+
+    for (String name : new String[] {"CERTIFIED", "HOME_DIR"}) {
+      assertEquals(
+          "",
+          page.select("tr:has(td:first-child:contains(" + name + ")) td.provided-elements").text(),
+          name + " provides none");
+    }
+  }
+
   @ParameterizedTest
   @CsvSource({Sim.ADMIN + ", 200", Sim.EDITOR + ", 403", Sim.USER + ", 403"})
   void onlyAdminsReadSetup(String username, int status) throws Exception {

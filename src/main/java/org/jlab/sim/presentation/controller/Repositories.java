@@ -8,9 +8,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serial;
+import java.math.BigInteger;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.jlab.sim.business.service.RepositoryService;
+import org.jlab.sim.business.service.SqaElementService;
 import org.jlab.sim.persistence.entity.Repository;
+import org.jlab.sim.persistence.entity.RepositoryElement;
+import org.jlab.sim.persistence.entity.SqaElement;
 import org.jlab.smoothness.business.service.JPAService;
 
 /**
@@ -26,6 +33,7 @@ public class Repositories extends HttpServlet {
   @Serial private static final long serialVersionUID = 1L;
 
   @EJB RepositoryService repositoryService;
+  @EJB SqaElementService elementService;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -42,7 +50,21 @@ public class Repositories extends HttpServlet {
     List<Repository> repoList =
         repositoryService.findAll(new JPAService.OrderDirective("name", true));
 
+    // The SQA elements each repository provides for all its software, in the SQAP's order
+    Map<String, SqaElement> elementsById = new HashMap<>();
+    for (SqaElement element : elementService.getAll()) {
+      elementsById.put(element.getElementId(), element);
+    }
+    Map<BigInteger, List<RepositoryElement>> provided = elementService.findProvided();
+    for (List<RepositoryElement> elements : provided.values()) {
+      elements.sort(
+          Comparator.comparingInt(
+              (RepositoryElement element) -> elementsById.get(element.getElementId()).getWeight()));
+    }
+
     request.setAttribute("repoList", repoList);
+    request.setAttribute("provided", provided);
+    request.setAttribute("elementsById", elementsById);
 
     request.getRequestDispatcher("/WEB-INF/views/repositories.jsp").forward(request, response);
   }

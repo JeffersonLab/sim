@@ -224,6 +224,7 @@ td.risk .gap-count {
 }
 #elements-table .element-meta,
 #elements-table .element-recorded,
+#elements-table .element-provided,
 #elements-footer {
     color: #666;
     font-size: smaller;

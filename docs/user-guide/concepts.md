@@ -82,7 +82,9 @@ assessment. See [Risk and SQA assessment](risk-assessment.md).
 
 The SQAP asks for certain **SQA elements** at each control level, such as a User Guide or version
 control. Assessed software has a checklist of the elements its level requires or recommends, each
-**Met**, a **Gap**, **Not applicable** or not recorded. See [SQA elements](sqa-elements.md).
+**Met**, a **Gap**, **Not applicable** or not recorded. An element that a repository provides for
+all its software, such as version control, is met without being recorded. See
+[SQA elements](sqa-elements.md).
 
 ## Roles
 

@@ -163,3 +163,17 @@ CREATE TABLE SIM_OWNER.SOFTWARE_ELEMENT
     -- Not applicable needs its reason
     CONSTRAINT SOFTWARE_ELEMENT_CK2 CHECK (STATUS <> 'NOT_APPLICABLE' OR NOTE IS NOT NULL)
 );
+
+-- The SQA elements a repository provides for all its software, such as version control for every
+-- project on GitLab. A product's checklist shows such an element as met by its repository, unless
+-- somebody recorded a status for the product. NOTE says on what basis the repository provides it.
+CREATE TABLE SIM_OWNER.REPOSITORY_ELEMENT
+(
+    REPOSITORY_ID INTEGER NOT NULL,
+    ELEMENT_ID    VARCHAR2(64 CHAR) NOT NULL,
+    NOTE          VARCHAR2(512 CHAR) NOT NULL,
+    LINK_URL      VARCHAR2(512 CHAR) NULL,
+    CONSTRAINT REPOSITORY_ELEMENT_PK PRIMARY KEY (REPOSITORY_ID, ELEMENT_ID),
+    CONSTRAINT REPOSITORY_ELEMENT_FK1 FOREIGN KEY (REPOSITORY_ID) REFERENCES SIM_OWNER.REPOSITORY (REPOSITORY_ID),
+    CONSTRAINT REPOSITORY_ELEMENT_FK2 FOREIGN KEY (ELEMENT_ID) REFERENCES SIM_OWNER.SQA_ELEMENT (ELEMENT_ID)
+);

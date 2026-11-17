@@ -76,6 +76,11 @@ SIM has no page to add or change repositories or topics.
   URL, and whether it can be synced (`SYNC_YN`). A repository can only be synced if SIM has code
   for it, which it has for the five named in [What each sync reads](sync.md#what-each-sync-reads);
   any other repository with `SYNC_YN = 'Y'` shows an `Unknown Repository` error on its sync.
+- **The SQA elements a repository provides** for all its software, which the Repositories tab
+  lists and each product's [checklist](sqa-elements.md#met-by-the-repository) shows as met, are
+  rows in the `REPOSITORY_ELEMENT` table: the repository, the element's id from `SQA_ELEMENT`, a
+  note that says on what basis the repository provides it, and an optional link. Add a row only
+  for an element that everything in the repository has. A change shows on the next page load.
 - **Topics** are added when someone types a new one in the Directory's dialog or a sync brings
   one in. A topic no software uses any more stays in the lists; remove it in the database.
 

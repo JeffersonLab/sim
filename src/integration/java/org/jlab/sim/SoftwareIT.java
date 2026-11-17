@@ -635,6 +635,82 @@ class SoftwareIT {
     assertNull(row(withGap, "&gap=ANY"));
   }
 
+  /**
+   * An SQA element a repository provides for all its software is met on each product's checklist
+   * without a record, and a status recorded for the product replaces it. GITHUB provides version
+   * control and issue tracking; HOME_DIR, where the other tests add software, provides nothing.
+   */
+  @Test
+  void anElementTheRepositoryProvidesIsMetUnlessRecordedOtherwise() throws Exception {
+    String token = Sim.token(Sim.EDITOR);
+    String github =
+        Sim.page("/directory", null)
+            .selectFirst("select[name=repositoryId] option:contains(GITHUB)")
+            .attr("value");
+    String name = "it-" + UUID.randomUUID().toString().substring(0, 8);
+    String filter = "/directory?softwareName=" + name + "&repositoryId=" + github;
+    assertOk(addIn(github, token, name, "APP", "N"));
+    String softwareId = Sim.page(filter, null).selectFirst("tr[data-name]").attr("data-id");
+
+    try {
+      // Impact 4 and Complexity 1: level 2 Significant, which requires all three elements
+      assertOk(
+          score(
+              token,
+              softwareId,
+              4,
+              1,
+              3,
+              List.of(Map.entry("levelOverride", ""), Map.entry("levelNote", ""))));
+
+      Element row = Sim.page(filter, null).selectFirst("tr[data-name]");
+      Map<String, JsonObject> checklist = checklist(row);
+      long required =
+          checklist.values().stream()
+              .filter(item -> "REQUIRED".equals(item.getString("requirement")))
+              .count();
+      JsonObject versionControl = checklist.get("version-control");
+      assertEquals("GITHUB", versionControl.getString("provider"));
+      assertEquals(
+          "Every project is a Git repository on GitHub.", versionControl.getString("providerNote"));
+      assertFalse(versionControl.containsKey("status"), "nobody recorded it");
+      assertEquals("GITHUB", checklist.get("issue-tracking").getString("provider"));
+      assertFalse(checklist.get("user-guide").containsKey("provider"));
+      assertEquals(
+          "Not recorded",
+          elementsCell(row).text(),
+          "what the repository provides is not a person's record");
+
+      // Once something is recorded, the count includes what the repository provides
+      assertOk(record(token, softwareId, new String[] {"user-guide", "MET", "", ""}));
+      assertEquals("3 of " + required, elementsCell(Sim.page(filter, null)).text());
+
+      // A status recorded for the product replaces the repository's, and clearing it returns it
+      assertOk(record(token, softwareId, new String[] {"version-control", "GAP", "", ""}));
+      row = Sim.page(filter, null).selectFirst("tr[data-name]");
+      assertEquals("2 of " + required + " (1 gap)", elementsCell(row).text());
+      assertEquals("GAP", checklist(row).get("version-control").getString("status"));
+      assertEquals("GITHUB", checklist(row).get("version-control").getString("provider"));
+      assertNotNull(Sim.page(filter + "&gap=version-control", null).selectFirst("tr[data-name]"));
+
+      assertOk(record(token, softwareId, new String[] {"version-control", "", "", ""}));
+      assertEquals("3 of " + required, elementsCell(Sim.page(filter, null)).text());
+      assertNull(Sim.page(filter + "&gap=ANY", null).selectFirst("tr[data-name]"));
+    } finally {
+      assertOk(
+          Sim.post(
+              "/ajax/remove-software",
+              Sim.token(Sim.ADMIN),
+              List.of(Map.entry("softwareId", softwareId))));
+    }
+
+    // Software in HOME_DIR gets nothing from its repository
+    String homeDir = newName();
+    assertOk(add(token, homeDir, "APP", "N"));
+    scoreNamed(token, homeDir, 4, 3);
+    assertFalse(checklist(row(homeDir)).get("version-control").containsKey("provider"));
+  }
+
   /** A name nobody else uses, which the test's cleanup removes. */
   private String newName() {
     String name = "it-" + UUID.randomUUID().toString().substring(0, 8);
@@ -664,8 +740,20 @@ class SoftwareIT {
 
   private HttpResponse<String> add(
       String token, String name, String type, String archived, String... topics) throws Exception {
+    return addIn(repositoryId, token, name, type, archived, topics);
+  }
+
+  /** Adds software to a repository other than HOME_DIR: the caller removes it. */
+  private static HttpResponse<String> addIn(
+      String inRepositoryId,
+      String token,
+      String name,
+      String type,
+      String archived,
+      String... topics)
+      throws Exception {
     List<Map.Entry<String, String>> form = new ArrayList<>();
-    form.add(Map.entry("repositoryId", repositoryId));
+    form.add(Map.entry("repositoryId", inRepositoryId));
     form.add(Map.entry("name", name));
     form.add(Map.entry("type", type));
     for (String topic : topics) {

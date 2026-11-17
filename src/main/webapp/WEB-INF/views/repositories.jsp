@@ -18,6 +18,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Description</th>
+                        <th>SQA Elements Provided</th>
                         <th>Sync</th>
                     </tr>
                 </thead>
@@ -36,6 +37,15 @@
                                 (<a href="directory?repositoryId=${repo.repositoryId}">Software</a>)
                             </td>
                             <td><c:out value="${repo.description}"/></td>
+                            <%-- Met on the checklist of all the repository's software, unless recorded otherwise --%>
+                            <td class="provided-elements">
+                                <c:forEach var="provision" items="${provided[repo.repositoryId]}">
+                                    <div class="provided-element">
+                                        <c:out value="${elementsById[provision.elementId].name}"/>
+                                        <div class="provided-note"><c:out value="${provision.note}"/><c:if test="${not empty provision.linkUrl}"> <a href="${fn:escapeXml(provision.linkUrl)}">Link</a></c:if></div>
+                                    </div>
+                                </c:forEach>
+                            </td>
                             <td>
                                 <!-- Use onclick to avoid https://bugs.webkit.org/show_bug.cgi?id=30103 -->
                                 <c:url value="/repositories/sync/${repo.repositoryId}"
