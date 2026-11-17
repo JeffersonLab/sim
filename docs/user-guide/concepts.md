@@ -9,7 +9,7 @@ Each entry in SIM is a piece of **software**, with:
 | Field | What it is |
 |---|---|
 | **Name** | Its name, up to 128 characters. A name is unique within its repository; two repositories can each have software of the same name. |
-| **Type** | `APP`, `LIB` (a library), `SCRIPT` or `PLUGIN`. |
+| **Type** | `APP`, `LIB` (a library), `SCRIPT` or `PLUGIN`; see [Types](#types). |
 | **Repository** | Where its code or release lives; see [Repositories](#repositories). |
 | **Description** | What it does, up to 256 characters. |
 | **Note** | Anything else worth knowing, up to 256 characters. A sync never changes it. |
@@ -23,6 +23,32 @@ Each piece of software also has a [risk assessment](#risk-and-sqa-assessment).
 The name and repository identify the software: they can't be changed once it is added. To move
 software to another repository or rename it, add it again and remove the old entry.
 
+## Types
+
+Software is hard to sort into types, and a type is useful only if everyone sorts the same way,
+so take it as a best effort, decided by who the software is for and how it runs:
+
+| Type | What it is |
+|---|---|
+| `APP` | Software for end users: a program with an entry point you run. Software started by a shared container to share resources, such as a web app, is an app too. |
+| `SCRIPT` | A kind of app: small, narrowly focused, usually a single interpreted source file, run easily by power users. The line between an app and a script is blurry; when in doubt, choose `APP`. |
+| `LIB` | Software for developers: code with no entry point of its own, meant to be reused by other software through its API. |
+| `PLUGIN` | A kind of library that is added to or removed from an app easily, often by its users at run time, to customize it. |
+
+How ACG sorts common cases:
+
+| Software | Type | Why |
+|---|---|---|
+| A Java web app in Wildfly, or PHP in Apache | `APP` | It is for end users. Strictly it is a plugin to its server, but it is used as an app. |
+| A desktop program started from JMenu | `APP` | It is for end users, and it is a program. |
+| A Low Level Apps IOC "glue" app | `APP` | It combines libraries into a program. |
+| A Java JAR that isn't executable, such as the jlog logbook API | `LIB` | It is for developers, to include in their code. |
+| Low Level Apps code that other software links | `LIB` | It is reusable code for developers. |
+
+Where one repository holds more than one kind of code, choose the type of its main purpose: an
+app with a container build file for a quick start is still an `APP`. A repository that holds only
+a container build file, or other infrastructure as code, is probably a `SCRIPT`.
+
 ## Repositories
 
 A **repository** is a place software lives: a code host such as GitHub or GitLab, one of the
@@ -31,7 +57,13 @@ lab's software lists, or a shared directory. The **Repositories** tab lists them
 Some repositories can be **synced**: SIM reads the list of software from the source and shows how
 it differs from SIM's, and an editor applies the differences. These are GitHub, GitLab, and the
 lab's Certified, CSUE and Low Level Apps lists; see [What each sync reads](sync.md#what-each-sync-reads).
-Software in other repositories is entered and kept up to date by hand.
+Software in other repositories is entered and kept up to date by hand. `ACE_GIT` and `HLA_GIT`,
+old local Git repositories, keep the few entries they have: add no new software to them.
+
+The same software can be in more than one repository, because some lab lists record where
+software is deployed as well as where its code is kept: an app can be in CSUE for its deployment
+and on GitHub for its code and issues, such as `fe_daq` in CSUE and `AI_SRF_OPS_fe_daq` on
+GitHub. Each is a separate entry in SIM.
 
 Administrators add repositories; see [Repositories and topics](administration.md#repositories-and-topics).
 

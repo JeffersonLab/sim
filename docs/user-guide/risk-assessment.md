@@ -8,17 +8,16 @@ in the [Directory](directory.md) to open the **Risk & SQA Assessment** dialog. A
 to read; members of the `acg` and `sim-admin` [roles](concepts.md#roles) can change it. Everyone
 else sees only **Close**.
 
-The dialog links to the two documents that define the terms: **SQAP §4.3**, the Accelerator
-Controls Software Quality Assurance Plan's section on software control levels, and **Guidance**,
-the group's software risk guidance, which defines each input's values.
+The dialog has two links: **SQAP §4.3**, the Accelerator Controls Software Quality Assurance
+Plan's section on software control levels, and **Guidance**, which opens [Rating the risk
+inputs](#rating-the-risk-inputs) in this guide.
 
 ## Making an assessment
 
 1. Set the six **Risk Inputs**. As you change them, the dialog shows the derived SQA level, the
    fragility, the factors that set it, and the attention.
-2. If the SQAP allows a documented exception to the derived level, pick the level in
-   **Override** and give the reason in **Rationale**, up to 512 characters. An override needs a
-   rationale.
+2. If the SQAP allows an exception to the derived level, pick the level in **Override** and give
+   the reason in **Rationale**, up to 512 characters. An override needs a rationale.
 3. Select **Save**. SIM saves the inputs, records you and the time as the assessor, and reloads
    the page. **Cancel**, the × in the title bar, or Esc closes the dialog without saving.
 
@@ -40,33 +39,69 @@ Each input is from 1 to 5; the dialog shows each value's name and number.
 | **Documentation Gaps** | Few | Low | Medium | High | Many | Fragility |
 | **Esotericism** | Common | Low | Medium | High | Esoteric | Fragility |
 
-Ops Impact is how much the accelerator's operation depends on the software; Critical means its
-failure could injure someone or damage the machine. The other five are risk factors: what makes
-the software likely to fail, or slow to fix when it does. The **Guidance** link has their full
-definitions.
+Ops Impact is how much the accelerator's operation depends on the software. The other five are
+risk factors: what makes the software likely to fail, or slow to fix when it does.
+
+## Rating the risk inputs
+
+The risk that matters most is downtime: the software not working as operations need it, during
+a run or during Scheduled Accelerator Maintenance. Rate each input for the software as it is now,
+and reassess when the software or its use changes. Software not yet written, or a new version
+that a coming operations program needs, can be rated too.
+
+The SQAP defines the two inputs that give the control level, so this guide doesn't repeat them:
+
+- **Ops Impact**: [SQAP §4.3.1](https://pages.jlab.org/acc/iac/docs/sqap/latest/04-software-development-life-cycle/#431-ops-impact).
+- **Code Complexity**: [SQAP §4.3.2](https://pages.jlab.org/acc/iac/docs/sqap/latest/04-software-development-life-cycle/#432-code-complexity).
+
+Who rates the software, and when, is in [SQAP
+§4.3.4](https://pages.jlab.org/acc/iac/docs/sqap/latest/04-software-development-life-cycle/#434-recording-the-control-level).
+The other four inputs are SIM's own, and only set fragility and attention.
+
+### Past Downtime Rate
+
+How often the software has failed in operations; past failures are the best guide to future
+ones. 1 **Rare** is software that has hardly ever failed, 5 **Frequent** software that fails
+often. The software's issues labeled `downtime` are the record to count.
+
+### Debug/Test Difficulty
+
+How well tested the software is, and how hard it is to test and debug. Consider whether it has
+unit and integration tests and a log; whether its code is modular, so that a problem can be
+isolated; whether it is easy to trace what it is doing; and whether debugging needs special tools
+or beam studies. Software that has run in production for a long time can count as tested in
+place; new, untested software rates higher. 1 **Easy** is well tested and easy to debug, 5
+**Hard** is poorly tested or hard to debug.
+
+### Documentation Gaps
+
+What documentation the software is missing: a README, API documentation (such as Javadoc,
+Doxygen or Sphinx), a user guide, on-call notes, technical notes such as a design or
+administration guide, and requirements. Poorly defined requirements are a risk of their own:
+software that doesn't do what operations need is downtime too. 1 **Few** is comprehensive
+documentation, 5 **Many** is sparse. The aim is that no knowledge lives only in someone's head.
+
+### Esotericism
+
+How much specialized knowledge the software hides, beyond what its documentation can pass on:
+its subject domain, its programming language and libraries, its development environment and
+tools, and its procedures and customers. The fewer people in ACG who understand it well enough
+to troubleshoot it, the higher the rating; it is relative to ACG's staff, not to the world. 1
+**Common** is widely understood, 5 **Esoteric** is software only one person knows. The aim is at
+least two experts, a primary maintainer and a backup, and a few others familiar with its
+technology and subject.
 
 ## SQA control level
 
 The SQA control level says how much process the SQAP asks for when the software changes: 0
 **Minimal**, 1 **Partial**, 2 **Significant** or 3 **Full**. SIM derives it from Ops Impact and
-Code Complexity:
-
-| Ops Impact \ Code Complexity | 1 Simple | 2 Low | 3 Medium | 4 High | 5 Complex |
-|---|---|---|---|---|---|
-| **1 Marginal** | 0 | 0 | 1 | 2 | 2 |
-| **2 Low** | 0 | 0 | 1 | 2 | 2 |
-| **3 Medium** | 1 | 1 | 2 | 3 | 3 |
-| **4 High** | 2 | 2 | 3 | 3 | 3 |
-| **5 Critical** | 3 | 3 | 3 | 3 | 3 |
-
-This is the SQAP's three-by-three table, with each input's 1 and 2 counted as low, 3 as
-moderate, and 4 and 5 as high, and Critical impact always Full.
+Code Complexity with the SQAP's [control level
+table](https://pages.jlab.org/acc/iac/docs/sqap/latest/04-software-development-life-cycle/#433-control-level-table),
+and the dialog shows the result as you change them.
 
 An **override** replaces the derived level with another, for an exception the SQAP allows. The
 Directory then shows the override with an asterisk, and its SQA Level filter uses the override.
 The derived level is kept, so the dialog shows both.
-
-The level is meant to be stable: it changes only when the software's impact or complexity does.
 
 ## Fragility and attention
 
@@ -87,7 +122,8 @@ Impact and fragility:
 
 Unlike the SQA level, attention is meant to fall as the software improves: documenting it,
 adding tests or training a second maintainer lowers a factor, and with it the fragility and the
-attention. Reassess the software when that happens.
+attention. Reassess the software when that happens. To choose what to work on next, filter the
+Directory by attention, or by **Risk Factors** for software with any factor at 4 or worse.
 
 ## Not assessed
 
