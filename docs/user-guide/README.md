@@ -21,9 +21,11 @@ than the version you are using.
 2. [Directory](directory.md): finding software, and adding, editing and removing it.
 3. [Risk and SQA assessment](risk-assessment.md): the six risk inputs, and how they give the SQA
    control level and the attention band.
-4. [Repositories and sync](sync.md): the Repositories tab, and copying software in from GitHub,
+4. [SQA elements](sqa-elements.md): the checklist of what the SQAP asks of software at its
+   control level, and finding the gaps.
+5. [Repositories and sync](sync.md): the Repositories tab, and copying software in from GitHub,
    GitLab and the lab's other lists.
-5. [Administration](administration.md): the Setup tab, settings and the sync's access tokens. For
+6. [Administration](administration.md): the Setup tab, settings and the sync's access tokens. For
    administrators.
 
 ## Tabs at a glance
@@ -46,6 +48,9 @@ than the version you are using.
   software](directory.md#adding-software).
 - **Assess its risk.** Select the software's **Risk & SQA** cell, set the six inputs, and select
   **Save**. See [Risk and SQA assessment](risk-assessment.md).
+- **Record what it has of the SQAP's elements.** Once it is assessed, select **SQA Elements** in
+  the same cell, set each element's status, and select **Save**. See
+  [SQA elements](sqa-elements.md).
 - **Bring in new software from GitHub or GitLab.** On **Repositories**, select the arrow on the
   repository's row, check the differences, and apply them. See [Repositories and
   sync](sync.md).

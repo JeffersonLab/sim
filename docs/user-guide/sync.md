@@ -41,9 +41,10 @@ will update, remove and add. Each applied row shows **Success!**, and **Apply Al
 Anyone else sees the same page, with the buttons disabled.
 
 **Check the Remove rows before applying them.** **Remove** deletes the software from SIM, with
-its note and its [risk assessment](risk-assessment.md), and can't be undone. A project that was
-renamed shows as one Remove and one Add, and applying both loses the old entry's assessment and
-note: add the note and assessment to the new entry before removing the old one. A project that
+its note, its [risk assessment](risk-assessment.md) and its [SQA elements](sqa-elements.md), and
+can't be undone. A project that was renamed shows as one Remove and one Add, and applying both
+loses the old entry's assessment, SQA elements and note: add them to the new entry before
+removing the old one. A project that
 left the source, such as a GitHub repository that lost its `acg` topic, shows as Remove, and so
 does software added to a synced repository by hand.
 

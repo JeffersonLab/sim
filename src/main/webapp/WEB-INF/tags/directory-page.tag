@@ -138,6 +138,22 @@
                                 </select>
                             </div>
                         </li>
+                        <li>
+                            <div class="li-key">
+                                <label for="gap-select">Gap in SQA Element</label>
+                            </div>
+                            <div class="li-value">
+                                <select id="gap-select" name="gap">
+                                    <option value="">&nbsp;</option>
+                                    <option value="ANY"${param.gap eq 'ANY' ? ' selected="selected"' : ''}>Any element</option>
+                                    <c:forEach items="${elementList}" var="element">
+                                        <option value="${fn:escapeXml(element.elementId)}"${param.gap eq element.elementId ? ' selected="selected"' : ''}>
+                                            <c:out value="${element.name}"/></option>
+                                    </c:forEach>
+                                </select>
+                                <div>(recorded as a gap, at the software's level)</div>
+                            </div>
+                        </li>
                     </ul>
                 </fieldset>
             </div>
@@ -191,7 +207,8 @@
                 data-difficulty="${fn:escapeXml(software.difficulty.value)}"
                 data-complexity="${fn:escapeXml(software.complexity.value)}"
                 data-gaps="${fn:escapeXml(software.gaps.value)}"
-                data-esotericism="${fn:escapeXml(software.esotericism.value)}">
+                data-esotericism="${fn:escapeXml(software.esotericism.value)}"
+                data-checklist="${fn:escapeXml(checklistJson[software.softwareId])}">
                 <td class="name${editOpener}"<c:if test="${not readonly}"> title="Click to edit"</c:if>>
                     <c:choose>
                         <c:when test="${not empty software.homeUrl}">
@@ -236,6 +253,15 @@
                         </c:when>
                         <c:otherwise>Not assessed</c:otherwise>
                     </c:choose></a>
+                    <%-- The checklist follows the control level, so only assessed software has one --%>
+                    <c:set var="checklist" value="${checklists[software.softwareId]}"/>
+                    <c:if test="${not empty checklist}">
+                        <a class="elements-dialog-opener${checklist.recorded ? '' : ' not-recorded'}" href="#" title="Required SQA elements met, of those that apply"><span class="risk-key">SQA Elements</span>
+                            <span class="sqa-elements"><c:choose>
+                                <c:when test="${checklist.recorded}"><c:out value="${checklist.summary}"/><c:if test="${checklist.gapCount gt 0}"> <span class="gap-count">(<c:out value="${checklist.gapCount}"/> ${checklist.gapCount eq 1 ? 'gap' : 'gaps'})</span></c:if></c:when>
+                                <c:otherwise>Not recorded</c:otherwise>
+                            </c:choose></span></a>
+                    </c:if>
                 </td>
             </tr>
         </c:forEach>
@@ -423,6 +449,64 @@
                 </c:when>
                 <c:otherwise>
                     <button id="risk-save-button" type="button">Save</button>
+                    <button class="dialog-close-button" type="button">Cancel</button>
+                </c:otherwise>
+            </c:choose>
+        </div>
+    </section>
+</div>
+<%-- A product's checklist of SQA elements. Every element is here once; directory.js shows those of
+     the row's checklist, in its order, and fills in what was recorded --%>
+<div class="dialog" id="elements-dialog" title="SQA Elements" data-editable="${readonly ? 'N' : 'Y'}">
+    <section>
+        <input type="hidden" id="elements-software-id"/>
+        <div class="dialog-links">
+            <a target="_blank" href="https://pages.jlab.org/acc/iac/docs/sqap/latest/04-software-development-life-cycle/#44-life-cycle-stages">SQAP &sect;4.4</a>
+        </div>
+        <p id="elements-intro">The SQA elements the SQAP asks of a product at control level <span id="elements-level"></span>. An element nobody has recorded is not a gap.</p>
+        <%-- Not a data-table: the Directory is the page's only one, which its scripts and tests rely on.
+             The Full level's checklist is taller than most windows, so the table scrolls, not the dialog --%>
+        <div id="elements-scroll">
+        <table id="elements-table">
+            <thead>
+            <tr>
+                <th>Element</th>
+                <th>Status</th>
+                <th>Link</th>
+                <th>Note</th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach items="${elementList}" var="element">
+                <tr class="element-row" data-element-id="${fn:escapeXml(element.elementId)}" data-element-name="${fn:escapeXml(element.name)}">
+                    <td class="element-name">
+                        <div><c:out value="${element.name}"/></div>
+                        <div class="element-meta"><span class="element-requirement"></span> · <c:out value="${element.phase}"/> · <a target="_blank" href="${fn:escapeXml(element.sectionUrl)}">&sect;<c:out value="${element.sectionNumber}"/></a></div>
+                    </td>
+                    <td>
+                        <select class="element-status" aria-label="Status of ${fn:escapeXml(element.name)}">
+                            <option value="">Not recorded</option>
+                            <c:forEach items="${elementStatusList}" var="opt">
+                                <option value="${opt}"><c:out value="${opt.label}"/></option>
+                            </c:forEach>
+                        </select>
+                        <div class="element-recorded"></div>
+                    </td>
+                    <td><input type="url" class="element-link" maxlength="512" placeholder="https://&hellip;" aria-label="Link for ${fn:escapeXml(element.name)}"/></td>
+                    <td><input type="text" class="element-note" maxlength="512" aria-label="Note for ${fn:escapeXml(element.name)}"/></td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
+        </div>
+        <div id="elements-footer">Link: the evidence of an element that is met, or the issue that tracks a gap. Not applicable needs a note saying why.<c:if test="${not empty sqapVersion}"> Elements of SQAP revision <c:out value="${sqapVersion}"/>.</c:if></div>
+        <div class="dialog-button-panel">
+            <c:choose>
+                <c:when test="${readonly}">
+                    <button class="dialog-close-button" type="button">Close</button>
+                </c:when>
+                <c:otherwise>
+                    <button id="elements-save-button" type="button">Save</button>
                     <button class="dialog-close-button" type="button">Cancel</button>
                 </c:otherwise>
             </c:choose>

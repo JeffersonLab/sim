@@ -12,7 +12,7 @@ assess it. SIM opens on this tab.
 | **Name** | The name, linked to its home URL if it has one, with 🕸 if it is [archived](concepts.md#archived-software). Under it, the type and the repository. |
 | **Description** | The description, then the note, then the topics. When there are five or more topics, the first three are shown and the rest are behind **+N more**; select it to show them all, and **less** to hide them again. |
 | **Maintainers** | The maintainers' usernames, one per line. |
-| **Risk & SQA** | The Ops Impact, the SQA level and the attention, or **Not assessed**. An asterisk after the SQA level means it is overridden; hover over it for the derived level and the rationale. Select the cell to open the [assessment](risk-assessment.md). |
+| **Risk & SQA** | The Ops Impact, the SQA level and the attention, or **Not assessed**. An asterisk after the SQA level means it is overridden; hover over it for the derived level and the rationale. Select the cell to open the [assessment](risk-assessment.md). Under it, for assessed software, **SQA Elements**: how many of the required [SQA elements](sqa-elements.md) are met, and the gaps, or **Not recorded**. Select it to open the checklist. |
 
 The software is in order of risk: assessed software first, by Ops Impact from highest to lowest,
 then by attention from highest to lowest, then by name; then the software nobody has assessed
@@ -40,9 +40,10 @@ form; select **Apply** after it to see everything again.
 | **Attention** | Software with this attention. |
 | **Risk Factors** | **Any factor ≥ 4**: software with at least one of the five risk factors at 4 or 5, that is, a fragility of High or Fragile. |
 | **Assessed** | Software that has been assessed, or that hasn't. |
+| **Gap in SQA Element** | Software where this [SQA element](sqa-elements.md), or with **Any element** any of them, is recorded as a gap and is on the checklist at the software's level. |
 
-The SQA Level, Attention and Risk Factors filters only find assessed software, since SIM shows no
-level or attention for software nobody has assessed.
+The SQA Level, Attention, Risk Factors and Gap in SQA Element filters only find assessed
+software, since SIM shows no level, attention or checklist for software nobody has assessed.
 
 The filter is part of the page's address, so you can bookmark a search or send it to someone.
 The **Software** link beside each repository on the [Repositories](sync.md#the-repositories-tab)
@@ -87,11 +88,13 @@ software](concepts.md#archived-software).
 Remove is for software added by mistake, or the old entry of software you renamed or moved.
 
 Open the row's edit dialog, select **Remove** at its bottom left, and confirm. The software, with
-its topics and its assessment, is deleted; it can't be restored, only added again.
+its topics, its assessment and its SQA elements, is deleted; it can't be restored, only added
+again.
 
 ## Embedding the Directory
 
 `/sim/directory?loose=Y` shows the Directory on its own, without SIM's header and tabs, to embed
 in another page, such as a wiki, in a frame. It is always read-only, its software links open in
 the whole window rather than the frame, and it takes the same filters as the Directory: set them
-on the Directory, then add `&loose=Y` to its address. The risk assessments still open, read-only.
+on the Directory, then add `&loose=Y` to its address. The risk assessments and
+the checklists of SQA elements still open, read-only.

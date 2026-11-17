@@ -1,6 +1,9 @@
 package org.jlab.sim.presentation.controller;
 
 import jakarta.ejb.EJB;
+import jakarta.json.Json;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -10,16 +13,24 @@ import java.io.IOException;
 import java.io.Serial;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import org.jlab.sim.business.service.RepositoryService;
 import org.jlab.sim.business.service.SoftwareService;
+import org.jlab.sim.business.service.SqaElementService;
 import org.jlab.sim.business.service.TopicService;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
+import org.jlab.sim.persistence.entity.SoftwareElement;
+import org.jlab.sim.persistence.entity.SqaElement;
 import org.jlab.sim.persistence.entity.Topic;
 import org.jlab.sim.persistence.enumeration.*;
+import org.jlab.sim.persistence.view.Checklist;
 import org.jlab.sim.presentation.util.Parameter;
 import org.jlab.smoothness.business.service.JPAService;
 import org.jlab.smoothness.presentation.util.Paginator;
@@ -43,6 +54,7 @@ public class Directory extends HttpServlet {
   @EJB SoftwareService softwareService;
   @EJB RepositoryService repositoryService;
   @EJB TopicService topicService;
+  @EJB SqaElementService elementService;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -66,6 +78,8 @@ public class Directory extends HttpServlet {
     Attention attention;
     boolean fragile;
     Boolean assessed;
+    String gapParam = request.getParameter("gap");
+    String gapElementId = gapParam == null || gapParam.isBlank() ? null : gapParam;
     int offset;
     Integer maxPerPage;
 
@@ -87,6 +101,23 @@ public class Directory extends HttpServlet {
 
     if (maxPerPage == null || maxPerPage > 100 || maxPerPage < 1) {
       maxPerPage = 10;
+    }
+
+    List<SqaElement> elementList = elementService.getAll();
+    SqaElement gapElement = null;
+
+    if (gapElementId != null && !SqaElementService.ANY_ELEMENT.equals(gapElementId)) {
+      for (SqaElement element : elementList) {
+        if (element.getElementId().equals(gapElementId)) {
+          gapElement = element;
+        }
+      }
+
+      // Rather than list nothing, as if no software had the gap
+      if (gapElement == null) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
     }
 
     List<Repository> repoList =
@@ -120,6 +151,7 @@ public class Directory extends HttpServlet {
             attention,
             fragile,
             assessed,
+            gapElementId,
             SoftwareOrder.IMPACT,
             offset,
             maxPerPage);
@@ -135,7 +167,8 @@ public class Directory extends HttpServlet {
             level,
             attention,
             fragile,
-            assessed);
+            assessed,
+            gapElementId);
 
     Paginator paginator = new Paginator(totalRecords, offset, maxPerPage);
 
@@ -151,7 +184,26 @@ public class Directory extends HttpServlet {
             level,
             attention,
             fragile,
-            assessed);
+            assessed,
+            gapElementId,
+            gapElement);
+
+    // Each assessed product's checklist: unassessed software has no control level to choose its
+    // elements by
+    Map<BigInteger, List<SoftwareElement>> recorded = elementService.findRecorded(softwareList);
+    Map<BigInteger, Checklist> checklists = new HashMap<>();
+    Map<BigInteger, String> checklistJson = new HashMap<>();
+    for (Software software : softwareList) {
+      if (software.isAssessed()) {
+        Checklist checklist =
+            Checklist.of(
+                elementList,
+                software.getEffectiveControlLevel(),
+                recorded.getOrDefault(software.getSoftwareId(), List.of()));
+        checklists.put(software.getSoftwareId(), checklist);
+        checklistJson.put(software.getSoftwareId(), toJson(checklist));
+      }
+    }
 
     List<Topic> topicList = topicService.getAll();
 
@@ -171,12 +223,42 @@ public class Directory extends HttpServlet {
     request.setAttribute("complexityList", Arrays.asList(CodeComplexity.values()));
     request.setAttribute("gapList", Arrays.asList(DocumentationGaps.values()));
     request.setAttribute("esotericismList", Arrays.asList(Esotericism.values()));
+    request.setAttribute("elementList", elementList);
+    request.setAttribute("elementStatusList", Arrays.asList(ElementStatus.values()));
+    request.setAttribute("checklists", checklists);
+    request.setAttribute("checklistJson", checklistJson);
+    request.setAttribute(
+        "sqapVersion", elementList.isEmpty() ? null : elementList.get(0).getSqapVersion());
 
     if (isLooseModeRequested(request)) {
       request.getRequestDispatcher("/WEB-INF/views/directory-loose.jsp").forward(request, response);
     } else {
       request.getRequestDispatcher("/WEB-INF/views/directory.jsp").forward(request, response);
     }
+  }
+
+  /**
+   * A checklist for the page's dialog (directory.js): its elements in order, each with its
+   * requirement and what was recorded of it.
+   */
+  private static String toJson(Checklist checklist) {
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm", Locale.US);
+    JsonArrayBuilder items = Json.createArrayBuilder();
+    for (Checklist.Item item : checklist.getItems()) {
+      JsonObjectBuilder json =
+          Json.createObjectBuilder()
+              .add("id", item.getElement().getElementId())
+              .add("requirement", item.getRequirement().name());
+      if (item.getStatus() != null) {
+        json.add("status", item.getStatus().name())
+            .add("link", item.getLinkUrl() == null ? "" : item.getLinkUrl())
+            .add("note", item.getNote() == null ? "" : item.getNote())
+            .add("by", item.getRecordedBy())
+            .add("date", dateFormat.format(item.getRecordedDate()));
+      }
+      items.add(json);
+    }
+    return items.build().toString();
   }
 
   private boolean isLooseModeRequested(HttpServletRequest request) {
@@ -194,7 +276,9 @@ public class Directory extends HttpServlet {
       ControlLevel level,
       Attention attention,
       boolean fragile,
-      Boolean assessed) {
+      Boolean assessed,
+      String gapElementId,
+      SqaElement gapElement) {
     DecimalFormat formatter = new DecimalFormat("###,###");
 
     StringBuilder selectionMessage = new StringBuilder("All Software ");
@@ -239,6 +323,12 @@ public class Directory extends HttpServlet {
 
     if (assessed != null) {
       filters.add(assessed ? "Assessed" : "Not Assessed");
+    }
+
+    if (gapElement != null) {
+      filters.add("Gap in \"" + gapElement.getName() + "\"");
+    } else if (gapElementId != null) {
+      filters.add("Gap in any SQA Element");
     }
 
     if (!filters.isEmpty()) {
