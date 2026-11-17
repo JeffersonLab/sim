@@ -68,19 +68,30 @@ or lacks access, it shows `Request failed with status code: 401`.
 The other three syncs read the lab's web pages without a token, so they work only where the
 application server can reach those pages.
 
-## Repositories and topics
+## Repositories, workflows and topics
 
-SIM has no page to add or change repositories or topics.
+SIM has no page to add or change repositories, workflows or topics.
 
 - **Repositories** are rows in the database's `REPOSITORY` table: a name, description and home
   URL, and whether it can be synced (`SYNC_YN`). A repository can only be synced if SIM has code
   for it, which it has for the five named in [What each sync reads](sync.md#what-each-sync-reads);
   any other repository with `SYNC_YN = 'Y'` shows an `Unknown Repository` error on its sync.
 - **The SQA elements a repository provides** for all its software, which the Repositories tab
-  lists and each product's [checklist](sqa-elements.md#met-by-the-repository) shows as met, are
-  rows in the `REPOSITORY_ELEMENT` table: the repository, the element's id from `SQA_ELEMENT`, a
-  note that says on what basis the repository provides it, and an optional link. Add a row only
-  for an element that everything in the repository has. A change shows on the next page load.
+  lists and each product's [checklist](sqa-elements.md#met-by-the-workflow-or-the-repository)
+  shows as met, are rows in the `REPOSITORY_ELEMENT` table: the repository, the element's id
+  from `SQA_ELEMENT`, a note that says on what basis the repository provides it, and an optional
+  link. Add a row only for an element that everything in the repository has. A change shows on
+  the next page load.
+- **Workflows** are rows in the `WORKFLOW` table: a name, a description, and its place in the
+  lists (`WEIGHT`). The syncs propose the workflows named Certified, CSUE, EPICS build system
+  and Legacy Certified [by those names](sync.md#adding-software), so one renamed in the database
+  is proposed no more until SIM's code follows. To remove a workflow, first clear it from the
+  software that has it (`SOFTWARE.WORKFLOW_ID`).
+- **The SQA elements a workflow provides** for all the software released with it, which the
+  Workflows tab lists, are rows in the `WORKFLOW_ELEMENT` table, with the same columns as
+  `REPOSITORY_ELEMENT` but for the workflow. Add a row only for an element that everything
+  released with the workflow has; leave out one that some of it lacks, and it stays not recorded
+  for each product. A change shows on the next page load.
 - **Topics** are added when someone types a new one in the Directory's dialog or a sync brings
   one in. A topic no software uses any more stays in the lists; remove it in the database.
 

@@ -24,7 +24,7 @@
     flex-wrap: wrap;
 
 }
-/* The Repositories tab: the basis of each SQA element a repository provides */
+/* The Repositories and Workflows tabs: the basis of each SQA element one provides */
 .provided-elements .provided-note {
     color: #666;
     font-size: smaller;

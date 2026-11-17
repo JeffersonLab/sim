@@ -1,6 +1,7 @@
 package org.jlab.sim.business.service;
 
 import jakarta.annotation.security.PermitAll;
+import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
@@ -20,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.Software;
+import org.jlab.sim.persistence.entity.Workflow;
 import org.jlab.sim.persistence.enumeration.SoftwareType;
 import org.jlab.sim.persistence.view.SoftwareDiff;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
@@ -40,7 +42,24 @@ public class SyncService extends JPAService<Software> {
     super(Software.class);
   }
 
+  @EJB WorkflowService workflowService;
+
   static final String DESCRIPTION = "description";
+
+  /*
+   * The workflows a sync proposes for the software it adds, by their names in the WORKFLOW table
+   * (03_workflows.sql): CSUE, Low Level Apps and the legacy Certified list each release their
+   * software one way, and a GitLab project in the certified group uses the certified workflow.
+   * Other GitLab projects and GitHub's get none, since where a project lives doesn't tell how it
+   * is released.
+   */
+  static final String WORKFLOW_CERTIFIED = "Certified";
+  static final String WORKFLOW_CSUE = "CSUE";
+  static final String WORKFLOW_EPICS = "EPICS build system";
+  static final String WORKFLOW_LEGACY_CERTIFIED = "Legacy Certified";
+
+  /** The GitLab group whose projects use the certified workflow. */
+  static final String GITLAB_CERTIFIED_PATH = "acc/ops/acs/certified";
 
   /*
    * Each source's address. An environment variable of the same name replaces it, so that a test
@@ -83,14 +102,55 @@ public class SyncService extends JPAService<Software> {
       throw new UserFriendlyException("Repository is required");
     }
 
-    return switch (repository.getName()) {
-      case "CSUE" -> fetchCSUE(repository);
-      case "CERTIFIED" -> fetchCertified(repository);
-      case "GITHUB" -> fetchGitHub(repository);
-      case "LLAPP" -> fetchLLAPP(repository);
-      case "GITLAB" -> fetchGitLab(repository);
-      default -> throw new UserFriendlyException("Unknown Repository: " + repository.getName());
-    };
+    List<Software> softwareList =
+        switch (repository.getName()) {
+          case "CSUE" -> fetchCSUE(repository);
+          case "CERTIFIED" -> fetchCertified(repository);
+          case "GITHUB" -> fetchGitHub(repository);
+          case "LLAPP" -> fetchLLAPP(repository);
+          case "GITLAB" -> fetchGitLab(repository);
+          default -> throw new UserFriendlyException("Unknown Repository: " + repository.getName());
+        };
+
+    proposeWorkflows(softwareList, workflowService.getAll());
+
+    return softwareList;
+  }
+
+  /**
+   * Gives each fetched product the workflow its sync proposes, for the sync page to add it with. A
+   * proposed name that no workflow has proposes none.
+   *
+   * @param softwareList The fetched software, each with its proposed workflow's name or null
+   * @param workflows The workflows SIM has
+   */
+  static void proposeWorkflows(List<Software> softwareList, List<Workflow> workflows) {
+    Map<String, Workflow> byName = new HashMap<>();
+    for (Workflow workflow : workflows) {
+      byName.put(workflow.getName(), workflow);
+    }
+
+    for (Software software : softwareList) {
+      software.setWorkflow(byName.get(software.getProposedWorkflowName()));
+    }
+  }
+
+  /**
+   * The workflow a GitLab project is released with, as far as its path tells: the certified
+   * workflow for a project in the certified group, and none for any other.
+   *
+   * @param pathWithNamespace The project's full path, such as {@code acc/ops/acs/certified/jmyapi},
+   *     or null
+   * @return The workflow's name, or null
+   */
+  static String gitLabWorkflowName(String pathWithNamespace) {
+    if (pathWithNamespace == null) {
+      return null;
+    }
+
+    String path = pathWithNamespace.toLowerCase(Locale.US);
+
+    return path.startsWith(GITLAB_CERTIFIED_PATH + "/") ? WORKFLOW_CERTIFIED : null;
   }
 
   static class PaginatedResult {
@@ -144,7 +204,7 @@ public class SyncService extends JPAService<Software> {
    * @param json The response body
    * @param repository The repository the software is in
    * @param excludedPaths The excluded group and project paths, from {@link #excludedGitLabPaths}
-   * @return The software, with its topics and archived state
+   * @return The software, with its topics, archived state and proposed workflow
    * @throws UserFriendlyException If the JSON doesn't parse or lacks a field
    */
   static List<Software> parseGitLabProjects(
@@ -152,16 +212,24 @@ public class SyncService extends JPAService<Software> {
     try (StringReader stringReader = new StringReader(json);
         JsonReader jsonReader = Json.createReader(stringReader)) {
       JsonArrayBuilder included = Json.createArrayBuilder();
+      List<String> includedPaths = new ArrayList<>();
 
       for (JsonValue value : jsonReader.readArray()) {
         String path = value.asJsonObject().getString("path_with_namespace", null);
 
         if (!isExcludedGitLabPath(path, excludedPaths)) {
           included.add(value);
+          includedPaths.add(path);
         }
       }
 
-      return parseProjects(included.build(), "web_url", repository);
+      List<Software> softwareList = parseProjects(included.build(), "web_url", repository);
+
+      for (int i = 0; i < softwareList.size(); i++) {
+        softwareList.get(i).setProposedWorkflowName(gitLabWorkflowName(includedPaths.get(i)));
+      }
+
+      return softwareList;
     } catch (Exception e) {
       throw new UserFriendlyException("Could not parse JSON", e);
     }
@@ -480,6 +548,8 @@ public class SyncService extends JPAService<Software> {
                 false,
                 null);
 
+        software.setProposedWorkflowName(WORKFLOW_CSUE);
+
         softwareList.add(software);
       }
     }
@@ -552,6 +622,8 @@ public class SyncService extends JPAService<Software> {
             new Software(
                 repository, name, type, description, maintainerUsernameCsv, homeUrl, false, null);
 
+        software.setProposedWorkflowName(WORKFLOW_LEGACY_CERTIFIED);
+
         softwareList.add(software);
       }
     }
@@ -616,6 +688,8 @@ public class SyncService extends JPAService<Software> {
                     null,
                     false,
                     null);
+
+            software.setProposedWorkflowName(WORKFLOW_EPICS);
 
             softwareList.add(software);
 

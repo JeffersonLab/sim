@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import org.jlab.sim.persistence.entity.SoftwareElement;
 import org.jlab.sim.persistence.entity.SqaElement;
@@ -183,6 +184,62 @@ class ChecklistTest {
             GITLAB);
     assertTrue(recorded.isRecorded());
     assertEquals("2 of 4", recorded.getSummary());
+  }
+
+  /**
+   * What a workflow provides for all the software released with it, named as the dialog names it.
+   */
+  private static final List<Checklist.Provision> CERTIFIED_WORKFLOW =
+      List.of(
+          new Checklist.Provision(
+              "user-guide", "the Certified workflow", "The template has a guide", null),
+          new Checklist.Provision(
+              "version-control", "the Certified workflow", "Releases are tagged", null));
+
+  @Test
+  void anElementTheWorkflowProvidesIsMetByItUnlessSomethingWasRecorded() {
+    Checklist provided =
+        Checklist.of(ELEMENTS, ControlLevel.Significant, List.of(), CERTIFIED_WORKFLOW);
+    Checklist.Item userGuide = item(provided, "user-guide");
+    assertEquals(ElementStatus.MET, userGuide.getEffectiveStatus());
+    assertEquals(null, userGuide.getStatus(), "nobody recorded it");
+    assertEquals("the Certified workflow", userGuide.getProvision().getProvider());
+    assertEquals("2 of 4", provided.getSummary());
+    assertFalse(provided.isRecorded(), "only a person's record does");
+
+    Checklist recorded =
+        Checklist.of(
+            ELEMENTS,
+            ControlLevel.Significant,
+            List.of(recorded("user-guide", ElementStatus.NOT_APPLICABLE)),
+            CERTIFIED_WORKFLOW);
+    assertEquals(ElementStatus.NOT_APPLICABLE, item(recorded, "user-guide").getEffectiveStatus());
+    assertEquals("1 of 3", recorded.getSummary());
+  }
+
+  @Test
+  void theWorkflowsElementsAndTheRepositorysAreBothMetAndTheFirstNamesTheProvider() {
+    // The workflow's, then the repository's, as the Directory lists them: both provide version
+    // control here, and only the workflow a User Guide
+    List<Checklist.Provision> both = new ArrayList<>(CERTIFIED_WORKFLOW);
+    both.addAll(GITLAB);
+
+    Checklist checklist = Checklist.of(ELEMENTS, ControlLevel.Significant, List.of(), both);
+
+    assertEquals(
+        "the Certified workflow", item(checklist, "version-control").getProvision().getProvider());
+    assertEquals(
+        "Releases are tagged", item(checklist, "version-control").getProvision().getNote());
+    assertEquals(
+        "the Certified workflow", item(checklist, "user-guide").getProvision().getProvider());
+    assertEquals("2 of 4", checklist.getSummary());
+
+    // The repository's alone still counts where the workflow provides nothing
+    assertEquals(
+        "GITLAB",
+        item(Checklist.of(ELEMENTS, ControlLevel.Significant, List.of(), GITLAB), "version-control")
+            .getProvision()
+            .getProvider());
   }
 
   @Test

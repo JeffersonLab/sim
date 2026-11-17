@@ -45,6 +45,8 @@ public class AddSoftware extends HttpServlet {
 
     try {
       BigInteger repositoryId = ParamConverter.convertBigInteger(request, "repositoryId");
+      // Blank or left out is no workflow
+      BigInteger workflowId = ParamConverter.convertBigInteger(request, "workflowId");
       name = request.getParameter("name");
       String description = request.getParameter("description");
       String maintainerUsernameCsv = request.getParameter("maintainerUsernameCsv");
@@ -60,6 +62,7 @@ public class AddSoftware extends HttpServlet {
 
       softwareService.addSoftware(
           repositoryId,
+          workflowId,
           name,
           type,
           topicArray,

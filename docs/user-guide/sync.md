@@ -9,7 +9,8 @@ The **Repositories** tab lists the places software lives. Each row has:
 - the repository's name, linked to its home page if it has one, and a **Software** link that
   opens the [Directory](directory.md) filtered to the repository;
 - its description;
-- the [SQA elements it provides](sqa-elements.md#met-by-the-repository) for all its software,
+- the [SQA elements it provides](sqa-elements.md#met-by-the-workflow-or-the-repository) for all
+  its software,
   each with its basis: these are met on the checklist of every product in the repository, unless
   a status is recorded for the product;
 - a **Sync** arrow (→), which opens the repository's sync. The arrow is disabled for repositories
@@ -63,6 +64,17 @@ and maintainers from the sources that list them (CSUE and Low Level Apps). Its t
 - for the Certified list, the section it is listed in (apps, libraries or scripts);
 - for CSUE and Low Level Apps, `APP`.
 
+Its [workflow](concepts.md#workflows) is the one the sync proposes, shown in the row's
+**Workflow** column, where the repository tells how its software is released:
+
+- for CSUE, **CSUE**; for Low Level Apps, **EPICS build system**; for the Certified list,
+  **Legacy Certified**;
+- for GitLab, **Certified** for a project in the certified group, `acc/ops/acs/certified` or a
+  subgroup of it, and none for any other;
+- for GitHub, none.
+
+Set or correct it afterwards in the Directory's [edit dialog](directory.md#editing).
+
 Like any new software, it starts [not assessed](risk-assessment.md#not-assessed).
 
 ### Updating software
@@ -74,8 +86,10 @@ A sync compares, and **Update** copies from the source:
 - the **home URL**, when the source has one;
 - the **archived** flag, from GitHub and GitLab only.
 
-It never changes the **type**, the **maintainers**, the **note** or the assessment, so edits to
-those in SIM are kept. An edit to a field the source does have, such as a description, shows as
+It never changes the **type**, the **workflow**, the **maintainers**, the **note** or the
+assessment, so edits to those in SIM are kept: the **Workflow** column of software SIM already
+has shows its own, whatever the sync would propose. A GitLab project that moves into the
+certified group keeps the workflow it has until an editor changes it. An edit to a field the source does have, such as a description, shows as
 **Update** on the next sync, and applying it puts the source's value back: change those at the
 source instead.
 

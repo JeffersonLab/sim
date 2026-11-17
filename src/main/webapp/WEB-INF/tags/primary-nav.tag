@@ -10,6 +10,9 @@
     <li${fn:startsWith(currentPath, '/repositories') ? ' class="current-primary"' : ''}>
         <a href="${pageContext.request.contextPath}/repositories">Repositories</a>
     </li>
+    <li${'/workflows' eq currentPath ? ' class="current-primary"' : ''}>
+        <a href="${pageContext.request.contextPath}/workflows">Workflows</a>
+    </li>
     <c:if test="${pageContext.request.isUserInRole('sim-admin')}">
         <li${fn:startsWith(currentPath, '/setup') ? ' class="current-primary"' : ''}>
             <a href="${pageContext.request.contextPath}/setup/settings">Setup</a>

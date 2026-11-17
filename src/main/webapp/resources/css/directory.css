@@ -10,6 +10,10 @@ td.name {
     font-size: smaller;
     margin-top: 4px;
 }
+/* The workflow, on a line of its own under them */
+.name-meta.workflow {
+    margin-top: 2px;
+}
 td.description {
     word-break: break-word;
 }

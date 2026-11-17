@@ -11,6 +11,7 @@ Each entry in SIM is a piece of **software**, with:
 | **Name** | Its name, up to 128 characters. A name is unique within its repository; two repositories can each have software of the same name. |
 | **Type** | `APP`, `LIB` (a library), `SCRIPT` or `PLUGIN`; see [Types](#types). |
 | **Repository** | Where its code or release lives; see [Repositories](#repositories). |
+| **Workflow** | How it is released, or none; see [Workflows](#workflows). |
 | **Description** | What it does, up to 256 characters. |
 | **Note** | Anything else worth knowing, up to 256 characters. A sync never changes it. |
 | **Topics** | Tags such as `java`, `epics` or `web`; see [Topics](#topics). |
@@ -65,7 +66,41 @@ software is deployed as well as where its code is kept: an app can be in CSUE fo
 and on GitHub for its code and issues, such as `fe_daq` in CSUE and `AI_SRF_OPS_fe_daq` on
 GitHub. Each is a separate entry in SIM.
 
-Administrators add repositories; see [Repositories and topics](administration.md#repositories-and-topics).
+Administrators add repositories; see
+[Repositories, workflows and topics](administration.md#repositories-workflows-and-topics).
+
+## Workflows
+
+A **workflow** is how software is released: how it is built, given a version and installed. Where
+software lives and how it is released are two things: a project on GitLab may be released with
+the certified workflow or without it. The **Workflows** tab lists them:
+
+| Workflow | Is |
+|---|---|
+| **Certified** | The certified workflow on code.jlab.org: the release-workflow components, deployed to `/cs/certified` by ADM. |
+| **GitHub web application** | Web applications on GitHub, released through GitHub Actions with the shared workflows. |
+| **CSUE** | The Controls System UNIX Environment's release procedure. |
+| **EPICS build system** | The EPICS build system, for low level apps. |
+| **Legacy Certified** | The legacy Certified repository: tar-file releases, installed in versioned directories on NFS. |
+
+Software has one workflow, or none: none means nobody has said, not that it has no release
+procedure. An editor sets it in the Directory's [edit dialog](directory.md#editing), and a
+[sync](sync.md#adding-software) proposes it for the software it adds where the repository tells:
+CSUE, Low Level Apps and the Certified list each release their software one way, and a GitLab
+project in the certified group uses the certified workflow. Other GitLab projects and GitHub
+repositories start with none.
+
+Each row of the Workflows tab has the workflow's name, with a **Software** link that opens the
+[Directory](directory.md) filtered to it, its description, and the
+[SQA elements it provides](sqa-elements.md#met-by-the-workflow-or-the-repository) for all the
+software released with it, each with its basis. The last row, **None**, links to the software
+whose workflow nobody has set.
+
+Software that moves from the legacy Certified repository to code.jlab.org is added in `GITLAB`,
+with the Certified workflow; archive its old entry in `CERTIFIED`, which keeps Legacy Certified.
+
+Administrators add workflows; see
+[Repositories, workflows and topics](administration.md#repositories-workflows-and-topics).
 
 ## Topics
 
@@ -114,15 +149,15 @@ assessment. See [Risk and SQA assessment](risk-assessment.md).
 
 The SQAP asks for certain **SQA elements** at each control level, such as a User Guide or version
 control. Assessed software has a checklist of the elements its level requires or recommends, each
-**Met**, a **Gap**, **Not applicable** or not recorded. An element that a repository provides for
-all its software, such as version control, is met without being recorded. See
-[SQA elements](sqa-elements.md).
+**Met**, a **Gap**, **Not applicable** or not recorded. An element that the software's workflow
+or repository provides for all its software, such as version control, is met without being
+recorded. See [SQA elements](sqa-elements.md).
 
 ## Roles
 
 | Who | Can |
 |---|---|
-| Anyone, logged in or not | View the Directory, the Repositories tab, the sync pages, each assessment and checklist of SQA elements, and the Help tab. |
+| Anyone, logged in or not | View the Directory, the Repositories and Workflows tabs, the sync pages, each assessment and checklist of SQA elements, and the Help tab. |
 | Members of the `acg` role | Also add, edit and remove software, save assessments and checklists, and apply syncs. |
 | Members of the `sim-admin` role | All of the above, and the **Setup** tab. |
 

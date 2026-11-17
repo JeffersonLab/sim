@@ -24,12 +24,16 @@ import org.jlab.sim.business.service.RepositoryService;
 import org.jlab.sim.business.service.SoftwareService;
 import org.jlab.sim.business.service.SqaElementService;
 import org.jlab.sim.business.service.TopicService;
+import org.jlab.sim.business.service.WorkflowService;
+import org.jlab.sim.persistence.entity.ProvidedElement;
 import org.jlab.sim.persistence.entity.Repository;
 import org.jlab.sim.persistence.entity.RepositoryElement;
 import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.entity.SoftwareElement;
 import org.jlab.sim.persistence.entity.SqaElement;
 import org.jlab.sim.persistence.entity.Topic;
+import org.jlab.sim.persistence.entity.Workflow;
+import org.jlab.sim.persistence.entity.WorkflowElement;
 import org.jlab.sim.persistence.enumeration.*;
 import org.jlab.sim.persistence.view.Checklist;
 import org.jlab.sim.presentation.util.Parameter;
@@ -52,10 +56,14 @@ public class Directory extends HttpServlet {
   private static final String LOOSE_PARAMETER = "loose";
   private static final String LOOSE_TRUE_VALUE = "Y";
 
+  /** The workflow filter's value for software that has no workflow, where an id names one */
+  private static final String NO_WORKFLOW = "NONE";
+
   @EJB SoftwareService softwareService;
   @EJB RepositoryService repositoryService;
   @EJB TopicService topicService;
   @EJB SqaElementService elementService;
+  @EJB WorkflowService workflowService;
 
   /**
    * Handles the HTTP <code>GET</code> method.
@@ -74,6 +82,9 @@ public class Directory extends HttpServlet {
     String[] topicNameArray = request.getParameterValues("topic");
     SoftwareType type;
     BigInteger repositoryId;
+    String workflowParam = request.getParameter("workflowId");
+    boolean noWorkflow = NO_WORKFLOW.equals(workflowParam);
+    BigInteger workflowId = null;
     Include includeArchived;
     ControlLevel level;
     Attention attention;
@@ -87,6 +98,9 @@ public class Directory extends HttpServlet {
     try {
       type = Parameter.convertSoftwareType(request, "type");
       repositoryId = ParamConverter.convertBigInteger(request, "repositoryId");
+      if (!noWorkflow) {
+        workflowId = ParamConverter.convertBigInteger(request, "workflowId");
+      }
       includeArchived = Parameter.convertInclude(request, "archived");
       level = Parameter.convertControlLevel(request, "level");
       attention = Parameter.convertAttention(request, "attention");
@@ -140,11 +154,27 @@ public class Directory extends HttpServlet {
       }
     }
 
+    List<Workflow> workflowList = workflowService.getAll();
+
+    Workflow workflow = null;
+
+    if (workflowId != null) {
+      workflow = workflowService.find(workflowId);
+
+      // Rather than list all software as if there were no filter
+      if (workflow == null) {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
+    }
+
     List<Software> softwareList =
         softwareService.filterList(
             softwareName,
             username,
             repository,
+            workflow,
+            noWorkflow,
             type,
             topicNameArray,
             includeArchived,
@@ -162,6 +192,8 @@ public class Directory extends HttpServlet {
             softwareName,
             username,
             repository,
+            workflow,
+            noWorkflow,
             type,
             topicNameArray,
             includeArchived,
@@ -179,6 +211,8 @@ public class Directory extends HttpServlet {
             softwareName,
             username,
             repository,
+            workflow,
+            noWorkflow,
             type,
             topicNameArray,
             includeArchived,
@@ -193,6 +227,8 @@ public class Directory extends HttpServlet {
     // elements by
     Map<BigInteger, List<SoftwareElement>> recorded = elementService.findRecorded(softwareList);
     Map<BigInteger, List<RepositoryElement>> provided = elementService.findProvided();
+    Map<BigInteger, List<WorkflowElement>> providedByWorkflow =
+        elementService.findProvidedByWorkflow();
     Map<BigInteger, Checklist> checklists = new HashMap<>();
     Map<BigInteger, String> checklistJson = new HashMap<>();
     for (Software software : softwareList) {
@@ -202,7 +238,7 @@ public class Directory extends HttpServlet {
                 elementList,
                 software.getEffectiveControlLevel(),
                 recorded.getOrDefault(software.getSoftwareId(), List.of()),
-                provisions(software.getRepository(), provided));
+                provisions(software, providedByWorkflow, provided));
         checklists.put(software.getSoftwareId(), checklist);
         checklistJson.put(software.getSoftwareId(), toJson(checklist));
       }
@@ -213,6 +249,7 @@ public class Directory extends HttpServlet {
     request.setAttribute("topicList", topicList);
     request.setAttribute("selectionMessage", selectionMessage);
     request.setAttribute("repoList", repoList);
+    request.setAttribute("workflowList", workflowList);
     request.setAttribute("typeList", typeList);
     request.setAttribute("includeList", includeList);
     request.setAttribute("softwareList", softwareList);
@@ -240,20 +277,41 @@ public class Directory extends HttpServlet {
     }
   }
 
-  /** What a repository provides for all its software, named for the repository. */
+  /**
+   * What is provided for a product without being recorded on it: what its workflow provides for all
+   * the software released with it, then what its repository provides for all its software, each
+   * named for its provider. The workflow's come first, so that it names the provider of an element
+   * both provide: how software is released says more of it than where it lives.
+   */
   private static List<Checklist.Provision> provisions(
-      Repository repository, Map<BigInteger, List<RepositoryElement>> provided) {
+      Software software,
+      Map<BigInteger, List<WorkflowElement>> providedByWorkflow,
+      Map<BigInteger, List<RepositoryElement>> providedByRepository) {
     List<Checklist.Provision> provisions = new ArrayList<>();
-    for (RepositoryElement element :
-        provided.getOrDefault(repository.getRepositoryId(), List.of())) {
+    Workflow workflow = software.getWorkflow();
+    if (workflow != null) {
+      addProvisions(
+          provisions,
+          workflow.getPhrase(),
+          providedByWorkflow.getOrDefault(workflow.getWorkflowId(), List.of()));
+    }
+    Repository repository = software.getRepository();
+    addProvisions(
+        provisions,
+        repository.getName(),
+        providedByRepository.getOrDefault(repository.getRepositoryId(), List.of()));
+    return provisions;
+  }
+
+  private static void addProvisions(
+      List<Checklist.Provision> provisions,
+      String provider,
+      List<? extends ProvidedElement> elements) {
+    for (ProvidedElement element : elements) {
       provisions.add(
           new Checklist.Provision(
-              element.getElementId(),
-              repository.getName(),
-              element.getNote(),
-              element.getLinkUrl()));
+              element.getElementId(), provider, element.getNote(), element.getLinkUrl()));
     }
-    return provisions;
   }
 
   /**
@@ -295,6 +353,8 @@ public class Directory extends HttpServlet {
       String softwareName,
       String username,
       Repository repository,
+      Workflow workflow,
+      boolean noWorkflow,
       SoftwareType type,
       String[] topicNameArray,
       Include includeArchived,
@@ -320,6 +380,12 @@ public class Directory extends HttpServlet {
 
     if (repository != null) {
       filters.add("Repository \"" + repository.getName() + "\"");
+    }
+
+    if (noWorkflow) {
+      filters.add("No Workflow");
+    } else if (workflow != null) {
+      filters.add("Workflow \"" + workflow.getName() + "\"");
     }
 
     if (type != null) {

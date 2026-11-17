@@ -17,6 +17,7 @@ import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.entity.SoftwareElement;
 import org.jlab.sim.persistence.entity.SoftwareTopic;
 import org.jlab.sim.persistence.entity.SqaElement;
+import org.jlab.sim.persistence.entity.Workflow;
 import org.jlab.sim.persistence.enumeration.*;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.JPAService;
@@ -25,6 +26,7 @@ import org.jlab.smoothness.business.service.JPAService;
 public class SoftwareService extends JPAService<Software> {
   @EJB RepositoryService repositoryService;
   @EJB SoftwareTopicService softwareTopicService;
+  @EJB WorkflowService workflowService;
 
   static final String ACG_ROLE = "acg";
   static final String ADMIN_ROLE = "sim-admin";
@@ -39,6 +41,7 @@ public class SoftwareService extends JPAService<Software> {
   @RolesAllowed({ADMIN_ROLE, ACG_ROLE})
   public void addSoftware(
       BigInteger repoId,
+      BigInteger workflowId,
       String name,
       SoftwareType type,
       String[] topicArray,
@@ -69,6 +72,7 @@ public class SoftwareService extends JPAService<Software> {
 
     Software software =
         new Software(repo, name, type, description, maintainerUsernameCsv, homeUrl, archived, note);
+    software.setWorkflow(findWorkflow(workflowId));
 
     create(software);
 
@@ -77,10 +81,19 @@ public class SoftwareService extends JPAService<Software> {
     softwareTopicService.set(software, topicArray);
   }
 
+  /**
+   * Edits software.
+   *
+   * @param setWorkflow Whether to set the workflow: a sync's Update doesn't, so that it never
+   *     changes one somebody set
+   * @param workflowId The workflow to set, or null for none
+   */
   @RolesAllowed({ADMIN_ROLE, ACG_ROLE})
   public void editSoftware(
       BigInteger softwareId,
       BigInteger repoId,
+      boolean setWorkflow,
+      BigInteger workflowId,
       SoftwareType type,
       String[] topicArray,
       String description,
@@ -114,6 +127,10 @@ public class SoftwareService extends JPAService<Software> {
       throw new UserFriendlyException("Type cannot be empty");
     }
 
+    if (setWorkflow) {
+      software.setWorkflow(findWorkflow(workflowId));
+    }
+
     software.setType(type);
     software.setDescription(description);
     software.setMaintainerUsernameCsv(maintainerUsernameCsv);
@@ -130,6 +147,21 @@ public class SoftwareService extends JPAService<Software> {
     em.flush();
 
     softwareTopicService.set(software, topicArray);
+  }
+
+  /** The workflow of this id, or null for a null id, which is no workflow. */
+  private Workflow findWorkflow(BigInteger workflowId) throws UserFriendlyException {
+    if (workflowId == null) {
+      return null;
+    }
+
+    Workflow workflow = workflowService.find(workflowId);
+
+    if (workflow == null) {
+      throw new UserFriendlyException("workflow not found with id: " + workflowId);
+    }
+
+    return workflow;
   }
 
   @RolesAllowed({ADMIN_ROLE, ACG_ROLE})
@@ -217,11 +249,19 @@ public class SoftwareService extends JPAService<Software> {
     return super.findAll(directives);
   }
 
+  /**
+   * The software the filters select, a page of it.
+   *
+   * @param workflow Software released with this workflow, or null for any
+   * @param noWorkflow Software that has no workflow, whatever {@code workflow} is
+   */
   @PermitAll
   public List<Software> filterList(
       String softwareName,
       String username,
       Repository repository,
+      Workflow workflow,
+      boolean noWorkflow,
       SoftwareType type,
       String[] topicNameArray,
       Include includeArchived,
@@ -246,6 +286,8 @@ public class SoftwareService extends JPAService<Software> {
             softwareName,
             username,
             repository,
+            workflow,
+            noWorkflow,
             type,
             topicNameArray,
             includeArchived,
@@ -287,6 +329,8 @@ public class SoftwareService extends JPAService<Software> {
       String softwareName,
       String username,
       Repository repository,
+      Workflow workflow,
+      boolean noWorkflow,
       SoftwareType type,
       String[] topicNameArray,
       Include includeArchived,
@@ -313,6 +357,12 @@ public class SoftwareService extends JPAService<Software> {
     if (repository != null) {
       filters.add(
           cb.equal(root.get("repository").get("repositoryId"), repository.getRepositoryId()));
+    }
+
+    if (noWorkflow) {
+      filters.add(cb.isNull(root.get("workflow")));
+    } else if (workflow != null) {
+      filters.add(cb.equal(root.get("workflow").get("workflowId"), workflow.getWorkflowId()));
     }
 
     if (type != null) {
@@ -398,6 +448,8 @@ public class SoftwareService extends JPAService<Software> {
       String softwareName,
       String username,
       Repository repository,
+      Workflow workflow,
+      boolean noWorkflow,
       SoftwareType type,
       String[] topicNameArray,
       Include includeArchived,
@@ -418,6 +470,8 @@ public class SoftwareService extends JPAService<Software> {
             softwareName,
             username,
             repository,
+            workflow,
+            noWorkflow,
             type,
             topicNameArray,
             includeArchived,
