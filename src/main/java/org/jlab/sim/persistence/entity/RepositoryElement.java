@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "REPOSITORY_ELEMENT", schema = "SIM_OWNER")
-public class RepositoryElement implements Serializable {
+public class RepositoryElement implements ProvidedElement, Serializable {
   private static final long serialVersionUID = 1L;
 
   @EmbeddedId private RepositoryElementId id;
@@ -29,14 +29,17 @@ public class RepositoryElement implements Serializable {
     return id.getRepositoryId();
   }
 
+  @Override
   public String getElementId() {
     return id.getElementId();
   }
 
+  @Override
   public String getNote() {
     return note;
   }
 
+  @Override
   public String getLinkUrl() {
     return linkUrl;
   }

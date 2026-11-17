@@ -9,7 +9,7 @@ assess it. SIM opens on this tab.
 
 | Column | Shows |
 |---|---|
-| **Name** | The name, linked to its home URL if it has one, with 🕸 if it is [archived](concepts.md#archived-software). Under it, the type and the repository. |
+| **Name** | The name, linked to its home URL if it has one, with 🕸 if it is [archived](concepts.md#archived-software). Under it, the type and the repository, and the [workflow](concepts.md#workflows) if it has one. |
 | **Description** | The description, then the note, then the topics. When there are five or more topics, the first three are shown and the rest are behind **+N more**; select it to show them all, and **less** to hide them again. |
 | **Maintainers** | The maintainers' usernames, one per line. |
 | **Risk & SQA** | The Ops Impact, the SQA level and the attention, or **Not assessed**. An asterisk after the SQA level means it is overridden; hover over it for the derived level and the rationale. Select the cell to open the [assessment](risk-assessment.md). Under it, for assessed software, **SQA Elements**: how many of the required [SQA elements](sqa-elements.md) are met, and the gaps, or **Not recorded**. Select it to open the checklist. |
@@ -33,6 +33,7 @@ form; select **Apply** after it to see everything again.
 | **Software Name** | Software with this name, ignoring case. Use `*` as a wildcard: `epics*` finds names that start with `epics`, and `*epics*` names that contain it. |
 | **Maintainer Username** | Software whose maintainers contain this text, ignoring case. |
 | **Repository** | Software in this repository. |
+| **Workflow** | Software released with this [workflow](concepts.md#workflows), or with **None** the software whose workflow nobody has set. |
 | **Type** | Software of this type. |
 | **Topics** | Software with all of the topics you pick. |
 | **Include Archived** | Blank leaves archived software out, as it is by default; **YES** includes it, and **EXCLUSIVELY** shows only archived software. |
@@ -47,7 +48,8 @@ software, since SIM shows no level, attention or checklist for software nobody h
 
 The filter is part of the page's address, so you can bookmark a search or send it to someone.
 The **Software** link beside each repository on the [Repositories](sync.md#the-repositories-tab)
-tab opens the Directory filtered to that repository.
+tab opens the Directory filtered to that repository, and the one beside each workflow on the
+[Workflows](concepts.md#workflows) tab opens it filtered to that workflow.
 
 ## Editing software
 
@@ -60,6 +62,8 @@ Select **Add**, fill in the dialog, and select **Save**:
 
 - **Name**, **Type** and **Repo** (the repository) are required. A name already used in that
   repository is refused.
+- **Workflow**: how the software is released; see [Workflows](concepts.md#workflows). Leave it
+  at **None** if you don't know, or none of them fits.
 - **Topics**: pick from the list, or type a new topic and press Enter.
 - **Maintainers**: usernames separated by commas, such as `jdoe,jsmith`.
 - **Archived**: **No** for software in use.
@@ -77,8 +81,12 @@ cell opens the [assessment](risk-assessment.md) instead. You can change everythi
 change either, add the software again and remove the old entry. Saving replaces the topics with
 the ones in the dialog.
 
+Set the **Workflow** here when you know how the software is released: its checklist then shows
+the [SQA elements the workflow provides](sqa-elements.md#met-by-the-workflow-or-the-repository)
+as met.
+
 A sync may later change what you edit: see [What a sync changes](sync.md#what-a-sync-changes).
-The note is never synced, so it is the place for anything you want kept.
+The note and the workflow are never synced, so the note is the place for anything you want kept.
 
 ### Removing
 

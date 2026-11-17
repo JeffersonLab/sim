@@ -12,6 +12,7 @@
             <Class name="org.jlab.sim.presentation.controller.Directory"/>
             <Class name="org.jlab.sim.presentation.controller.Repositories"/>
             <Class name="org.jlab.sim.presentation.controller.Sync"/>
+            <Class name="org.jlab.sim.presentation.controller.Workflows"/>
         </Or>
     </Match>
     <Match>

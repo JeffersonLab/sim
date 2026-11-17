@@ -49,6 +49,11 @@ public class Software implements Serializable {
   @JoinColumn(name = "REPOSITORY_ID", referencedColumnName = "REPOSITORY_ID", nullable = false)
   private Repository repository;
 
+  /** How it is released; null if nobody has said and its sync couldn't tell */
+  @ManyToOne(optional = true)
+  @JoinColumn(name = "WORKFLOW_ID", referencedColumnName = "WORKFLOW_ID", nullable = true)
+  private Workflow workflow;
+
   @Size(max = 256)
   @Column(name = "HOME_URL", nullable = true, length = 256)
   private String homeUrl;
@@ -123,6 +128,9 @@ public class Software implements Serializable {
 
   @Transient private List<String> stringTopicList;
   @Transient private boolean archivedSynced = false;
+
+  /** The name of the workflow a sync proposes for software it adds, if its source tells */
+  @Transient private String proposedWorkflowName;
 
   public Software() {}
 
@@ -200,6 +208,14 @@ public class Software implements Serializable {
     this.repository = repository;
   }
 
+  public Workflow getWorkflow() {
+    return workflow;
+  }
+
+  public void setWorkflow(Workflow workflow) {
+    this.workflow = workflow;
+  }
+
   public String getHomeUrl() {
     return homeUrl;
   }
@@ -272,6 +288,14 @@ public class Software implements Serializable {
 
   public void setArchivedSynced(boolean archivedSynced) {
     this.archivedSynced = archivedSynced;
+  }
+
+  public String getProposedWorkflowName() {
+    return proposedWorkflowName;
+  }
+
+  public void setProposedWorkflowName(String proposedWorkflowName) {
+    this.proposedWorkflowName = proposedWorkflowName;
   }
 
   public OpsImpact getImpact() {

@@ -30,6 +30,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Type</th>
+                        <th>Workflow</th>
                         <th>Description</th>
                         <th>Maintainers</th>
                         <th>Home URL</th>
@@ -57,12 +58,15 @@
                             data-name="${fn:escapeXml(software.name)}"
                             data-archived="${fn:escapeXml(software.archived)}"
                             data-type="${fn:escapeXml(software.type)}"
+                            data-workflow-id="${software.workflow.workflowId}"
                             data-topic-csv="${fn:escapeXml(software.stringTopicCsv)}"
                             data-description="${fn:escapeXml(software.description)}"
                             data-maintainer="${fn:escapeXml(software.maintainerUsernameCsv)}"
                             data-url="${fn:escapeXml(software.homeUrl)}">
                             <td><c:out value="${software.name}"/></td>
                             <td><c:out value="${software.type}"/></td>
+                            <%-- What the sync proposes: Add sends it, and an editor can change it afterwards --%>
+                            <td class="workflow"><c:out value="${software.workflow.name}"/></td>
                             <td>
                                 <div><c:out value="${software.description}"/></div>
                                 <ul class="topic-list">
@@ -100,6 +104,7 @@
                             data-url="${fn:escapeXml(homeUrlSync ? remoteMap[software.name].homeUrl : software.homeUrl)}">
                             <td><c:out value="${software.name}"/></td>
                             <td><c:out value="${software.type}"/></td>
+                            <td class="workflow"><c:out value="${software.workflow.name}"/></td>
                             <td>
                                 <c:choose>
                                     <c:when test="${not descriptionSync || software.description eq remoteMap[software.name].description}">
@@ -179,6 +184,7 @@
                         <tr class="remove-row" data-id="${software.softwareId}">
                             <td><c:out value="${software.name}"/></td>
                             <td><c:out value="${software.type}"/></td>
+                            <td class="workflow"><c:out value="${software.workflow.name}"/></td>
                             <td>
                                 <div><c:out value="${software.description}"/></div>
                                 <ul class="topic-list">
@@ -201,6 +207,7 @@
                         <tr>
                             <td><c:out value="${software.name}"/></td>
                             <td><c:out value="${software.type}"/></td>
+                            <td class="workflow"><c:out value="${software.workflow.name}"/></td>
                             <td>
                                 <div><c:out value="${software.description}"/></div>
                                 <ul class="topic-list">

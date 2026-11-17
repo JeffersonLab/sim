@@ -14,6 +14,7 @@ jlab.addRow = function() {
         maintainerUsernameCsv = $("#row-maintainers").val(),
         homeUrl = $("#row-url").val(),
         repositoryId = $("#row-repo").val(),
+        workflowId = $("#row-workflow").val(),
         archived = $("#row-archived").val(),
         reloading = false;
 
@@ -29,6 +30,7 @@ jlab.addRow = function() {
         type: "POST",
         data: {
             repositoryId: repositoryId,
+            workflowId: workflowId,
             name: name,
             type: type,
             topicArray: topicArray,
@@ -73,6 +75,7 @@ jlab.editRow = function() {
         maintainerUsernameCsv = $("#row-maintainers").val(),
         homeUrl = $("#row-url").val(),
         repositoryId = $("#row-repo").val(),
+        workflowId = $("#row-workflow").val(),
         archived = $("#row-archived").val(),
         reloading = false;
 
@@ -89,6 +92,7 @@ jlab.editRow = function() {
         data: {
             softwareId: softwareId,
             repositoryId: repositoryId,
+            workflowId: workflowId,
             name: name,
             type: type,
             topicArray: topicArray,
@@ -186,6 +190,7 @@ jlab.openEditDialog = function($row) {
     $("#row-note").val($row.attr("data-note"));
     $("#row-maintainers").val($row.attr("data-maintainer-csv"));
     $("#row-repo").val($row.attr("data-repo-id"));
+    $("#row-workflow").val($row.attr("data-workflow-id") || "");
     $("#row-topics").val(topicCsv.split(",")).trigger('change');
     $("#row-url").val($row.attr("data-url"));
     $("#row-archived").val($row.attr("data-archived"));
@@ -223,6 +228,7 @@ $(document).on("click", ".default-clear-panel", function () {
     $("#software-name").val('');
     $("#username").val('');
     $("#repository-select").val('');
+    $("#workflow-select").val('');
     $("#topic-select").val(null).trigger('change');
     $("#type-select").val('');
     $("#archived-select").val('');
@@ -427,8 +433,9 @@ $(document).on("click", ".elements-dialog-opener", function () {
         $row.find(".element-note").val(item.note || "");
         $row.find(".element-recorded").text(item.status ? "by " + item.by + " on " + item.date : "");
 
-        /* An element the repository provides for all its software is met without a record: it
-         * takes the place of Not recorded, and a status recorded for this software replaces it */
+        /* An element the workflow or the repository provides for all its software is met without
+         * a record: it takes the place of Not recorded, and a status recorded for this software
+         * replaces it. The provider is a repository's name or such as "the Certified workflow" */
         let $provided = $row.find(".element-provided").empty();
         $row.find(".element-status option[value='']").text(item.provider ? "Met, by " + item.provider : "Not recorded");
         if (item.provider && item.status) {

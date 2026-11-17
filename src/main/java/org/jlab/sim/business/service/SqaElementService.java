@@ -16,6 +16,7 @@ import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.entity.SoftwareElement;
 import org.jlab.sim.persistence.entity.SoftwareElementId;
 import org.jlab.sim.persistence.entity.SqaElement;
+import org.jlab.sim.persistence.entity.WorkflowElement;
 import org.jlab.sim.persistence.enumeration.ElementStatus;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.JPAService;
@@ -90,6 +91,26 @@ public class SqaElementService extends JPAService<SqaElement> {
       provided
           .computeIfAbsent(repositoryElement.getRepositoryId(), id -> new ArrayList<>())
           .add(repositoryElement);
+    }
+    return provided;
+  }
+
+  /**
+   * The elements each workflow provides for all the software released with it.
+   *
+   * @return By workflow id; a workflow that provides none has no entry
+   */
+  @PermitAll
+  public Map<BigInteger, List<WorkflowElement>> findProvidedByWorkflow() {
+    Map<BigInteger, List<WorkflowElement>> provided = new HashMap<>();
+    List<WorkflowElement> found =
+        getEntityManager()
+            .createQuery("select we from WorkflowElement we", WorkflowElement.class)
+            .getResultList();
+    for (WorkflowElement workflowElement : found) {
+      provided
+          .computeIfAbsent(workflowElement.getWorkflowId(), id -> new ArrayList<>())
+          .add(workflowElement);
     }
     return provided;
   }

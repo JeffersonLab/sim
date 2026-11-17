@@ -3,6 +3,8 @@ jlab.addRow = function($tr, batch) {
     var name = $tr.attr("data-name"),
         archived = $tr.attr("data-archived"),
         type = $tr.attr("data-type"),
+        /* The workflow the sync proposes, or blank for none */
+        workflowId = $tr.attr("data-workflow-id"),
         topicCsv = $tr.attr("data-topic-csv"),
         topicArray = topicCsv.split(','),
         description = $tr.attr("data-description"),
@@ -21,6 +23,7 @@ jlab.addRow = function($tr, batch) {
         type: "POST",
         data: {
             repositoryId: repositoryId,
+            workflowId: workflowId,
             name: name,
             type: type,
             topicArray: topicArray,
@@ -123,6 +126,7 @@ jlab.updateRow = function($tr, batch) {
         .width($button.width())
         .empty().append('<div class="button-indicator"></div>');
 
+    /* No workflowId: an update leaves the workflow as it is, so a sync never changes one somebody set */
     var request = jQuery.ajax({
         url: jlab.contextPath + "/ajax/edit-software",
         type: "POST",

@@ -8,6 +8,14 @@
     "archived": false
   },
   {
+    "name": "it-sync-certified",
+    "path_with_namespace": "acc/ops/acs/certified/it-sync-certified",
+    "web_url": "https://code.jlab.org/acc/ops/acs/certified/it-sync-certified",
+    "description": "In acc/ops/acs/certified, so its sync proposes the certified workflow",
+    "topics": ["app"],
+    "archived": false
+  },
+  {
     "name": "it-sync-scratch",
     "path_with_namespace": "acc/scratch/it-sync-scratch",
     "web_url": "https://code.jlab.org/acc/scratch/it-sync-scratch",

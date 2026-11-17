@@ -16,8 +16,8 @@ than the version you are using.
 
 ## Contents
 
-1. [Concepts](concepts.md): software and its types, repositories, topics, maintainers, archived
-   software, the risk assessment and roles.
+1. [Concepts](concepts.md): software and its types, repositories, workflows, topics,
+   maintainers, archived software, the risk assessment and roles.
 2. [Directory](directory.md): finding software, and adding, editing and removing it.
 3. [Risk and SQA assessment](risk-assessment.md): the six risk inputs, how to rate them, and how
    they give the SQA control level and the attention band.
@@ -34,6 +34,7 @@ than the version you are using.
 |---|---|
 | **Directory** | All the software, with filters; add, edit and assess it here. SIM opens on this tab. |
 | **Repositories** | The places software lives, each with a link to its software and, if it can be synced, to its sync. |
+| **Workflows** | The ways software is released, each with a link to its software and the SQA elements it provides. |
 | **Setup** | Administrators only: settings and the directory cache. |
 | **Help** | Version, contacts, documentation and a feedback form. |
 

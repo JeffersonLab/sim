@@ -64,6 +64,20 @@
                         </li>
                         <li>
                             <div class="li-key">
+                                <label for="row-workflow">Workflow</label>
+                            </div>
+                            <div class="li-value">
+                                <select id="row-workflow">
+                                    <option value="">None</option>
+                                    <c:forEach items="${workflowList}" var="workflow">
+                                        <option value="${workflow.workflowId}" title="${fn:escapeXml(workflow.description)}">
+                                            <c:out value="${workflow.name}"/></option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="li-key">
                                 <label for="row-topics">Topics</label>
                             </div>
                             <div class="li-value">

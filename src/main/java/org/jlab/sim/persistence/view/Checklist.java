@@ -18,14 +18,15 @@ import org.jlab.sim.persistence.enumeration.ElementStatus;
  * product's control level, each with what somebody recorded of it, if anybody has, and with who
  * provides it for the product, if anybody does.
  *
- * <p>An element's status is what was recorded for the product; otherwise met, if a provider such as
- * the product's repository provides the element for all its software; otherwise none.
+ * <p>An element's status is what was recorded for the product; otherwise met, if a provider, the
+ * product's workflow or its repository, provides the element for all its software; otherwise none.
  */
 public final class Checklist {
 
   /**
    * An element that something provides for all the software it holds, so that it need not be
-   * recorded on each product: the provider's name, such as a repository's, and on what basis.
+   * recorded on each product: the provider, as the dialog names it after "Met, by", such as a
+   * repository's name or "the Certified workflow", and on what basis.
    */
   public static final class Provision {
     private final String elementId;
@@ -148,8 +149,9 @@ public final class Checklist {
    * @param level The product's control level: the override where there is one
    * @param recorded What has been recorded for the product, of any element. An element the level
    *     neither requires nor recommends is left out, whatever was recorded of it at another level.
-   * @param provided The elements provided for the product without being recorded on it, such as
-   *     those its repository provides
+   * @param provided The elements provided for the product without being recorded on it: those its
+   *     workflow provides and those its repository provides. Where two provide the same element,
+   *     the first names the provider.
    * @return The required elements, then the recommended ones, each in the SQAP's order
    */
   public static Checklist of(
@@ -163,7 +165,7 @@ public final class Checklist {
     }
     Map<String, Provision> provisions = new HashMap<>();
     for (Provision provision : provided) {
-      provisions.put(provision.getElementId(), provision);
+      provisions.putIfAbsent(provision.getElementId(), provision);
     }
 
     List<Item> items = new ArrayList<>();

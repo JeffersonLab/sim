@@ -46,6 +46,12 @@ public class EditSoftware extends HttpServlet {
     try {
       BigInteger softwareId = ParamConverter.convertBigInteger(request, "softwareId");
       BigInteger repositoryId = ParamConverter.convertBigInteger(request, "repositoryId");
+
+      // If the workflowId field is null (no key), that means leave the workflow as is, as with
+      // the note: the sync page sends none, so a sync never changes a workflow somebody set.
+      // To clear it, set it to the empty string.
+      boolean setWorkflow = request.getParameter("workflowId") != null;
+      BigInteger workflowId = ParamConverter.convertBigInteger(request, "workflowId");
       String description = request.getParameter("description");
       String maintainerUsernameCsv = request.getParameter("maintainerUsernameCsv");
       String homeUrl = request.getParameter("homeUrl");
@@ -66,6 +72,8 @@ public class EditSoftware extends HttpServlet {
       softwareService.editSoftware(
           softwareId,
           repositoryId,
+          setWorkflow,
+          workflowId,
           type,
           topicArray,
           description,

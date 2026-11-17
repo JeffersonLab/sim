@@ -711,6 +711,206 @@ class SoftwareIT {
     assertFalse(checklist(row(homeDir)).get("version-control").containsKey("provider"));
   }
 
+  /**
+   * An editor says how software is released, in the Edit dialog, and the Directory shows the
+   * workflow and filters by it. A save that names no workflow, as a sync's Update does, leaves it.
+   */
+  @Test
+  void editorSetsTheWorkflowAndTheDirectoryFiltersByIt() throws Exception {
+    String token = Sim.token(Sim.EDITOR);
+    String certified = workflowId("Certified");
+    String name = newName();
+    assertOk(add(token, name, "APP", "N"));
+
+    Element row = row(name);
+    String softwareId = row.attr("data-id");
+    assertEquals("", row.attr("data-workflow-id"), "new software has no workflow");
+    assertNull(row.selectFirst("td.name .name-meta.workflow"), "and shows none");
+    assertNotNull(row(name, "&workflowId=NONE"));
+    assertNull(row(name, "&workflowId=" + certified));
+
+    assertOk(edit(token, softwareId, certified));
+
+    row = row(name);
+    assertEquals(certified, row.attr("data-workflow-id"));
+    assertEquals("Certified workflow", row.selectFirst("td.name .name-meta.workflow").text());
+    assertEquals("APP · HOME_DIR", row.selectFirst("td.name .name-meta").text());
+    assertNotNull(row(name, "&workflowId=" + certified));
+    assertNull(row(name, "&workflowId=" + workflowId("Legacy Certified")));
+    assertNull(row(name, "&workflowId=NONE"));
+
+    String message =
+        Sim.page("/directory?workflowId=" + certified, null).select(".message-box").text();
+    assertTrue(message.contains("Workflow \"Certified\""), message);
+    message = Sim.page("/directory?workflowId=NONE", null).select(".message-box").text();
+    assertTrue(message.contains("No Workflow"), message);
+
+    // No workflow named: left as it is. A blank one: none.
+    assertOk(edit(token, softwareId, null));
+    assertEquals(certified, row(name).attr("data-workflow-id"));
+    assertFail(edit(token, softwareId, "999999"), "workflow not found with id: 999999");
+    assertFail(edit(token, softwareId, "abc"), "Unable to edit Software");
+    for (String other : new String[] {Sim.token(Sim.USER), null}) {
+      assertFail(edit(other, softwareId, ""), "Not authenticated / authorized");
+    }
+    assertEquals(certified, row(name).attr("data-workflow-id"), "nothing was saved");
+    assertOk(edit(token, softwareId, ""));
+    assertEquals("", row(name).attr("data-workflow-id"));
+
+    // The Add dialog sets it too
+    String withWorkflow = newName();
+    assertOk(
+        addIn(
+            repositoryId,
+            token,
+            withWorkflow,
+            "APP",
+            "N",
+            List.of(Map.entry("workflowId", certified))));
+    assertEquals(certified, row(withWorkflow).attr("data-workflow-id"));
+    assertFail(
+        addIn(
+            repositoryId, token, newName(), "APP", "N", List.of(Map.entry("workflowId", "999999"))),
+        "workflow not found with id: 999999");
+  }
+
+  /**
+   * An SQA element a workflow provides for all the software released with it is met on each
+   * product's checklist without a record, as one its repository provides is, and a status recorded
+   * for the product replaces it. The Certified workflow provides the version number and read-only
+   * installs; CSUE the version number only; pinned versions are left to each product's record.
+   */
+  @Test
+  void anElementTheWorkflowProvidesIsMetUnlessRecordedOtherwise() throws Exception {
+    String token = Sim.token(Sim.EDITOR);
+    String name = newName();
+    assertOk(
+        addIn(
+            repositoryId,
+            token,
+            name,
+            "APP",
+            "N",
+            List.of(Map.entry("workflowId", workflowId("Certified")))));
+    String softwareId = row(name).attr("data-id");
+    // Impact 4 and Complexity 1: level 2 Significant, which requires both elements
+    scoreNamed(token, name, 4, 3);
+
+    Element row = row(name);
+    Map<String, JsonObject> checklist = checklist(row);
+    long required =
+        checklist.values().stream()
+            .filter(item -> "REQUIRED".equals(item.getString("requirement")))
+            .count();
+    JsonObject version = checklist.get("installed-version");
+    assertEquals("REQUIRED", version.getString("requirement"));
+    assertEquals("the Certified workflow", version.getString("provider"));
+    assertEquals(
+        "Each release is installed under /cs/certified in a folder for its version.",
+        version.getString("providerNote"));
+    assertTrue(
+        version.getString("providerLink").startsWith("https://pages.jlab.org/acc/iac/docs/sqap/"),
+        version.getString("providerLink"));
+    assertFalse(version.containsKey("status"), "nobody recorded it");
+    assertEquals(
+        "the Certified workflow", checklist.get("installed-read-only").getString("provider"));
+    assertFalse(checklist.get("versions-pinned").containsKey("provider"), "left to the product");
+    assertFalse(checklist.get("version-control").containsKey("provider"), "HOME_DIR provides none");
+    assertEquals(
+        "Not recorded",
+        elementsCell(row).text(),
+        "what the workflow provides is not a person's record");
+
+    // Once something is recorded, the count includes what the workflow provides
+    assertOk(record(token, softwareId, new String[] {"user-guide", "MET", "", ""}));
+    assertEquals("3 of " + required, elementsCell(row(name)).text());
+
+    // A status recorded for the product replaces the workflow's, and clearing it returns it
+    assertOk(record(token, softwareId, new String[] {"installed-read-only", "GAP", "", ""}));
+    row = row(name);
+    assertEquals("2 of " + required + " (1 gap)", elementsCell(row).text());
+    assertEquals("GAP", checklist(row).get("installed-read-only").getString("status"));
+    assertEquals(
+        "the Certified workflow", checklist(row).get("installed-read-only").getString("provider"));
+    assertNotNull(row(name, "&gap=installed-read-only"));
+
+    assertOk(record(token, softwareId, new String[] {"installed-read-only", "", "", ""}));
+    assertEquals("3 of " + required, elementsCell(row(name)).text());
+    assertNull(row(name, "&gap=ANY"));
+
+    // CSUE installs under developers' usernames: a product there stays not recorded for read-only
+    assertOk(edit(token, softwareId, workflowId("CSUE")));
+    row = row(name);
+    assertEquals(
+        "the CSUE workflow", checklist(row).get("installed-version").getString("provider"));
+    assertFalse(checklist(row).get("installed-read-only").containsKey("provider"));
+    assertFalse(checklist(row).get("installed-read-only").containsKey("status"), "not a gap");
+    assertEquals("2 of " + required, elementsCell(row).text());
+    assertNull(row(name, "&gap=ANY"));
+
+    // No workflow, nothing provided
+    assertOk(edit(token, softwareId, ""));
+    assertFalse(checklist(row(name)).get("installed-version").containsKey("provider"));
+    assertEquals("1 of " + required, elementsCell(row(name)).text());
+  }
+
+  /** A product gets what its workflow provides and what its repository provides, each named. */
+  @Test
+  void theWorkflowsElementsAddToTheRepositorys() throws Exception {
+    String token = Sim.token(Sim.EDITOR);
+    String github =
+        Sim.page("/directory", null)
+            .selectFirst("select[name=repositoryId] option:contains(GITHUB)")
+            .attr("value");
+    String name = "it-" + UUID.randomUUID().toString().substring(0, 8);
+    String filter = "/directory?softwareName=" + name + "&repositoryId=" + github;
+    assertOk(
+        addIn(
+            github,
+            token,
+            name,
+            "APP",
+            "N",
+            List.of(Map.entry("workflowId", workflowId("GitHub web application")))));
+    String softwareId = Sim.page(filter, null).selectFirst("tr[data-name]").attr("data-id");
+
+    try {
+      assertOk(
+          score(
+              token,
+              softwareId,
+              4,
+              1,
+              3,
+              List.of(Map.entry("levelOverride", ""), Map.entry("levelNote", ""))));
+
+      Element row = Sim.page(filter, null).selectFirst("tr[data-name]");
+      Map<String, JsonObject> checklist = checklist(row);
+      assertEquals("GITHUB", checklist.get("version-control").getString("provider"));
+      assertEquals("GITHUB", checklist.get("issue-tracking").getString("provider"));
+      assertEquals(
+          "the GitHub web application workflow",
+          checklist.get("installed-version").getString("provider"));
+      assertEquals(
+          "the GitHub web application workflow",
+          checklist.get("installed-read-only").getString("provider"));
+      assertEquals("", checklist.get("installed-version").getString("providerLink"));
+
+      long required =
+          checklist.values().stream()
+              .filter(item -> "REQUIRED".equals(item.getString("requirement")))
+              .count();
+      assertOk(record(token, softwareId, new String[] {"user-guide", "MET", "", ""}));
+      assertEquals("5 of " + required, elementsCell(Sim.page(filter, null)).text());
+    } finally {
+      assertOk(
+          Sim.post(
+              "/ajax/remove-software",
+              Sim.token(Sim.ADMIN),
+              List.of(Map.entry("softwareId", softwareId))));
+    }
+  }
+
   /** A name nobody else uses, which the test's cleanup removes. */
   private String newName() {
     String name = "it-" + UUID.randomUUID().toString().substring(0, 8);
@@ -752,7 +952,20 @@ class SoftwareIT {
       String archived,
       String... topics)
       throws Exception {
-    List<Map.Entry<String, String>> form = new ArrayList<>();
+    return addIn(inRepositoryId, token, name, type, archived, List.of(), topics);
+  }
+
+  /** Adds software with more parameters than the others send, such as its workflow. */
+  private static HttpResponse<String> addIn(
+      String inRepositoryId,
+      String token,
+      String name,
+      String type,
+      String archived,
+      List<Map.Entry<String, String>> more,
+      String... topics)
+      throws Exception {
+    List<Map.Entry<String, String>> form = new ArrayList<>(more);
     form.add(Map.entry("repositoryId", inRepositoryId));
     form.add(Map.entry("name", name));
     form.add(Map.entry("type", type));
@@ -766,6 +979,38 @@ class SoftwareIT {
     form.add(Map.entry("note", ""));
 
     return Sim.post("/ajax/add-software", token, form);
+  }
+
+  /**
+   * Saves software in HOME_DIR as the Edit dialog does, with this workflow: an id, blank for none,
+   * or null to send no workflow at all, as a sync's Update does.
+   */
+  private static HttpResponse<String> edit(String token, String softwareId, String workflowId)
+      throws Exception {
+    List<Map.Entry<String, String>> form = new ArrayList<>();
+    form.add(Map.entry("softwareId", softwareId));
+    form.add(Map.entry("repositoryId", repositoryId));
+    if (workflowId != null) {
+      form.add(Map.entry("workflowId", workflowId));
+    }
+    form.add(Map.entry("type", "APP"));
+    form.add(Map.entry("description", "Added by an integration test"));
+    form.add(Map.entry("maintainerUsernameCsv", "jdoe,tbrown"));
+    form.add(Map.entry("homeUrl", "https://example.com/edited"));
+    form.add(Map.entry("archived", "N"));
+    form.add(Map.entry("note", ""));
+
+    return Sim.post("/ajax/edit-software", token, form);
+  }
+
+  /** A workflow's id, from the Directory's filter, by its name exactly. */
+  private static String workflowId(String name) throws Exception {
+    for (Element option : Sim.page("/directory", null).select("select[name=workflowId] option")) {
+      if (option.text().equals(name)) {
+        return option.attr("value");
+      }
+    }
+    throw new AssertionError(name + " workflow");
   }
 
   /** Scores software: the impact and complexity given, and the other four factors all the same. */

@@ -45,6 +45,23 @@
                         </li>
                         <li>
                             <div class="li-key">
+                                <label for="workflow-select">Workflow</label>
+                            </div>
+                            <div class="li-value">
+                                <%-- Compare as strings: EL can't turn NONE into a number to compare with an id --%>
+                                <select id="workflow-select" name="workflowId">
+                                    <option value="">&nbsp;</option>
+                                    <c:forEach items="${workflowList}" var="workflow">
+                                        <option value="${workflow.workflowId}"${param.workflowId eq ('' += workflow.workflowId) ? ' selected="selected"' : ''}>
+                                            <c:out value="${workflow.name}"/></option>
+                                    </c:forEach>
+                                    <option value="NONE"${param.workflowId eq 'NONE' ? ' selected="selected"' : ''}>None</option>
+                                </select>
+                                <div>(how the software is released)</div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="li-key">
                                 <label for="type-select">Type</label>
                             </div>
                             <div class="li-value">
@@ -193,6 +210,7 @@
                 data-description="${fn:escapeXml(software.description)}"
                 data-note="${fn:escapeXml(software.note)}"
                 data-repo-id="${software.repository.repositoryId}"
+                data-workflow-id="${software.workflow.workflowId}"
                 data-maintainer-csv="${fn:escapeXml(software.maintainerUsernameCsv)}"
                 data-url="${fn:escapeXml(software.homeUrl)}"
                 data-level="${software.controlLevel.value}"
@@ -222,6 +240,10 @@
                         <span class="archived-symbol">🕸</span>
                     </c:if>
                     <div class="name-meta"><span class="type"><c:out value="${software.type}"/></span> · <span class="repo"><c:out value="${software.repository.name}"/></span></div>
+                    <%-- How it is released, where somebody or its sync has said --%>
+                    <c:if test="${not empty software.workflow}">
+                        <div class="name-meta workflow" title="${fn:escapeXml(software.workflow.description)}"><c:out value="${software.workflow.name}"/> workflow</div>
+                    </c:if>
                 </td>
                 <td class="description${editOpener}"<c:if test="${not readonly}"> title="Click to edit"</c:if>>
                     <div><c:out value="${software.description}"/></div>
@@ -500,7 +522,7 @@
             </tbody>
         </table>
         </div>
-        <div id="elements-footer">Link: the evidence of an element that is met, or the issue that tracks a gap. Not applicable needs a note saying why. An element met by a repository is one it provides for all its software; a status recorded here replaces it.<c:if test="${not empty sqapVersion}"> Elements of SQAP revision <c:out value="${sqapVersion}"/>.</c:if></div>
+        <div id="elements-footer">Link: the evidence of an element that is met, or the issue that tracks a gap. Not applicable needs a note saying why. An element met by a workflow or a repository is one it provides for all its software; a status recorded here replaces it.<c:if test="${not empty sqapVersion}"> Elements of SQAP revision <c:out value="${sqapVersion}"/>.</c:if></div>
         <div class="dialog-button-panel">
             <c:choose>
                 <c:when test="${readonly}">

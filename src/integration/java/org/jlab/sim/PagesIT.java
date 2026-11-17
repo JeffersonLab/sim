@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.http.HttpResponse;
+import java.util.List;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.junit.jupiter.api.BeforeAll;
@@ -30,7 +31,9 @@ class PagesIT {
         "/directory?archived=YES",
         "/directory?max=5&offset=5",
         "/directory?level=2&attention=3&fragile=Y&assessed=N",
+        "/directory?workflowId=NONE",
         "/repositories",
+        "/workflows",
         "/help"
       })
   void anyoneReadsPage(String path) throws Exception {
@@ -54,6 +57,8 @@ class PagesIT {
     "/directory?fragile=maybe, 400",
     "/directory?assessed=bogus, 400",
     "/directory?repositoryId=999999, 400",
+    "/directory?workflowId=abc, 400",
+    "/directory?workflowId=999999, 400",
     "/repositories/sync, 400",
     "/repositories/sync?repositoryId=, 400",
     "/repositories/sync?repositoryId=abc, 400",
@@ -104,6 +109,59 @@ class PagesIT {
           page.select("tr:has(td:first-child:contains(" + name + ")) td.provided-elements").text(),
           name + " provides none");
     }
+  }
+
+  /**
+   * The Workflows tab: each workflow with the SQA elements it provides for all the software
+   * released with it, and the basis of each. CSUE and the EPICS build system install into a
+   * directory for each version, but under developers' usernames, so they provide the version number
+   * and not read-only installs. None provides pinned versions, which are left to each product's
+   * record.
+   */
+  @Test
+  void workflowsListsTheSqaElementsEachProvides() throws Exception {
+    Document page = Sim.page("/workflows", null);
+
+    assertEquals(
+        "Certified,GitHub web application,CSUE,EPICS build system,Legacy Certified,None",
+        String.join(",", page.select("tbody td:first-child .workflow-name").eachText()),
+        "the workflows, in their order, then none");
+
+    String certified = provided(page, "Certified");
+    assertTrue(certified.contains("Version number, found from the installed instance"), certified);
+    assertTrue(
+        certified.contains("Each release is installed under /cs/certified in a folder for"),
+        certified);
+    assertTrue(certified.contains("Installed software read-only to its users"), certified);
+
+    for (String name : new String[] {"GitHub web application", "Legacy Certified"}) {
+      String both = provided(page, name);
+      assertTrue(both.contains("Version number, found from the installed instance"), both);
+      assertTrue(both.contains("A service account owns the installed software"), both);
+    }
+
+    for (String name : new String[] {"CSUE", "EPICS build system"}) {
+      String versionOnly = provided(page, name);
+      assertTrue(versionOnly.contains("Version number, found from the installed instance"), name);
+      assertTrue(
+          versionOnly.contains("Each release is installed in a directory named for its version"),
+          versionOnly);
+      assertFalse(versionOnly.contains("Installed software read-only to its users"), name);
+    }
+
+    assertFalse(page.text().contains("Versions pinned exactly"), "no workflow provides it");
+    assertEquals("", provided(page, "None"));
+    assertTrue(page.select("#primary-nav a").eachText().contains("Workflows"), "the tab");
+  }
+
+  /** The elements a workflow's row lists, by the workflow's name exactly. */
+  private static String provided(Document page, String workflow) {
+    for (Element row : page.select("tbody tr")) {
+      if (row.selectFirst(".workflow-name").text().equals(workflow)) {
+        return row.select("td.provided-elements").text();
+      }
+    }
+    throw new AssertionError(workflow + " workflow");
   }
 
   @ParameterizedTest
@@ -185,6 +243,35 @@ class PagesIT {
 
     assertEquals(level, selected(page, "#level-select"), query);
     assertEquals(attention, selected(page, "#attention-select"), query);
+  }
+
+  /** The workflow filter keeps a workflow, None, or nothing, as submitted. */
+  @Test
+  void directoryFilterKeepsTheWorkflow() throws Exception {
+    Document page = Sim.page("/directory?workflowId=NONE", null);
+    assertEquals("NONE", selected(page, "#workflow-select"));
+
+    String id =
+        page.selectFirst("#workflow-select option:matchesOwn(^\\s*CSUE\\s*$)").attr("value");
+    assertEquals(id, selected(Sim.page("/directory?workflowId=" + id, null), "#workflow-select"));
+
+    assertEquals("", selected(Sim.page("/directory?workflowId=", null), "#workflow-select"));
+  }
+
+  /** Editors pick the workflow in the Add and Edit dialog; the first choice is none. */
+  @Test
+  void editDialogOffersTheWorkflows() throws Exception {
+    Document page = Sim.page("/directory", Sim.token(Sim.EDITOR));
+
+    assertEquals(
+        List.of(
+            "None",
+            "Certified",
+            "GitHub web application",
+            "CSUE",
+            "EPICS build system",
+            "Legacy Certified"),
+        page.select("#table-row-dialog #row-workflow option").eachText());
   }
 
   private static String selected(Document page, String select) {

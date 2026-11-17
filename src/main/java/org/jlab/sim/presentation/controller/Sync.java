@@ -95,6 +95,8 @@ public class Sync extends HttpServlet {
               null,
               repository,
               null,
+              false,
+              null,
               null,
               Include.YES,
               null,
