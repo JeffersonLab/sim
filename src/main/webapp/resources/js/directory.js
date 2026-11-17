@@ -426,6 +426,19 @@ $(document).on("click", ".elements-dialog-opener", function () {
         $row.find(".element-link").val(item.link || "");
         $row.find(".element-note").val(item.note || "");
         $row.find(".element-recorded").text(item.status ? "by " + item.by + " on " + item.date : "");
+
+        /* An element the repository provides for all its software is met without a record: it
+         * takes the place of Not recorded, and a status recorded for this software replaces it */
+        let $provided = $row.find(".element-provided").empty();
+        $row.find(".element-status option[value='']").text(item.provider ? "Met, by " + item.provider : "Not recorded");
+        if (item.provider && item.status) {
+            $provided.text("Otherwise met by " + item.provider);
+        } else if (item.provider) {
+            $provided.text(item.providerNote);
+            if (/^https?:\/\//.test(item.providerLink || "")) {
+                $provided.append(" ").append($("<a target=\"_blank\"></a>").attr("href", item.providerLink).text("Link"));
+            }
+        }
         $row.toggleClass("recommended", item.requirement !== "REQUIRED");
         /* In the checklist's order: required elements first */
         $row.addClass("on-checklist").appendTo($tbody).show();

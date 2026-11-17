@@ -9,6 +9,9 @@ The **Repositories** tab lists the places software lives. Each row has:
 - the repository's name, linked to its home page if it has one, and a **Software** link that
   opens the [Directory](directory.md) filtered to the repository;
 - its description;
+- the [SQA elements it provides](sqa-elements.md#met-by-the-repository) for all its software,
+  each with its basis: these are met on the checklist of every product in the repository, unless
+  a status is recorded for the product;
 - a **Sync** arrow (→), which opens the repository's sync. The arrow is disabled for repositories
   that can't be synced, whose software is entered by hand.
 

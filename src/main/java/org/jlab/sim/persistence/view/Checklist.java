@@ -15,14 +15,56 @@ import org.jlab.sim.persistence.enumeration.ElementStatus;
 
 /**
  * A product's checklist of SQA elements: the elements the ACS SQAP requires or recommends at the
- * product's control level, each with what somebody recorded of it, if anybody has.
+ * product's control level, each with what somebody recorded of it, if anybody has, and with who
+ * provides it for the product, if anybody does.
+ *
+ * <p>An element's status is what was recorded for the product; otherwise met, if a provider such as
+ * the product's repository provides the element for all its software; otherwise none.
  */
 public final class Checklist {
 
-  /** An element of the checklist, with what somebody recorded of it for the product, if anybody. */
+  /**
+   * An element that something provides for all the software it holds, so that it need not be
+   * recorded on each product: the provider's name, such as a repository's, and on what basis.
+   */
+  public static final class Provision {
+    private final String elementId;
+    private final String provider;
+    private final String note;
+    private final String linkUrl;
+
+    public Provision(String elementId, String provider, String note, String linkUrl) {
+      this.elementId = elementId;
+      this.provider = provider;
+      this.note = note;
+      this.linkUrl = linkUrl;
+    }
+
+    public String getElementId() {
+      return elementId;
+    }
+
+    public String getProvider() {
+      return provider;
+    }
+
+    public String getNote() {
+      return note;
+    }
+
+    public String getLinkUrl() {
+      return linkUrl;
+    }
+  }
+
+  /**
+   * An element of the checklist, with what somebody recorded of it for the product, if anybody, and
+   * its provision, if it is provided.
+   */
   public static final class Item {
     private final SqaElement element;
     private final ElementRequirement requirement;
+    private final Provision provision;
     // What was recorded: each stays unset if nobody has recorded the element
     private ElementStatus status;
     private String linkUrl;
@@ -30,9 +72,14 @@ public final class Checklist {
     private String recordedBy;
     private Date recordedDate;
 
-    Item(SqaElement element, ElementRequirement requirement, SoftwareElement recorded) {
+    Item(
+        SqaElement element,
+        ElementRequirement requirement,
+        SoftwareElement recorded,
+        Provision provision) {
       this.element = element;
       this.requirement = requirement;
+      this.provision = provision;
       if (recorded != null) {
         this.status = recorded.getStatus();
         this.linkUrl = recorded.getLinkUrl();
@@ -50,9 +97,25 @@ public final class Checklist {
       return requirement;
     }
 
-    /** The recorded status, or null if nobody has recorded one. */
+    /** The status recorded for the product, or null if nobody has recorded one. */
     public ElementStatus getStatus() {
       return status;
+    }
+
+    /** How the element is provided for the product, or null if nothing provides it. */
+    public Provision getProvision() {
+      return provision;
+    }
+
+    /**
+     * The status that counts: the recorded one, which wins; otherwise met, if the element is
+     * provided; otherwise null.
+     */
+    public ElementStatus getEffectiveStatus() {
+      if (status != null) {
+        return status;
+      }
+      return provision == null ? null : ElementStatus.MET;
     }
 
     public String getLinkUrl() {
@@ -85,20 +148,34 @@ public final class Checklist {
    * @param level The product's control level: the override where there is one
    * @param recorded What has been recorded for the product, of any element. An element the level
    *     neither requires nor recommends is left out, whatever was recorded of it at another level.
+   * @param provided The elements provided for the product without being recorded on it, such as
+   *     those its repository provides
    * @return The required elements, then the recommended ones, each in the SQAP's order
    */
   public static Checklist of(
-      Collection<SqaElement> elements, ControlLevel level, Collection<SoftwareElement> recorded) {
+      Collection<SqaElement> elements,
+      ControlLevel level,
+      Collection<SoftwareElement> recorded,
+      Collection<Provision> provided) {
     Map<String, SoftwareElement> byId = new HashMap<>();
     for (SoftwareElement softwareElement : recorded) {
       byId.put(softwareElement.getElementId(), softwareElement);
+    }
+    Map<String, Provision> provisions = new HashMap<>();
+    for (Provision provision : provided) {
+      provisions.put(provision.getElementId(), provision);
     }
 
     List<Item> items = new ArrayList<>();
     for (SqaElement element : elements) {
       ElementRequirement requirement = element.getRequirement(level);
       if (requirement != null) {
-        items.add(new Item(element, requirement, byId.get(element.getElementId())));
+        items.add(
+            new Item(
+                element,
+                requirement,
+                byId.get(element.getElementId()),
+                provisions.get(element.getElementId())));
       }
     }
     items.sort(
@@ -112,7 +189,10 @@ public final class Checklist {
     return items;
   }
 
-  /** Whether anybody has recorded a status for any element of the checklist. */
+  /**
+   * Whether anybody has recorded a status for any element of the checklist. What is only provided
+   * doesn't count: software that has not yet come under the SQAP shows as not recorded.
+   */
   public boolean isRecorded() {
     return items.stream().anyMatch(item -> item.getStatus() != null);
   }
@@ -121,20 +201,20 @@ public final class Checklist {
   public long getRequiredCount() {
     return items.stream()
         .filter(item -> item.getRequirement() == ElementRequirement.REQUIRED)
-        .filter(item -> item.getStatus() != ElementStatus.NOT_APPLICABLE)
+        .filter(item -> item.getEffectiveStatus() != ElementStatus.NOT_APPLICABLE)
         .count();
   }
 
   public long getRequiredMetCount() {
     return items.stream()
         .filter(item -> item.getRequirement() == ElementRequirement.REQUIRED)
-        .filter(item -> item.getStatus() == ElementStatus.MET)
+        .filter(item -> item.getEffectiveStatus() == ElementStatus.MET)
         .count();
   }
 
   /** The elements recorded as a gap, required or recommended. */
   public long getGapCount() {
-    return items.stream().filter(item -> item.getStatus() == ElementStatus.GAP).count();
+    return items.stream().filter(item -> item.getEffectiveStatus() == ElementStatus.GAP).count();
   }
 
   /** Such as "5 of 7": the required elements that are met, of those that apply. */

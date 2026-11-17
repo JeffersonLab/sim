@@ -25,6 +25,7 @@ import org.jlab.sim.business.service.SoftwareService;
 import org.jlab.sim.business.service.SqaElementService;
 import org.jlab.sim.business.service.TopicService;
 import org.jlab.sim.persistence.entity.Repository;
+import org.jlab.sim.persistence.entity.RepositoryElement;
 import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.entity.SoftwareElement;
 import org.jlab.sim.persistence.entity.SqaElement;
@@ -191,6 +192,7 @@ public class Directory extends HttpServlet {
     // Each assessed product's checklist: unassessed software has no control level to choose its
     // elements by
     Map<BigInteger, List<SoftwareElement>> recorded = elementService.findRecorded(softwareList);
+    Map<BigInteger, List<RepositoryElement>> provided = elementService.findProvided();
     Map<BigInteger, Checklist> checklists = new HashMap<>();
     Map<BigInteger, String> checklistJson = new HashMap<>();
     for (Software software : softwareList) {
@@ -199,7 +201,8 @@ public class Directory extends HttpServlet {
             Checklist.of(
                 elementList,
                 software.getEffectiveControlLevel(),
-                recorded.getOrDefault(software.getSoftwareId(), List.of()));
+                recorded.getOrDefault(software.getSoftwareId(), List.of()),
+                provisions(software.getRepository(), provided));
         checklists.put(software.getSoftwareId(), checklist);
         checklistJson.put(software.getSoftwareId(), toJson(checklist));
       }
@@ -237,6 +240,22 @@ public class Directory extends HttpServlet {
     }
   }
 
+  /** What a repository provides for all its software, named for the repository. */
+  private static List<Checklist.Provision> provisions(
+      Repository repository, Map<BigInteger, List<RepositoryElement>> provided) {
+    List<Checklist.Provision> provisions = new ArrayList<>();
+    for (RepositoryElement element :
+        provided.getOrDefault(repository.getRepositoryId(), List.of())) {
+      provisions.add(
+          new Checklist.Provision(
+              element.getElementId(),
+              repository.getName(),
+              element.getNote(),
+              element.getLinkUrl()));
+    }
+    return provisions;
+  }
+
   /**
    * A checklist for the page's dialog (directory.js): its elements in order, each with its
    * requirement and what was recorded of it.
@@ -255,6 +274,12 @@ public class Directory extends HttpServlet {
             .add("note", item.getNote() == null ? "" : item.getNote())
             .add("by", item.getRecordedBy())
             .add("date", dateFormat.format(item.getRecordedDate()));
+      }
+      Checklist.Provision provision = item.getProvision();
+      if (provision != null) {
+        json.add("provider", provision.getProvider())
+            .add("providerNote", provision.getNote())
+            .add("providerLink", provision.getLinkUrl() == null ? "" : provision.getLinkUrl());
       }
       items.add(json);
     }

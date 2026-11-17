@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import org.jlab.sim.persistence.entity.RepositoryElement;
 import org.jlab.sim.persistence.entity.Software;
 import org.jlab.sim.persistence.entity.SoftwareElement;
 import org.jlab.sim.persistence.entity.SoftwareElementId;
@@ -71,6 +72,26 @@ public class SqaElementService extends JPAService<SqaElement> {
           .add(softwareElement);
     }
     return recorded;
+  }
+
+  /**
+   * The elements each repository provides for all its software.
+   *
+   * @return By repository id; a repository that provides none has no entry
+   */
+  @PermitAll
+  public Map<BigInteger, List<RepositoryElement>> findProvided() {
+    Map<BigInteger, List<RepositoryElement>> provided = new HashMap<>();
+    List<RepositoryElement> found =
+        getEntityManager()
+            .createQuery("select re from RepositoryElement re", RepositoryElement.class)
+            .getResultList();
+    for (RepositoryElement repositoryElement : found) {
+      provided
+          .computeIfAbsent(repositoryElement.getRepositoryId(), id -> new ArrayList<>())
+          .add(repositoryElement);
+    }
+    return provided;
   }
 
   /**
