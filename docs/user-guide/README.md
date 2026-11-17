@@ -16,11 +16,11 @@ than the version you are using.
 
 ## Contents
 
-1. [Concepts](concepts.md): software, repositories, topics, maintainers, archived software, the
-   risk assessment and roles.
+1. [Concepts](concepts.md): software and its types, repositories, topics, maintainers, archived
+   software, the risk assessment and roles.
 2. [Directory](directory.md): finding software, and adding, editing and removing it.
-3. [Risk and SQA assessment](risk-assessment.md): the six risk inputs, and how they give the SQA
-   control level and the attention band.
+3. [Risk and SQA assessment](risk-assessment.md): the six risk inputs, how to rate them, and how
+   they give the SQA control level and the attention band.
 4. [SQA elements](sqa-elements.md): the checklist of what the SQAP asks of software at its
    control level, and finding the gaps.
 5. [Repositories and sync](sync.md): the Repositories tab, and copying software in from GitHub,
