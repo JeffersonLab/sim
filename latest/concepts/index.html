@@ -339,10 +339,32 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#types" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Types
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#repositories" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
         Repositories
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Workflows
       </span>
     </span>
   </a>
@@ -387,6 +409,17 @@
     <span class="md-ellipsis">
       <span class="md-typeset">
         Risk and SQA assessment
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sqa-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SQA elements
       </span>
     </span>
   </a>
@@ -453,6 +486,32 @@
     
   
   Risk and SQA assessment
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sqa-elements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  SQA elements
 
     
   </span>
@@ -568,10 +627,32 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#types" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Types
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#repositories" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
         Repositories
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workflows" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Workflows
       </span>
     </span>
   </a>
@@ -616,6 +697,17 @@
     <span class="md-ellipsis">
       <span class="md-typeset">
         Risk and SQA assessment
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sqa-elements" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        SQA elements
       </span>
     </span>
   </a>
@@ -676,11 +768,15 @@
 </tr>
 <tr>
 <td><strong>Type</strong></td>
-<td><code>APP</code>, <code>LIB</code> (a library), <code>SCRIPT</code> or <code>PLUGIN</code>.</td>
+<td><code>APP</code>, <code>LIB</code> (a library), <code>SCRIPT</code> or <code>PLUGIN</code>; see <a href="#types">Types</a>.</td>
 </tr>
 <tr>
 <td><strong>Repository</strong></td>
 <td>Where its code or release lives; see <a href="#repositories">Repositories</a>.</td>
+</tr>
+<tr>
+<td><strong>Workflow</strong></td>
+<td>How it is released, or none; see <a href="#workflows">Workflows</a>.</td>
 </tr>
 <tr>
 <td><strong>Description</strong></td>
@@ -711,14 +807,138 @@
 <p>Each piece of software also has a <a href="#risk-and-sqa-assessment">risk assessment</a>.</p>
 <p>The name and repository identify the software: they can't be changed once it is added. To move
 software to another repository or rename it, add it again and remove the old entry.</p>
+<h2 id="types">Types<a class="headerlink" href="#types" title="Permanent link">&para;</a></h2>
+<p>Software is hard to sort into types, and a type is useful only if everyone sorts the same way,
+so take it as a best effort, decided by who the software is for and how it runs:</p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APP</code></td>
+<td>Software for end users: a program with an entry point you run. Software started by a shared container to share resources, such as a web app, is an app too.</td>
+</tr>
+<tr>
+<td><code>SCRIPT</code></td>
+<td>A kind of app: small, narrowly focused, usually a single interpreted source file, run easily by power users. The line between an app and a script is blurry; when in doubt, choose <code>APP</code>.</td>
+</tr>
+<tr>
+<td><code>LIB</code></td>
+<td>Software for developers: code with no entry point of its own, meant to be reused by other software through its API.</td>
+</tr>
+<tr>
+<td><code>PLUGIN</code></td>
+<td>A kind of library that is added to or removed from an app easily, often by its users at run time, to customize it.</td>
+</tr>
+</tbody>
+</table>
+<p>How ACG sorts common cases:</p>
+<table>
+<thead>
+<tr>
+<th>Software</th>
+<th>Type</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A Java web app in Wildfly, or PHP in Apache</td>
+<td><code>APP</code></td>
+<td>It is for end users. Strictly it is a plugin to its server, but it is used as an app.</td>
+</tr>
+<tr>
+<td>A desktop program started from JMenu</td>
+<td><code>APP</code></td>
+<td>It is for end users, and it is a program.</td>
+</tr>
+<tr>
+<td>A Low Level Apps IOC "glue" app</td>
+<td><code>APP</code></td>
+<td>It combines libraries into a program.</td>
+</tr>
+<tr>
+<td>A Java JAR that isn't executable, such as the jlog logbook API</td>
+<td><code>LIB</code></td>
+<td>It is for developers, to include in their code.</td>
+</tr>
+<tr>
+<td>Low Level Apps code that other software links</td>
+<td><code>LIB</code></td>
+<td>It is reusable code for developers.</td>
+</tr>
+</tbody>
+</table>
+<p>Where one repository holds more than one kind of code, choose the type of its main purpose: an
+app with a container build file for a quick start is still an <code>APP</code>. A repository that holds only
+a container build file, or other infrastructure as code, is probably a <code>SCRIPT</code>.</p>
 <h2 id="repositories">Repositories<a class="headerlink" href="#repositories" title="Permanent link">&para;</a></h2>
 <p>A <strong>repository</strong> is a place software lives: a code host such as GitHub or GitLab, one of the
 lab's software lists, or a shared directory. The <strong>Repositories</strong> tab lists them.</p>
 <p>Some repositories can be <strong>synced</strong>: SIM reads the list of software from the source and shows how
 it differs from SIM's, and an editor applies the differences. These are GitHub, GitLab, and the
 lab's Certified, CSUE and Low Level Apps lists; see <a href="../sync/#what-each-sync-reads">What each sync reads</a>.
-Software in other repositories is entered and kept up to date by hand.</p>
-<p>Administrators add repositories; see <a href="../administration/#repositories-and-topics">Repositories and topics</a>.</p>
+Software in other repositories is entered and kept up to date by hand. <code>ACE_GIT</code> and <code>HLA_GIT</code>,
+old local Git repositories, keep the few entries they have: add no new software to them.</p>
+<p>The same software can be in more than one repository, because some lab lists record where
+software is deployed as well as where its code is kept: an app can be in CSUE for its deployment
+and on GitHub for its code and issues, such as <code>fe_daq</code> in CSUE and <code>AI_SRF_OPS_fe_daq</code> on
+GitHub. Each is a separate entry in SIM.</p>
+<p>Administrators add repositories; see
+<a href="../administration/#repositories-workflows-and-topics">Repositories, workflows and topics</a>.</p>
+<h2 id="workflows">Workflows<a class="headerlink" href="#workflows" title="Permanent link">&para;</a></h2>
+<p>A <strong>workflow</strong> is how software is released: how it is built, given a version and installed. Where
+software lives and how it is released are two things: a project on GitLab may be released with
+the certified workflow or without it. The <strong>Workflows</strong> tab lists them:</p>
+<table>
+<thead>
+<tr>
+<th>Workflow</th>
+<th>Is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Certified</strong></td>
+<td>The certified workflow on code.jlab.org: the release-workflow components, deployed to <code>/cs/certified</code> by ADM.</td>
+</tr>
+<tr>
+<td><strong>GitHub web application</strong></td>
+<td>Web applications on GitHub, released through GitHub Actions with the shared workflows.</td>
+</tr>
+<tr>
+<td><strong>CSUE</strong></td>
+<td>The Controls System UNIX Environment's release procedure.</td>
+</tr>
+<tr>
+<td><strong>EPICS build system</strong></td>
+<td>The EPICS build system, for low level apps.</td>
+</tr>
+<tr>
+<td><strong>Legacy Certified</strong></td>
+<td>The legacy Certified repository: tar-file releases, installed in versioned directories on NFS.</td>
+</tr>
+</tbody>
+</table>
+<p>Software has one workflow, or none: none means nobody has said, not that it has no release
+procedure. An editor sets it in the Directory's <a href="../directory/#editing">edit dialog</a>, and a
+<a href="../sync/#adding-software">sync</a> proposes it for the software it adds where the repository tells:
+CSUE, Low Level Apps and the Certified list each release their software one way, and a GitLab
+project in the certified group uses the certified workflow. Other GitLab projects and GitHub
+repositories start with none.</p>
+<p>Each row of the Workflows tab has the workflow's name, with a <strong>Software</strong> link that opens the
+<a href="../directory/">Directory</a> filtered to it, its description, and the
+<a href="../sqa-elements/#met-by-the-workflow-or-the-repository">SQA elements it provides</a> for all the
+software released with it, each with its basis. The last row, <strong>None</strong>, links to the software
+whose workflow nobody has set.</p>
+<p>Software that moves from the legacy Certified repository to code.jlab.org is added in <code>GITLAB</code>,
+with the Certified workflow; archive its old entry in <code>CERTIFIED</code>, which keeps Legacy Certified.</p>
+<p>Administrators add workflows; see
+<a href="../administration/#repositories-workflows-and-topics">Repositories, workflows and topics</a>.</p>
 <h2 id="topics">Topics<a class="headerlink" href="#topics" title="Permanent link">&para;</a></h2>
 <p><strong>Topics</strong> are lower-case tags that group software across repositories, such as the language it
 is written in or the system it serves. A piece of software can have any number of topics, and the
@@ -752,6 +972,12 @@ From them SIM works out:</p>
 </ul>
 <p>Software starts <strong>Not assessed</strong>, with every input at its middle value, until someone saves an
 assessment. See <a href="../risk-assessment/">Risk and SQA assessment</a>.</p>
+<h2 id="sqa-elements">SQA elements<a class="headerlink" href="#sqa-elements" title="Permanent link">&para;</a></h2>
+<p>The SQAP asks for certain <strong>SQA elements</strong> at each control level, such as a User Guide or version
+control. Assessed software has a checklist of the elements its level requires or recommends, each
+<strong>Met</strong>, a <strong>Gap</strong>, <strong>Not applicable</strong> or not recorded. An element that the software's workflow
+or repository provides for all its software, such as version control, is met without being
+recorded. See <a href="../sqa-elements/">SQA elements</a>.</p>
 <h2 id="roles">Roles<a class="headerlink" href="#roles" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -763,11 +989,11 @@ assessment. See <a href="../risk-assessment/">Risk and SQA assessment</a>.</p>
 <tbody>
 <tr>
 <td>Anyone, logged in or not</td>
-<td>View the Directory, the Repositories tab, the sync pages, each assessment, and the Help tab.</td>
+<td>View the Directory, the Repositories and Workflows tabs, the sync pages, each assessment and checklist of SQA elements, and the Help tab.</td>
 </tr>
 <tr>
 <td>Members of the <code>acg</code> role</td>
-<td>Also add, edit and remove software, save assessments, and apply syncs.</td>
+<td>Also add, edit and remove software, save assessments and checklists, and apply syncs.</td>
 </tr>
 <tr>
 <td>Members of the <code>sim-admin</code> role</td>

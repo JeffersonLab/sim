@@ -477,6 +477,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../sqa-elements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  SQA elements
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../sync/" class="md-nav__link">
         
   
@@ -685,7 +711,7 @@ assess it. SIM opens on this tab.</p>
 <tbody>
 <tr>
 <td><strong>Name</strong></td>
-<td>The name, linked to its home URL if it has one, with 🕸 if it is <a href="../concepts/#archived-software">archived</a>. Under it, the type and the repository.</td>
+<td>The name, linked to its home URL if it has one, with 🕸 if it is <a href="../concepts/#archived-software">archived</a>. Under it, the type and the repository, and the <a href="../concepts/#workflows">workflow</a> if it has one.</td>
 </tr>
 <tr>
 <td><strong>Description</strong></td>
@@ -697,7 +723,7 @@ assess it. SIM opens on this tab.</p>
 </tr>
 <tr>
 <td><strong>Risk &amp; SQA</strong></td>
-<td>The Ops Impact, the SQA level and the attention, or <strong>Not assessed</strong>. An asterisk after the SQA level means it is overridden; hover over it for the derived level and the rationale. Select the cell to open the <a href="../risk-assessment/">assessment</a>.</td>
+<td>The Ops Impact, the SQA level and the attention, or <strong>Not assessed</strong>. An asterisk after the SQA level means it is overridden; hover over it for the derived level and the rationale. Select the cell to open the <a href="../risk-assessment/">assessment</a>. Under it, for assessed software, <strong>SQA Elements</strong>: how many of the required <a href="../sqa-elements/">SQA elements</a> are met, and the gaps, or <strong>Not recorded</strong>. Select it to open the checklist.</td>
 </tr>
 </tbody>
 </table>
@@ -732,6 +758,10 @@ form; select <strong>Apply</strong> after it to see everything again.</p>
 <td>Software in this repository.</td>
 </tr>
 <tr>
+<td><strong>Workflow</strong></td>
+<td>Software released with this <a href="../concepts/#workflows">workflow</a>, or with <strong>None</strong> the software whose workflow nobody has set.</td>
+</tr>
+<tr>
 <td><strong>Type</strong></td>
 <td>Software of this type.</td>
 </tr>
@@ -759,13 +789,18 @@ form; select <strong>Apply</strong> after it to see everything again.</p>
 <td><strong>Assessed</strong></td>
 <td>Software that has been assessed, or that hasn't.</td>
 </tr>
+<tr>
+<td><strong>Gap in SQA Element</strong></td>
+<td>Software where this <a href="../sqa-elements/">SQA element</a>, or with <strong>Any element</strong> any of them, is recorded as a gap and is on the checklist at the software's level.</td>
+</tr>
 </tbody>
 </table>
-<p>The SQA Level, Attention and Risk Factors filters only find assessed software, since SIM shows no
-level or attention for software nobody has assessed.</p>
+<p>The SQA Level, Attention, Risk Factors and Gap in SQA Element filters only find assessed
+software, since SIM shows no level, attention or checklist for software nobody has assessed.</p>
 <p>The filter is part of the page's address, so you can bookmark a search or send it to someone.
 The <strong>Software</strong> link beside each repository on the <a href="../sync/#the-repositories-tab">Repositories</a>
-tab opens the Directory filtered to that repository.</p>
+tab opens the Directory filtered to that repository, and the one beside each workflow on the
+<a href="../concepts/#workflows">Workflows</a> tab opens it filtered to that workflow.</p>
 <h2 id="editing-software">Editing software<a class="headerlink" href="#editing-software" title="Permanent link">&para;</a></h2>
 <p>Members of the <code>acg</code> and <code>sim-admin</code> <a href="../concepts/#roles">roles</a> see an <strong>Add</strong> button above the
 table. To edit or remove software, select its row, as the hint beside <strong>Add</strong> says.</p>
@@ -774,6 +809,8 @@ table. To edit or remove software, select its row, as the hint beside <strong>Ad
 <ul>
 <li><strong>Name</strong>, <strong>Type</strong> and <strong>Repo</strong> (the repository) are required. A name already used in that
   repository is refused.</li>
+<li><strong>Workflow</strong>: how the software is released; see <a href="../concepts/#workflows">Workflows</a>. Leave it
+  at <strong>None</strong> if you don't know, or none of them fits.</li>
 <li><strong>Topics</strong>: pick from the list, or type a new topic and press Enter.</li>
 <li><strong>Maintainers</strong>: usernames separated by commas, such as <code>jdoe,jsmith</code>.</li>
 <li><strong>Archived</strong>: <strong>No</strong> for software in use.</li>
@@ -788,20 +825,25 @@ what they do, and dragging to select text in them doesn't open the dialog. The <
 cell opens the <a href="../risk-assessment/">assessment</a> instead. You can change everything but the name and the repository; to
 change either, add the software again and remove the old entry. Saving replaces the topics with
 the ones in the dialog.</p>
+<p>Set the <strong>Workflow</strong> here when you know how the software is released: its checklist then shows
+the <a href="../sqa-elements/#met-by-the-workflow-or-the-repository">SQA elements the workflow provides</a>
+as met.</p>
 <p>A sync may later change what you edit: see <a href="../sync/#what-a-sync-changes">What a sync changes</a>.
-The note is never synced, so it is the place for anything you want kept.</p>
+The note and the workflow are never synced, so the note is the place for anything you want kept.</p>
 <h3 id="removing">Removing<a class="headerlink" href="#removing" title="Permanent link">&para;</a></h3>
 <p>Archive retired software rather than removing it: it stays on record with its assessment, out of
 the Directory unless <strong>Include Archived</strong> asks for it; see <a href="../concepts/#archived-software">Archived
 software</a>.
 Remove is for software added by mistake, or the old entry of software you renamed or moved.</p>
 <p>Open the row's edit dialog, select <strong>Remove</strong> at its bottom left, and confirm. The software, with
-its topics and its assessment, is deleted; it can't be restored, only added again.</p>
+its topics, its assessment and its SQA elements, is deleted; it can't be restored, only added
+again.</p>
 <h2 id="embedding-the-directory">Embedding the Directory<a class="headerlink" href="#embedding-the-directory" title="Permanent link">&para;</a></h2>
 <p><code>/sim/directory?loose=Y</code> shows the Directory on its own, without SIM's header and tabs, to embed
 in another page, such as a wiki, in a frame. It is always read-only, its software links open in
 the whole window rather than the frame, and it takes the same filters as the Directory: set them
-on the Directory, then add <code>&amp;loose=Y</code> to its address. The risk assessments still open, read-only.</p>
+on the Directory, then add <code>&amp;loose=Y</code> to its address. The risk assessments and
+the checklists of SQA elements still open, read-only.</p>
 
 
 

@@ -11,7 +11,7 @@
       
       
       
-        <link rel="prev" href="../risk-assessment/">
+        <link rel="prev" href="../sqa-elements/">
       
       
         <link rel="next" href="../administration/">
@@ -344,6 +344,32 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../sqa-elements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  SQA elements
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -656,6 +682,10 @@
 <li>the repository's name, linked to its home page if it has one, and a <strong>Software</strong> link that
   opens the <a href="../directory/">Directory</a> filtered to the repository;</li>
 <li>its description;</li>
+<li>the <a href="../sqa-elements/#met-by-the-workflow-or-the-repository">SQA elements it provides</a> for all
+  its software,
+  each with its basis: these are met on the checklist of every product in the repository, unless
+  a status is recorded for the product;</li>
 <li>a <strong>Sync</strong> arrow (→), which opens the repository's sync. The arrow is disabled for repositories
   that can't be synced, whose software is entered by hand.</li>
 </ul>
@@ -706,9 +736,10 @@ will update, remove and add. Each applied row shows <strong>Success!</strong>, a
 <strong>Done!</strong> when it has finished. Open the sync again to check that nothing is left.</p>
 <p>Anyone else sees the same page, with the buttons disabled.</p>
 <p><strong>Check the Remove rows before applying them.</strong> <strong>Remove</strong> deletes the software from SIM, with
-its note and its <a href="../risk-assessment/">risk assessment</a>, and can't be undone. A project that was
-renamed shows as one Remove and one Add, and applying both loses the old entry's assessment and
-note: add the note and assessment to the new entry before removing the old one. A project that
+its note, its <a href="../risk-assessment/">risk assessment</a> and its <a href="../sqa-elements/">SQA elements</a>, and
+can't be undone. A project that was renamed shows as one Remove and one Add, and applying both
+loses the old entry's assessment, SQA elements and note: add them to the new entry before
+removing the old one. A project that
 left the source, such as a GitHub repository that lost its <code>acg</code> topic, shows as Remove, and so
 does software added to a synced repository by hand.</p>
 <h2 id="what-a-sync-changes">What a sync changes<a class="headerlink" href="#what-a-sync-changes" title="Permanent link">&para;</a></h2>
@@ -721,6 +752,16 @@ and maintainers from the sources that list them (CSUE and Low Level Apps). Its t
 <li>for the Certified list, the section it is listed in (apps, libraries or scripts);</li>
 <li>for CSUE and Low Level Apps, <code>APP</code>.</li>
 </ul>
+<p>Its <a href="../concepts/#workflows">workflow</a> is the one the sync proposes, shown in the row's
+<strong>Workflow</strong> column, where the repository tells how its software is released:</p>
+<ul>
+<li>for CSUE, <strong>CSUE</strong>; for Low Level Apps, <strong>EPICS build system</strong>; for the Certified list,
+  <strong>Legacy Certified</strong>;</li>
+<li>for GitLab, <strong>Certified</strong> for a project in the certified group, <code>acc/ops/acs/certified</code> or a
+  subgroup of it, and none for any other;</li>
+<li>for GitHub, none.</li>
+</ul>
+<p>Set or correct it afterwards in the Directory's <a href="../directory/#editing">edit dialog</a>.</p>
 <p>Like any new software, it starts <a href="../risk-assessment/#not-assessed">not assessed</a>.</p>
 <h3 id="updating-software">Updating software<a class="headerlink" href="#updating-software" title="Permanent link">&para;</a></h3>
 <p>A sync compares, and <strong>Update</strong> copies from the source:</p>
@@ -730,8 +771,10 @@ and maintainers from the sources that list them (CSUE and Low Level Apps). Its t
 <li>the <strong>home URL</strong>, when the source has one;</li>
 <li>the <strong>archived</strong> flag, from GitHub and GitLab only.</li>
 </ul>
-<p>It never changes the <strong>type</strong>, the <strong>maintainers</strong>, the <strong>note</strong> or the assessment, so edits to
-those in SIM are kept. An edit to a field the source does have, such as a description, shows as
+<p>It never changes the <strong>type</strong>, the <strong>workflow</strong>, the <strong>maintainers</strong>, the <strong>note</strong> or the
+assessment, so edits to those in SIM are kept: the <strong>Workflow</strong> column of software SIM already
+has shows its own, whatever the sync would propose. A GitLab project that moves into the
+certified group keeps the workflow it has until an editor changes it. An edit to a field the source does have, such as a description, shows as
 <strong>Update</strong> on the next sync, and applying it puts the source's value back: change those at the
 source instead.</p>
 <h2 id="what-each-sync-reads">What each sync reads<a class="headerlink" href="#what-each-sync-reads" title="Permanent link">&para;</a></h2>
@@ -810,7 +853,7 @@ take a GitLab project out, an administrator adds its path to the sync's exclusio
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../risk-assessment/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Risk and SQA assessment">
+          <a href="../sqa-elements/" class="md-footer__link md-footer__link--prev" aria-label="Previous: SQA elements">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="lucide lucide-arrow-left" viewBox="0 0 24 24"><path d="m12 19-7-7 7-7M19 12H5"/></svg>
@@ -820,7 +863,7 @@ take a GitLab project out, an administrator adds its path to the sync's exclusio
                 Previous
               </span>
               <div class="md-ellipsis">
-                Risk and SQA assessment
+                SQA elements
               </div>
             </div>
           </a>

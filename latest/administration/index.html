@@ -345,6 +345,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../sqa-elements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+  SQA elements
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../sync/" class="md-nav__link">
         
   
@@ -480,10 +506,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#repositories-and-topics" class="md-nav__link">
+  <a href="#repositories-workflows-and-topics" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Repositories and topics
+        Repositories, workflows and topics
       </span>
     </span>
   </a>
@@ -600,10 +626,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#repositories-and-topics" class="md-nav__link">
+  <a href="#repositories-workflows-and-topics" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Repositories and topics
+        Repositories, workflows and topics
       </span>
     </span>
   </a>
@@ -755,13 +781,29 @@ restart or redeploy it after changing the file or the setting. Without a token, 
 or lacks access, it shows <code>Request failed with status code: 401</code>.</p>
 <p>The other three syncs read the lab's web pages without a token, so they work only where the
 application server can reach those pages.</p>
-<h2 id="repositories-and-topics">Repositories and topics<a class="headerlink" href="#repositories-and-topics" title="Permanent link">&para;</a></h2>
-<p>SIM has no page to add or change repositories or topics.</p>
+<h2 id="repositories-workflows-and-topics">Repositories, workflows and topics<a class="headerlink" href="#repositories-workflows-and-topics" title="Permanent link">&para;</a></h2>
+<p>SIM has no page to add or change repositories, workflows or topics.</p>
 <ul>
 <li><strong>Repositories</strong> are rows in the database's <code>REPOSITORY</code> table: a name, description and home
   URL, and whether it can be synced (<code>SYNC_YN</code>). A repository can only be synced if SIM has code
   for it, which it has for the five named in <a href="../sync/#what-each-sync-reads">What each sync reads</a>;
   any other repository with <code>SYNC_YN = 'Y'</code> shows an <code>Unknown Repository</code> error on its sync.</li>
+<li><strong>The SQA elements a repository provides</strong> for all its software, which the Repositories tab
+  lists and each product's <a href="../sqa-elements/#met-by-the-workflow-or-the-repository">checklist</a>
+  shows as met, are rows in the <code>REPOSITORY_ELEMENT</code> table: the repository, the element's id
+  from <code>SQA_ELEMENT</code>, a note that says on what basis the repository provides it, and an optional
+  link. Add a row only for an element that everything in the repository has. A change shows on
+  the next page load.</li>
+<li><strong>Workflows</strong> are rows in the <code>WORKFLOW</code> table: a name, a description, and its place in the
+  lists (<code>WEIGHT</code>). The syncs propose the workflows named Certified, CSUE, EPICS build system
+  and Legacy Certified <a href="../sync/#adding-software">by those names</a>, so one renamed in the database
+  is proposed no more until SIM's code follows. To remove a workflow, first clear it from the
+  software that has it (<code>SOFTWARE.WORKFLOW_ID</code>).</li>
+<li><strong>The SQA elements a workflow provides</strong> for all the software released with it, which the
+  Workflows tab lists, are rows in the <code>WORKFLOW_ELEMENT</code> table, with the same columns as
+  <code>REPOSITORY_ELEMENT</code> but for the workflow. Add a row only for an element that everything
+  released with the workflow has; leave out one that some of it lacks, and it stays not recorded
+  for each product. A change shows on the next page load.</li>
 <li><strong>Topics</strong> are added when someone types a new one in the Directory's dialog or a sync brings
   one in. A topic no software uses any more stays in the lists; remove it in the database.</li>
 </ul>
