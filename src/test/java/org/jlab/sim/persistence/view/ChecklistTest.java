@@ -254,4 +254,42 @@ class ChecklistTest {
     assertEquals(List.of("design-documented", "version-control"), ids(checklist));
     assertEquals("0 of 1", checklist.getSummary());
   }
+
+  /**
+   * What SIM computes of an element replaces what was recorded or provided of it, counts like any
+   * status, and doesn't make the checklist recorded.
+   */
+  @Test
+  void aComputedStatusReplacesWhatWasRecordedOrProvided() {
+    List<Checklist.Finding> computed =
+        List.of(
+            new Checklist.Finding("design-documented", ElementStatus.GAP, "Computed"),
+            new Checklist.Finding("version-control", ElementStatus.MET, "Computed"));
+    Checklist checklist =
+        Checklist.of(
+            ELEMENTS,
+            ControlLevel.Partial,
+            List.of(recorded("design-documented", ElementStatus.MET)),
+            GITLAB,
+            computed);
+
+    Checklist.Item design = item(checklist, "design-documented");
+    assertEquals(ElementStatus.GAP, design.getEffectiveStatus());
+    assertEquals(null, design.getStatus(), "what was recorded no longer counts");
+    assertEquals("Computed", design.getFinding().getNote());
+    assertEquals(ElementStatus.MET, item(checklist, "version-control").getEffectiveStatus());
+    assertEquals(1, checklist.getGapCount());
+    assertEquals("1 of 2", checklist.getSummary());
+    assertFalse(checklist.isRecorded(), "computed is not recorded");
+  }
+
+  @Test
+  void twoMaintainersAreMetAndFewerAreAGap() {
+    assertEquals(
+        ElementStatus.MET, ComputedElements.twoMaintainers(List.of("jdoe", "tbrown")).getStatus());
+    Checklist.Finding one = ComputedElements.twoMaintainers(List.of("jdoe"));
+    assertEquals(ElementStatus.GAP, one.getStatus());
+    assertEquals("Only jdoe listed", one.getNote());
+    assertEquals("No maintainers listed", ComputedElements.twoMaintainers(List.of()).getNote());
+  }
 }

@@ -18,8 +18,10 @@ import org.jlab.sim.persistence.enumeration.ElementStatus;
  * product's control level, each with what somebody recorded of it, if anybody has, and with who
  * provides it for the product, if anybody does.
  *
- * <p>An element's status is what was recorded for the product; otherwise met, if a provider, the
- * product's workflow or its repository, provides the element for all its software; otherwise none.
+ * <p>An element's status is what SIM computes from its own records, for the few elements it can
+ * (see {@link ComputedElements}); otherwise what was recorded for the product; otherwise met, if a
+ * provider, the product's workflow or its repository, provides the element for all its software;
+ * otherwise none.
  */
 public final class Checklist {
 
@@ -59,13 +61,42 @@ public final class Checklist {
   }
 
   /**
-   * An element of the checklist, with what somebody recorded of it for the product, if anybody, and
-   * its provision, if it is provided.
+   * The status of an element that SIM computes from its own records of the product, such as its
+   * maintainers, so that nobody records it: Met or Gap, and what it was computed from.
+   */
+  public static final class Finding {
+    private final String elementId;
+    private final ElementStatus status;
+    private final String note;
+
+    public Finding(String elementId, ElementStatus status, String note) {
+      this.elementId = elementId;
+      this.status = status;
+      this.note = note;
+    }
+
+    public String getElementId() {
+      return elementId;
+    }
+
+    public ElementStatus getStatus() {
+      return status;
+    }
+
+    public String getNote() {
+      return note;
+    }
+  }
+
+  /**
+   * An element of the checklist, with what somebody recorded of it for the product, if anybody, its
+   * provision, if it is provided, and its finding, if SIM computes it.
    */
   public static final class Item {
     private final SqaElement element;
     private final ElementRequirement requirement;
     private final Provision provision;
+    private final Finding finding;
     // What was recorded: each stays unset if nobody has recorded the element
     private ElementStatus status;
     private String linkUrl;
@@ -77,11 +108,14 @@ public final class Checklist {
         SqaElement element,
         ElementRequirement requirement,
         SoftwareElement recorded,
-        Provision provision) {
+        Provision provision,
+        Finding finding) {
       this.element = element;
       this.requirement = requirement;
       this.provision = provision;
-      if (recorded != null) {
+      this.finding = finding;
+      // What was recorded of a computed element, before SIM computed it, no longer counts
+      if (recorded != null && finding == null) {
         this.status = recorded.getStatus();
         this.linkUrl = recorded.getLinkUrl();
         this.note = recorded.getNote();
@@ -108,11 +142,19 @@ public final class Checklist {
       return provision;
     }
 
+    /** What SIM computed of the element, or null if it is not one SIM computes. */
+    public Finding getFinding() {
+      return finding;
+    }
+
     /**
-     * The status that counts: the recorded one, which wins; otherwise met, if the element is
-     * provided; otherwise null.
+     * The status that counts: the computed one, if SIM computes the element; otherwise the recorded
+     * one; otherwise met, if the element is provided; otherwise null.
      */
     public ElementStatus getEffectiveStatus() {
+      if (finding != null) {
+        return finding.getStatus();
+      }
       if (status != null) {
         return status;
       }
@@ -159,6 +201,22 @@ public final class Checklist {
       ControlLevel level,
       Collection<SoftwareElement> recorded,
       Collection<Provision> provided) {
+    return of(elements, level, recorded, provided, List.of());
+  }
+
+  /**
+   * The checklist of a product at a control level, with the elements SIM computes.
+   *
+   * @param computed What SIM computed of the product's elements: each replaces what was recorded or
+   *     provided of its element
+   * @see #of(Collection, ControlLevel, Collection, Collection)
+   */
+  public static Checklist of(
+      Collection<SqaElement> elements,
+      ControlLevel level,
+      Collection<SoftwareElement> recorded,
+      Collection<Provision> provided,
+      Collection<Finding> computed) {
     Map<String, SoftwareElement> byId = new HashMap<>();
     for (SoftwareElement softwareElement : recorded) {
       byId.put(softwareElement.getElementId(), softwareElement);
@@ -166,6 +224,10 @@ public final class Checklist {
     Map<String, Provision> provisions = new HashMap<>();
     for (Provision provision : provided) {
       provisions.putIfAbsent(provision.getElementId(), provision);
+    }
+    Map<String, Finding> findings = new HashMap<>();
+    for (Finding finding : computed) {
+      findings.put(finding.getElementId(), finding);
     }
 
     List<Item> items = new ArrayList<>();
@@ -177,7 +239,8 @@ public final class Checklist {
                 element,
                 requirement,
                 byId.get(element.getElementId()),
-                provisions.get(element.getElementId())));
+                provisions.get(element.getElementId()),
+                findings.get(element.getElementId())));
       }
     }
     items.sort(
@@ -193,7 +256,7 @@ public final class Checklist {
 
   /**
    * Whether anybody has recorded a status for any element of the checklist. What is only provided
-   * doesn't count: software that has not yet come under the SQAP shows as not recorded.
+   * or computed doesn't count: software that has not yet come under the SQAP shows as not recorded.
    */
   public boolean isRecorded() {
     return items.stream().anyMatch(item -> item.getStatus() != null);

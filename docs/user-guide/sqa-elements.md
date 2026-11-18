@@ -66,6 +66,24 @@ somebody records it.
 Software gets what its workflow provides only once it has one: set it in the Directory's
 [edit dialog](directory.md#editing), unless its sync did.
 
+To keep a link or a note on such an element, type it: the status changes to **Met**, recorded for
+the software, with the provider as **Otherwise met by**.
+
+## Set by SIM
+
+SIM sets two elements itself, from what it already records, and nobody records them:
+
+- **Ratings recorded** (Ops Impact and Code Complexity recorded in the Software Directory) is met
+  by the [assessment](risk-assessment.md), which every checklist comes from. The dialog names who
+  assessed the software, and when.
+- **Two maintainers** (at least two maintainers listed in the Software Directory) is met when the
+  Directory's **Maintainers** lists two or more, and a gap when it lists fewer. Add a maintainer in
+  the [edit dialog](directory.md#editing) to meet it.
+
+Their status reads **Set by SIM** and can't be changed in the dialog. They count like any other
+element, and the **Gap in SQA Element** filter finds software with fewer than two maintainers where
+its level asks for two.
+
 ## Recording an element
 
 For each element, set:
@@ -83,6 +101,9 @@ link and note.
 
 Under each status is who last recorded the element, and when. Saving the checklist doesn't
 change that for the elements you left as they were.
+
+Once an element has a link, **Open** beside it opens the link in a new window, for anyone reading
+the checklist, logged in or not.
 
 **Met** means somebody says the software has the element, not that the element is good enough:
 SIM doesn't read the document behind the link.

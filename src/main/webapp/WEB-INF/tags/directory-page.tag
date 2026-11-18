@@ -521,14 +521,19 @@
                         <div class="element-recorded"></div>
                         <div class="element-provided"></div>
                     </td>
-                    <td><input type="url" class="element-link" maxlength="512" placeholder="https://&hellip;" aria-label="Link for ${fn:escapeXml(element.shortName)}"/></td>
+                    <td>
+                        <div class="element-link-cell">
+                            <input type="url" class="element-link" maxlength="512" placeholder="https://&hellip;" aria-label="Link for ${fn:escapeXml(element.shortName)}"/>
+                            <a class="element-link-open" target="_blank" rel="noopener noreferrer" title="Open the link in a new window" hidden>Open</a>
+                        </div>
+                    </td>
                     <td><input type="text" class="element-note" maxlength="512" aria-label="Note for ${fn:escapeXml(element.shortName)}"/></td>
                 </tr>
             </c:forEach>
             </tbody>
         </table>
         </div>
-        <div id="elements-footer">Link: the evidence of an element that is met, or the issue that tracks a gap. Not applicable needs a note saying why. An element met by a workflow or a repository is one it provides for all its software; a status recorded here replaces it.<c:if test="${not empty sqapVersion}"> Elements of SQAP revision <c:out value="${sqapVersion}"/>.</c:if></div>
+        <div id="elements-footer">Link: the evidence of an element that is met, or the issue that tracks a gap. Not applicable needs a note saying why. An element met by a workflow or a repository is one it provides for all its software; a status recorded here replaces it. SIM sets Ratings recorded and Two maintainers from the assessment and the Maintainers column.<c:if test="${not empty sqapVersion}"> Elements of SQAP revision <c:out value="${sqapVersion}"/>.</c:if></div>
         <div class="dialog-button-panel">
             <c:choose>
                 <c:when test="${readonly}">

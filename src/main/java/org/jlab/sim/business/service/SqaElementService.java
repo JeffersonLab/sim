@@ -18,6 +18,7 @@ import org.jlab.sim.persistence.entity.SoftwareElementId;
 import org.jlab.sim.persistence.entity.SqaElement;
 import org.jlab.sim.persistence.entity.WorkflowElement;
 import org.jlab.sim.persistence.enumeration.ElementStatus;
+import org.jlab.sim.persistence.view.ComputedElements;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.JPAService;
 
@@ -140,6 +141,10 @@ public class SqaElementService extends JPAService<SqaElement> {
       SqaElement element = getEntityManager().find(SqaElement.class, entry.elementId());
       if (element == null) {
         throw new UserFriendlyException("Unknown SQA element: " + entry.elementId());
+      }
+      if (ComputedElements.IDS.contains(element.getElementId())) {
+        throw new UserFriendlyException(
+            "\"" + element.getShortName() + "\" is set by SIM from its own records");
       }
 
       String linkUrl = blankToNull(entry.linkUrl());

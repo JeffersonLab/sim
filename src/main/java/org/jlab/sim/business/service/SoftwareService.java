@@ -19,6 +19,7 @@ import org.jlab.sim.persistence.entity.SoftwareTopic;
 import org.jlab.sim.persistence.entity.SqaElement;
 import org.jlab.sim.persistence.entity.Workflow;
 import org.jlab.sim.persistence.enumeration.*;
+import org.jlab.sim.persistence.view.ComputedElements;
 import org.jlab.smoothness.business.exception.UserFriendlyException;
 import org.jlab.smoothness.business.service.JPAService;
 
@@ -410,37 +411,67 @@ public class SoftwareService extends JPAService<Software> {
 
     if (gapElementId != null) {
       // An element recorded as a gap, among those the software's level requires or recommends:
-      // one recorded at another level is not on the checklist now
+      // one recorded at another level is not on the checklist now. What was recorded of an element
+      // SIM computes no longer counts
+      Expression<ControlLevel> effective =
+          cb.coalesce(root.get("controlLevelOverride"), root.get("controlLevel"));
       Subquery<String> subquery = cq.subquery(String.class);
       Root<SoftwareElement> recorded = subquery.from(SoftwareElement.class);
       Root<SqaElement> element = subquery.from(SqaElement.class);
-      Expression<ControlLevel> effective =
-          cb.coalesce(root.get("controlLevelOverride"), root.get("controlLevel"));
-
-      List<Predicate> onChecklist = new ArrayList<>();
-      for (ControlLevel controlLevel : ControlLevel.values()) {
-        onChecklist.add(
-            cb.and(
-                cb.equal(effective, controlLevel),
-                cb.isNotNull(element.get("level" + controlLevel.getValue()))));
-      }
 
       List<Predicate> gap = new ArrayList<>();
       gap.add(cb.equal(recorded.get("id").get(SOFTWARE_ID), root.get(SOFTWARE_ID)));
       gap.add(cb.equal(recorded.get("status"), ElementStatus.GAP));
       gap.add(cb.equal(element.get(ELEMENT_ID), recorded.get("id").get(ELEMENT_ID)));
-      gap.add(cb.or(onChecklist.toArray(new Predicate[] {})));
+      gap.add(onChecklist(cb, element, effective));
+      gap.add(cb.not(element.get(ELEMENT_ID).in(ComputedElements.IDS)));
       if (!SqaElementService.ANY_ELEMENT.equals(gapElementId)) {
         gap.add(cb.equal(element.get(ELEMENT_ID), gapElementId));
       }
 
       subquery.select(recorded.get("id").get(ELEMENT_ID));
       subquery.where(cb.and(gap.toArray(new Predicate[] {})));
-      filters.add(cb.exists(subquery));
+      Predicate anyGap = cb.exists(subquery);
+
+      // The one gap SIM computes: fewer than two maintainers listed, where the level asks for two
+      if (SqaElementService.ANY_ELEMENT.equals(gapElementId)
+          || ComputedElements.TWO_MAINTAINERS.equals(gapElementId)) {
+        Subquery<String> asked = cq.subquery(String.class);
+        Root<SqaElement> twoMaintainers = asked.from(SqaElement.class);
+        asked.select(twoMaintainers.get(ELEMENT_ID));
+        asked.where(
+            cb.equal(twoMaintainers.get(ELEMENT_ID), ComputedElements.TWO_MAINTAINERS),
+            onChecklist(cb, twoMaintainers, effective));
+        // Usernames are separated by commas or white space, as Software.getMaintainerUsernameList
+        Expression<Integer> maintainers =
+            cb.coalesce(
+                cb.function(
+                    "REGEXP_COUNT",
+                    Integer.class,
+                    root.get("maintainerUsernameCsv"),
+                    cb.literal("[^,[:space:]]+")),
+                0);
+        anyGap = cb.or(anyGap, cb.and(cb.exists(asked), cb.lessThan(maintainers, 2)));
+      }
+
+      filters.add(anyGap);
       filters.add(cb.isNotNull(root.get(ASSESSED_DATE)));
     }
 
     return filters;
+  }
+
+  /** Whether the element is on the checklist at the software's level: required or recommended. */
+  private static Predicate onChecklist(
+      CriteriaBuilder cb, Root<SqaElement> element, Expression<ControlLevel> effective) {
+    List<Predicate> onChecklist = new ArrayList<>();
+    for (ControlLevel controlLevel : ControlLevel.values()) {
+      onChecklist.add(
+          cb.and(
+              cb.equal(effective, controlLevel),
+              cb.isNotNull(element.get("level" + controlLevel.getValue()))));
+    }
+    return cb.or(onChecklist.toArray(new Predicate[] {}));
   }
 
   @PermitAll
