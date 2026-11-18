@@ -428,6 +428,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#set-by-sim" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Set by SIM
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#recording-an-element" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -594,6 +605,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#set-by-sim" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Set by SIM
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#recording-an-element" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
@@ -678,9 +700,9 @@ only <strong>Close</strong>.</p>
 where there is one: first those it <strong>requires</strong>, under a <strong>Required</strong> heading, then those it
 <strong>recommends</strong>, under <strong>Recommended</strong>, each in the SQAP's order. Each heading counts its
 elements, and so does the line above the table, so a change of level shows in the numbers.</p>
-<p>Each element has the SQAP's short label, such as <strong>Design documented</strong>; hover over it for the
-SQAP's full wording, such as "Design, purpose and use documented in source code, README file or
-similar". Under the label are the element's phase and a link to the section of the SQAP that
+<p>Each element has the SQAP's short label, such as <strong>Dependency choices recorded</strong>; hover over it
+for the SQAP's full wording, such as "Choice recorded: purpose, source, license, maintenance
+status". Under the label are the element's phase and a link to the section of the SQAP that
 describes it.</p>
 <p>The checklist holds the elements a product has or lacks as a whole, such as a Software
 Requirements Specification, a User Guide, version control and issue tracking. What the SQAP asks
@@ -713,6 +735,21 @@ read-only to its users): for software released with them the element stays <stro
 somebody records it.</p>
 <p>Software gets what its workflow provides only once it has one: set it in the Directory's
 <a href="../directory/#editing">edit dialog</a>, unless its sync did.</p>
+<p>To keep a link or a note on such an element, type it: the status changes to <strong>Met</strong>, recorded for
+the software, with the provider as <strong>Otherwise met by</strong>.</p>
+<h2 id="set-by-sim">Set by SIM<a class="headerlink" href="#set-by-sim" title="Permanent link">&para;</a></h2>
+<p>SIM sets two elements itself, from what it already records, and nobody records them:</p>
+<ul>
+<li><strong>Ratings recorded</strong> (Ops Impact and Code Complexity recorded in the Software Directory) is met
+  by the <a href="../risk-assessment/">assessment</a>, which every checklist comes from. The dialog names who
+  assessed the software, and when.</li>
+<li><strong>Two maintainers</strong> (at least two maintainers listed in the Software Directory) is met when the
+  Directory's <strong>Maintainers</strong> lists two or more, and a gap when it lists fewer. Add a maintainer in
+  the <a href="../directory/#editing">edit dialog</a> to meet it.</li>
+</ul>
+<p>Their status reads <strong>Set by SIM</strong> and can't be changed in the dialog. They count like any other
+element, and the <strong>Gap in SQA Element</strong> filter finds software with fewer than two maintainers where
+its level asks for two.</p>
 <h2 id="recording-an-element">Recording an element<a class="headerlink" href="#recording-an-element" title="Permanent link">&para;</a></h2>
 <p>For each element, set:</p>
 <table>
@@ -743,6 +780,8 @@ element, set it to <strong>Not recorded</strong>, or to <strong>Met, by</strong>
 link and note.</p>
 <p>Under each status is who last recorded the element, and when. Saving the checklist doesn't
 change that for the elements you left as they were.</p>
+<p>Once an element has a link, <strong>Open</strong> beside it opens the link in a new window, for anyone reading
+the checklist, logged in or not.</p>
 <p><strong>Met</strong> means somebody says the software has the element, not that the element is good enough:
 SIM doesn't read the document behind the link.</p>
 <h2 id="not-recorded-is-not-a-gap">Not recorded is not a gap<a class="headerlink" href="#not-recorded-is-not-a-gap" title="Permanent link">&para;</a></h2>
