@@ -181,9 +181,10 @@ class PagesIT {
   }
 
   /**
-   * Each SQA element links to its section in the revision of the SQAP it was loaded from, as does
-   * the dialog's link to section 4.4: for a draft, the plan's source at the draft's commit, since
-   * the website's latest is the last released revision, whose tables may lack the draft's elements.
+   * Each SQA element links to its section in the revision of the SQAP it was loaded from, as do the
+   * dialogs' links to sections 4.4 and 4.3: for a draft, the plan's source at the draft's commit,
+   * since the website's latest is the last released revision, whose tables may lack the draft's
+   * elements.
    */
   @Test
   void elementsLinkToTheSqapRevisionTheyCameFrom() throws Exception {
@@ -194,6 +195,7 @@ class PagesIT {
             .selectFirst("#elements-table tr[data-element-id=two-maintainers] .element-meta a")
             .attr("href");
     String stages = directory.selectFirst("#elements-dialog .dialog-links a").attr("href");
+    String levels = directory.selectFirst("#risk-dialog .dialog-links a").attr("href");
 
     assertTrue(footer.contains("draft "), "the test data is a draft revision: " + footer);
     String revision = footer.replaceAll(".*draft (\\S+) after.*", "$1");
@@ -203,6 +205,7 @@ class PagesIT {
             + "/docs/04-software-development-life-cycle.md";
     assertEquals(page + "#446-maintenance", section);
     assertEquals(page + "#44-life-cycle-stages", stages);
+    assertEquals(page + "#43-software-control-levels", levels);
   }
 
   /** The elements a workflow's row lists, by the workflow's name exactly. */
