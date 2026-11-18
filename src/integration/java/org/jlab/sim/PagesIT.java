@@ -97,11 +97,11 @@ class PagesIT {
         page.select("tr:has(td:first-child:contains(GITLAB)) td.provided-elements").text();
     assertTrue(gitlab.contains("Version control"), gitlab);
     assertTrue(gitlab.contains("Every project is a Git repository on code.jlab.org."), gitlab);
-    assertTrue(gitlab.contains("Issue Tracking"), gitlab);
+    assertTrue(gitlab.contains("Issue tracking"), gitlab);
 
     String csue = page.select("tr:has(td:first-child:contains(CSUE)) td.provided-elements").text();
     assertTrue(csue.contains("Version control"), csue);
-    assertFalse(csue.contains("Issue Tracking"), csue);
+    assertFalse(csue.contains("Issue tracking"), csue);
 
     for (String name : new String[] {"CERTIFIED", "HOME_DIR"}) {
       assertEquals(
@@ -128,30 +128,56 @@ class PagesIT {
         "the workflows, in their order, then none");
 
     String certified = provided(page, "Certified");
-    assertTrue(certified.contains("Version number, found from the installed instance"), certified);
+    assertTrue(certified.contains("Installed version shown"), certified);
     assertTrue(
         certified.contains("Each release is installed under /cs/certified in a folder for"),
         certified);
-    assertTrue(certified.contains("Installed software read-only to its users"), certified);
+    assertTrue(certified.contains("Read-only install"), certified);
 
     for (String name : new String[] {"GitHub web application", "Legacy Certified"}) {
       String both = provided(page, name);
-      assertTrue(both.contains("Version number, found from the installed instance"), both);
+      assertTrue(both.contains("Installed version shown"), both);
       assertTrue(both.contains("A service account owns the installed software"), both);
     }
 
     for (String name : new String[] {"CSUE", "EPICS build system"}) {
       String versionOnly = provided(page, name);
-      assertTrue(versionOnly.contains("Version number, found from the installed instance"), name);
+      assertTrue(versionOnly.contains("Installed version shown"), name);
       assertTrue(
           versionOnly.contains("Each release is installed in a directory named for its version"),
           versionOnly);
-      assertFalse(versionOnly.contains("Installed software read-only to its users"), name);
+      assertFalse(versionOnly.contains("Read-only install"), name);
     }
 
-    assertFalse(page.text().contains("Versions pinned exactly"), "no workflow provides it");
+    assertFalse(page.text().contains("Versions pinned"), "no workflow provides it");
     assertEquals("", provided(page, "None"));
     assertTrue(page.select("#primary-nav a").eachText().contains("Workflows"), "the tab");
+  }
+
+  /**
+   * Lists of SQA elements show the SQAP's short label, with its full row as the title for hover:
+   * the Directory's gap filter and checklist, and the Repositories tab.
+   */
+  @Test
+  void elementsShowTheirShortLabelWithTheFullRowOnHover() throws Exception {
+    String full = "Design, purpose and use documented in source code, README file or similar";
+    Document directory = Sim.page("/directory", null);
+
+    Element option = directory.selectFirst("#gap-select option[value=design-documented]");
+    assertEquals("Design documented", option.text());
+    assertEquals(full, option.attr("title"));
+
+    Element label =
+        directory.selectFirst(
+            "#elements-table tr[data-element-id=design-documented] .element-short");
+    assertEquals("Design documented", label.text());
+    assertEquals(full, label.attr("title"));
+
+    Element provided =
+        Sim.page("/repositories", null)
+            .selectFirst("tr:has(td:first-child:contains(GITLAB)) .provided-element > span");
+    assertEquals("Version control", provided.text());
+    assertEquals("Version control", provided.attr("title"));
   }
 
   /** The elements a workflow's row lists, by the workflow's name exactly. */

@@ -417,7 +417,7 @@ public class Directory extends HttpServlet {
     }
 
     if (gapElement != null) {
-      filters.add("Gap in \"" + gapElement.getName() + "\"");
+      filters.add("Gap in \"" + gapElement.getShortName() + "\"");
     } else if (gapElementId != null) {
       filters.add("Gap in any SQA Element");
     }

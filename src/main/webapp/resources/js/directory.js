@@ -420,6 +420,7 @@ $(document).on("click", ".elements-dialog-opener", function () {
     $("#elements-dialog").dialog("option", "title", $tr.attr("data-name") + " - SQA Elements");
     $("#elements-level").text(jlab.risk.label("level-labels", level));
 
+    $tbody.find(".element-group").remove();
     $tbody.find(".element-row").removeClass("on-checklist").hide();
 
     checklist.forEach(function (item) {
@@ -427,7 +428,6 @@ $(document).on("click", ".elements-dialog-opener", function () {
             return $(this).attr("data-element-id") === item.id;
         });
 
-        $row.find(".element-requirement").text(item.requirement === "REQUIRED" ? "Required" : "Recommended");
         $row.find(".element-status").val(item.status || "");
         $row.find(".element-link").val(item.link || "");
         $row.find(".element-note").val(item.note || "");
@@ -451,6 +451,26 @@ $(document).on("click", ".elements-dialog-opener", function () {
         $row.addClass("on-checklist").appendTo($tbody).show();
     });
 
+    /* A heading row above the required elements and another above the recommended ones, so it is
+     * plain which is which, and the intro counts each, so a change of level shows */
+    let counts = [];
+    [["REQUIRED", "Required"], ["RECOMMENDED", "Recommended"]].forEach(function (group) {
+        let n = checklist.filter(function (item) {
+                return (item.requirement === "REQUIRED") === (group[0] === "REQUIRED");
+            }).length,
+            $first = $tbody.find(".element-row.on-checklist").filter(function () {
+                return $(this).hasClass("recommended") === (group[0] !== "REQUIRED");
+            }).first();
+        if (n > 0) {
+            counts.push(n + " " + group[1].toLowerCase());
+            $("<tr class=\"element-group\"><th colspan=\"4\"></th></tr>")
+                .addClass(group[0].toLowerCase())
+                .find("th").text(group[1] + " (" + n + ")").end()
+                .insertBefore($first);
+        }
+    });
+    $("#elements-counts").text(counts.join(", ") || "none");
+
     let $controls = $("#elements-table select, #elements-table input");
 
     if (editable) {
@@ -459,7 +479,9 @@ $(document).on("click", ".elements-dialog-opener", function () {
         $controls.attr("disabled", "disabled");
     }
 
-    $("#elements-dialog").dialog("open");
+    /* Wide enough for the four columns side by side, within the window as it is now */
+    $("#elements-dialog").dialog("option", "width", Math.max(700, Math.min(1100, $(window).width() - 40)))
+        .dialog("open");
     return false;
 });
 $(document).on("click", "#elements-save-button", function () {
@@ -564,8 +586,8 @@ $(function(){
 
     $("#elements-dialog").dialog({
         autoOpen: false,
-        minWidth: 900,
-        width: 900,
+        minWidth: 700,
+        width: 1100,
         height: "auto",
         modal: true,
         draggable: false

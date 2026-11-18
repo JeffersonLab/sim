@@ -541,7 +541,7 @@ class SoftwareIT {
 
     assertFail(
         record(token, softwareId, new String[] {"user-guide", "NOT_APPLICABLE", "", " "}),
-        "\"User Guide\" needs a note saying why it is not applicable");
+        "\"User guide\" needs a note saying why it is not applicable");
     assertFail(
         record(token, softwareId, new String[] {"user-guide", "MET", "javascript:alert(1)", ""}),
         "needs a link that starts with http:// or https://");
@@ -617,7 +617,7 @@ class SoftwareIT {
     assertNull(row(without, "&gap=ANY"));
 
     String message = Sim.page("/directory?gap=user-guide", null).select(".message-box").text();
-    assertTrue(message.contains("Gap in \"User Guide\""), message);
+    assertTrue(message.contains("Gap in \"User guide\""), message);
     message = Sim.page("/directory?gap=ANY", null).select(".message-box").text();
     assertTrue(message.contains("Gap in any SQA Element"), message);
     assertEquals(400, Sim.get("/directory?gap=no-such-element", null).statusCode());

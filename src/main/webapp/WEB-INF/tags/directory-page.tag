@@ -164,8 +164,8 @@
                                     <option value="">&nbsp;</option>
                                     <option value="ANY"${param.gap eq 'ANY' ? ' selected="selected"' : ''}>Any element</option>
                                     <c:forEach items="${elementList}" var="element">
-                                        <option value="${fn:escapeXml(element.elementId)}"${param.gap eq element.elementId ? ' selected="selected"' : ''}>
-                                            <c:out value="${element.name}"/></option>
+                                        <option value="${fn:escapeXml(element.elementId)}" title="${fn:escapeXml(element.name)}"${param.gap eq element.elementId ? ' selected="selected"' : ''}>
+                                            <c:out value="${element.shortName}"/></option>
                                     </c:forEach>
                                 </select>
                                 <div>(recorded as a gap, at the software's level)</div>
@@ -485,11 +485,17 @@
         <div class="dialog-links">
             <a target="_blank" href="https://pages.jlab.org/acc/iac/docs/sqap/latest/04-software-development-life-cycle/#44-life-cycle-stages">SQAP &sect;4.4</a>
         </div>
-        <p id="elements-intro">The SQA elements the SQAP asks of a product at control level <span id="elements-level"></span>. An element nobody has recorded is not a gap.</p>
+        <p id="elements-intro">The SQA elements the SQAP asks of a product at control level <span id="elements-level"></span>: <span id="elements-counts"></span>. An element nobody has recorded is not a gap. Hover over an element for the SQAP's wording.</p>
         <%-- Not a data-table: the Directory is the page's only one, which its scripts and tests rely on.
              The Full level's checklist is taller than most windows, so the table scrolls, not the dialog --%>
         <div id="elements-scroll">
         <table id="elements-table">
+            <colgroup>
+                <col class="element-col"/>
+                <col class="status-col"/>
+                <col class="link-col"/>
+                <col class="note-col"/>
+            </colgroup>
             <thead>
             <tr>
                 <th>Element</th>
@@ -500,13 +506,13 @@
             </thead>
             <tbody>
             <c:forEach items="${elementList}" var="element">
-                <tr class="element-row" data-element-id="${fn:escapeXml(element.elementId)}" data-element-name="${fn:escapeXml(element.name)}">
+                <tr class="element-row" data-element-id="${fn:escapeXml(element.elementId)}" data-element-name="${fn:escapeXml(element.shortName)}">
                     <td class="element-name">
-                        <div><c:out value="${element.name}"/></div>
-                        <div class="element-meta"><span class="element-requirement"></span> · <c:out value="${element.phase}"/> · <a target="_blank" href="${fn:escapeXml(element.sectionUrl)}">&sect;<c:out value="${element.sectionNumber}"/></a></div>
+                        <div><span class="element-short" title="${fn:escapeXml(element.name)}"><c:out value="${element.shortName}"/></span></div>
+                        <div class="element-meta"><c:out value="${element.phase}"/> · <a target="_blank" href="${fn:escapeXml(element.sectionUrl)}">&sect;<c:out value="${element.sectionNumber}"/></a></div>
                     </td>
                     <td>
-                        <select class="element-status" aria-label="Status of ${fn:escapeXml(element.name)}">
+                        <select class="element-status" aria-label="Status of ${fn:escapeXml(element.shortName)}">
                             <option value="">Not recorded</option>
                             <c:forEach items="${elementStatusList}" var="opt">
                                 <option value="${opt}"><c:out value="${opt.label}"/></option>
@@ -515,8 +521,8 @@
                         <div class="element-recorded"></div>
                         <div class="element-provided"></div>
                     </td>
-                    <td><input type="url" class="element-link" maxlength="512" placeholder="https://&hellip;" aria-label="Link for ${fn:escapeXml(element.name)}"/></td>
-                    <td><input type="text" class="element-note" maxlength="512" aria-label="Note for ${fn:escapeXml(element.name)}"/></td>
+                    <td><input type="url" class="element-link" maxlength="512" placeholder="https://&hellip;" aria-label="Link for ${fn:escapeXml(element.shortName)}"/></td>
+                    <td><input type="text" class="element-note" maxlength="512" aria-label="Note for ${fn:escapeXml(element.shortName)}"/></td>
                 </tr>
             </c:forEach>
             </tbody>

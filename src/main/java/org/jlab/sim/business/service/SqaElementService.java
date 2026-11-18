@@ -174,7 +174,7 @@ public class SqaElementService extends JPAService<SqaElement> {
   private static void validate(
       SqaElement element, ElementStatus status, String linkUrl, String note)
       throws UserFriendlyException {
-    String name = "\"" + element.getName() + "\"";
+    String name = "\"" + element.getShortName() + "\"";
 
     if (status == null) {
       if (linkUrl != null || note != null) {

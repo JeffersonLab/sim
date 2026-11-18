@@ -32,7 +32,7 @@
                             <td class="provided-elements">
                                 <c:forEach var="provision" items="${provided[workflow.workflowId]}">
                                     <div class="provided-element">
-                                        <c:out value="${elementsById[provision.elementId].name}"/>
+                                        <span title="${fn:escapeXml(elementsById[provision.elementId].name)}"><c:out value="${elementsById[provision.elementId].shortName}"/></span>
                                         <div class="provided-note"><c:out value="${provision.note}"/><c:if test="${not empty provision.linkUrl}"> <a href="${fn:escapeXml(provision.linkUrl)}">Link</a></c:if></div>
                                     </div>
                                 </c:forEach>

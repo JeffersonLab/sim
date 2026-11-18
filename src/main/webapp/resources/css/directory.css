@@ -78,6 +78,10 @@ td.risk .risk-key {
     height: 100px;
     resize: none;
 }
+/* The Choose dialog's widest select: its options are short names, but keep it inside the panel */
+#gap-select {
+    max-width: 300px;
+}
 #row-topics {
     width: 350px;
 }
@@ -207,13 +211,51 @@ td.risk .gap-count {
     max-height: 55vh;
     overflow-y: auto;
 }
+/* Fixed columns that share the dialog's width, so the table never scrolls sideways */
 #elements-table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 }
-#elements-table th {
+#elements-table .element-col {
+    width: 28%;
+}
+/* Wide enough for such as "Met, by the GitHub web application workflow"; Link and Note share the rest */
+#elements-table .status-col {
+    width: 280px;
+}
+#elements-table .element-status,
+#elements-table .element-link,
+#elements-table .element-note {
+    width: 100%;
+    box-sizing: border-box;
+}
+#elements-table td {
+    overflow-wrap: anywhere;
+}
+/* The short name; its title is the SQAP's full row */
+#elements-table .element-short {
+    font-weight: bold;
+    text-decoration: underline dotted #999;
+    cursor: help;
+}
+/* Required (N) and Recommended (N), each above its group of elements */
+#elements-table tr.element-group th {
+    position: static;
+    padding: 10px 8px 4px;
+    border-bottom: 1px solid #ccc;
+    font-size: 0.9em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+#elements-table tr.element-group th {
+    background-color: #f2f2f2;
+    color: #333;
+}
+#elements-table thead th {
     position: sticky;
     top: 0;
+    z-index: 1;
     background-color: white;
 }
 #elements-table th {
@@ -232,10 +274,6 @@ td.risk .gap-count {
 #elements-footer {
     color: #666;
     font-size: smaller;
-}
-#elements-table .element-link,
-#elements-table .element-note {
-    width: 200px;
 }
 #elements-footer {
     margin-top: 1em;
