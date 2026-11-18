@@ -50,14 +50,14 @@ and reassess when the software or its use changes. Software not yet written, or 
 that a coming operations program needs, can be rated too.
 
 The SQAP defines the two inputs that give the control level, so this guide doesn't repeat them.
-Its links go to the SQAP revision this release of SIM loads, a draft (8905d54) whose text is on
+Its links go to the SQAP revision this release of SIM loads, a draft (19bcfba) whose text is on
 code.jlab.org; the SQAP's website has only released revisions.
 
-- **Ops Impact**: [SQAP §4.3.1](https://code.jlab.org/acc/iac/docs/sqap/-/blob/8905d54/docs/04-software-development-life-cycle.md#431-ops-impact).
-- **Code Complexity**: [SQAP §4.3.2](https://code.jlab.org/acc/iac/docs/sqap/-/blob/8905d54/docs/04-software-development-life-cycle.md#432-code-complexity).
+- **Ops Impact**: [SQAP §4.3.1](https://code.jlab.org/acc/iac/docs/sqap/-/blob/19bcfba/docs/04-software-development-life-cycle.md#431-ops-impact).
+- **Code Complexity**: [SQAP §4.3.2](https://code.jlab.org/acc/iac/docs/sqap/-/blob/19bcfba/docs/04-software-development-life-cycle.md#432-code-complexity).
 
 Who rates the software, and when, is in [SQAP
-§4.3.4](https://code.jlab.org/acc/iac/docs/sqap/-/blob/8905d54/docs/04-software-development-life-cycle.md#434-recording-the-control-level).
+§4.3.4](https://code.jlab.org/acc/iac/docs/sqap/-/blob/19bcfba/docs/04-software-development-life-cycle.md#434-recording-the-control-level).
 The other four inputs are SIM's own, and only set fragility and attention.
 
 ### Past Downtime Rate
@@ -98,7 +98,7 @@ technology and subject.
 The SQA control level says how much process the SQAP asks for when the software changes: 0
 **Minimal**, 1 **Partial**, 2 **Significant** or 3 **Full**. SIM derives it from Ops Impact and
 Code Complexity with the SQAP's [control level
-table](https://code.jlab.org/acc/iac/docs/sqap/-/blob/8905d54/docs/04-software-development-life-cycle.md#433-control-level-table),
+table](https://code.jlab.org/acc/iac/docs/sqap/-/blob/19bcfba/docs/04-software-development-life-cycle.md#433-control-level-table),
 and the dialog shows the result as you change them.
 
 An **override** replaces the derived level with another, for an exception the SQAP allows. The
