@@ -24,6 +24,10 @@ public class SqaElement implements Serializable {
   @Column(name = "NAME", nullable = false, length = 256)
   private String name;
 
+  /** The SQAP's label for lists, such as "Design documented"; the name is the plan's full row. */
+  @Column(name = "SHORT_NAME", nullable = false, length = 64)
+  private String shortName;
+
   @Column(name = "PHASE", nullable = false, length = 64)
   private String phase;
 
@@ -64,6 +68,7 @@ public class SqaElement implements Serializable {
   public SqaElement(String elementId, String name, int weight, ElementRequirement... requirements) {
     this.elementId = elementId;
     this.name = name;
+    this.shortName = name;
     this.weight = weight;
     this.level0 = requirements[0];
     this.level1 = requirements[1];
@@ -77,6 +82,10 @@ public class SqaElement implements Serializable {
 
   public String getName() {
     return name;
+  }
+
+  public String getShortName() {
+    return shortName;
   }
 
   public String getPhase() {

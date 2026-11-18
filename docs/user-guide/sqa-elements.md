@@ -16,8 +16,13 @@ only **Close**.
 ## What is on the checklist
 
 The dialog lists the elements the SQAP asks for at the software's control level, the override
-where there is one: first those it **requires**, then those it **recommends**, each in the SQAP's
-order. Under each element's name are its phase and a link to the section of the SQAP that
+where there is one: first those it **requires**, under a **Required** heading, then those it
+**recommends**, under **Recommended**, each in the SQAP's order. Each heading counts its
+elements, and so does the line above the table, so a change of level shows in the numbers.
+
+Each element has the SQAP's short label, such as **Design documented**; hover over it for the
+SQAP's full wording, such as "Design, purpose and use documented in source code, README file or
+similar". Under the label are the element's phase and a link to the section of the SQAP that
 describes it.
 
 The checklist holds the elements a product has or lacks as a whole, such as a Software
@@ -54,8 +59,9 @@ back to the provider's, set the status to **Met, by** the provider again.
 the basis shown. Nobody has looked at this software's.
 
 What a workflow doesn't provide is not a gap. CSUE and the EPICS build system install software
-under developers' usernames, so they don't provide **Installed software read-only to its users**:
-for software released with them the element stays **Not recorded** until somebody records it.
+under developers' usernames, so they don't provide **Read-only install** (installed software
+read-only to its users): for software released with them the element stays **Not recorded** until
+somebody records it.
 
 Software gets what its workflow provides only once it has one: set it in the Directory's
 [edit dialog](directory.md#editing), unless its sync did.
