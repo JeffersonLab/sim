@@ -60,9 +60,9 @@ public class Directory extends HttpServlet {
   /** The workflow filter's value for software that has no workflow, where an id names one */
   private static final String NO_WORKFLOW = "NONE";
 
-  // Section 4.4 when no element says which revision of the SQAP it is from
-  private static final String SQAP_STAGES_URL =
-      "https://pages.jlab.org/acc/iac/docs/sqap/latest/04-software-development-life-cycle/#44-life-cycle-stages";
+  // Section 4 of the SQAP, when no element says which revision it is from
+  private static final String SQAP_SECTION_4 =
+      "https://pages.jlab.org/acc/iac/docs/sqap/latest/04-software-development-life-cycle/";
 
   @EJB SoftwareService softwareService;
   @EJB RepositoryService repositoryService;
@@ -275,7 +275,9 @@ public class Directory extends HttpServlet {
     request.setAttribute("checklistJson", checklistJson);
     request.setAttribute(
         "sqapVersion", elementList.isEmpty() ? null : elementList.get(0).getSqapVersion());
-    request.setAttribute("sqapStagesUrl", stagesUrl(elementList));
+    request.setAttribute("sqapStagesUrl", sectionFourUrl(elementList, "44-life-cycle-stages"));
+    request.setAttribute(
+        "sqapControlLevelsUrl", sectionFourUrl(elementList, "43-software-control-levels"));
 
     if (isLooseModeRequested(request)) {
       request.getRequestDispatcher("/WEB-INF/views/directory-loose.jsp").forward(request, response);
@@ -285,19 +287,21 @@ public class Directory extends HttpServlet {
   }
 
   /**
-   * The SQAP's section 4.4, Life Cycle Stages, in the revision the elements were loaded from: on
-   * the page of an element of one of its subsections, which links to the website's folder for a
-   * released revision and to the source at its commit for a draft.
+   * A heading of the SQAP's section 4, such as 4.4 Life Cycle Stages, in the revision the elements
+   * were loaded from: on the page of an element of a 4.4 subsection, whose link goes to the
+   * website's folder for a released revision and to the source at its commit for a draft.
+   *
+   * @param anchor The heading's anchor, the same on the website and in the source
    */
-  static String stagesUrl(List<SqaElement> elements) {
+  static String sectionFourUrl(List<SqaElement> elements, String anchor) {
     for (SqaElement element : elements) {
       if (element.getSectionNumber() != null && element.getSectionNumber().startsWith("4.4.")) {
         String url = element.getSectionUrl();
-        int anchor = url.indexOf('#');
-        return (anchor < 0 ? url : url.substring(0, anchor)) + "#44-life-cycle-stages";
+        int hash = url.indexOf('#');
+        return (hash < 0 ? url : url.substring(0, hash)) + "#" + anchor;
       }
     }
-    return SQAP_STAGES_URL;
+    return SQAP_SECTION_4 + "#" + anchor;
   }
 
   /**

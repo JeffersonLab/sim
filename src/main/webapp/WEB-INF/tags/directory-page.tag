@@ -325,7 +325,7 @@
         <fieldset>
             <legend>SQA Control Level = lookup(Impact, Complexity)</legend>
             <div class="dialog-links">
-                <a target="_blank" href="https://pages.jlab.org/acc/iac/docs/sqap/latest/04-software-development-life-cycle/#43-software-control-levels">SQAP &sect;4.3</a>
+                <a target="_blank" href="${fn:escapeXml(sqapControlLevelsUrl)}">SQAP &sect;4.3</a>
                 |
                 <a target="_blank" href="https://jeffersonlab.github.io/sim/v${initParam.releaseNumber}/risk-assessment/#rating-the-risk-inputs">Guidance</a>
             </div>
