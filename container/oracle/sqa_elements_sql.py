@@ -11,6 +11,11 @@ which SIM records for each product, each with its short label for lists (a file 
 from before the SQAP gave them, is refused). A file whose "draft" is true is not a released revision of
 the plan: it is refused unless --draft is given, and then the version says that it is a draft.
 
+Each element links to the section of the plan that holds its table: on the plan's website, in the
+revision's folder, for a released revision; in the plan's source on code.jlab.org, at the revision's
+commit, for a draft, which the website doesn't publish (its "latest" is the last release, whose
+tables may lack the draft's elements). GitLab gives a heading the same anchor as the website.
+
 For a database that already has elements, write the upgrade script by hand from this output:
 an element's id never changes, so update the rows whose id is already there and insert the rest.
 """
@@ -22,6 +27,15 @@ import json
 import sys
 
 SITE = "https://pages.jlab.org/acc/iac/docs/sqap"
+SOURCE = "https://code.jlab.org/acc/iac/docs/sqap/-/blob"
+
+
+def section_url(data: dict, url: str) -> str:
+    """Where an element's section is: url is relative to the file, such as "04-…/#441-requirements"."""
+    if not data["draft"]:
+        return f"{SITE}/v{data['version']}/{url}"
+    page, _, anchor = url.partition("/#")
+    return f"{SOURCE}/{data['revision']}/docs/{page}.md#{anchor}"
 LEVELS = ("minimal", "partial", "significant", "full")
 REQUIREMENTS = {"required": "REQUIRED", "recommended": "RECOMMENDED", None: None}
 
@@ -37,10 +51,8 @@ def sql(data: dict, allow_draft: bool) -> str:
         raise SystemExit("The file is a draft, not a released revision of the plan (--draft loads it anyway)")
     if data["draft"]:
         version = f"draft {data['revision']} after {data['version']}"
-        folder = "latest"  # A draft has no folder of its own on the site
     else:
         version = data["version"]
-        folder = f"v{data['version']}"
     lines = [
         "alter session set container = XEPDB1;",
         "",
@@ -62,7 +74,7 @@ def sql(data: dict, allow_draft: bool) -> str:
             literal(element["short"]),
             literal(element["phase"]),
             literal(element["section"]["number"]),
-            literal(f"{SITE}/{folder}/{element['section']['url']}"),
+            literal(section_url(data, element["section"]["url"])),
             str(weight),
             *(literal(REQUIREMENTS[element["levels"][level]]) for level in LEVELS),
             literal(version),

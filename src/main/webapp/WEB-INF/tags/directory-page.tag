@@ -483,7 +483,7 @@
     <section>
         <input type="hidden" id="elements-software-id"/>
         <div class="dialog-links">
-            <a target="_blank" href="https://pages.jlab.org/acc/iac/docs/sqap/latest/04-software-development-life-cycle/#44-life-cycle-stages">SQAP &sect;4.4</a>
+            <a target="_blank" href="${fn:escapeXml(sqapStagesUrl)}">SQAP &sect;4.4</a>
         </div>
         <p id="elements-intro">The SQA elements the SQAP asks of a product at control level <span id="elements-level"></span>: <span id="elements-counts"></span>. An element nobody has recorded is not a gap. Hover over an element for the SQAP's wording.</p>
         <%-- Not a data-table: the Directory is the page's only one, which its scripts and tests rely on.
