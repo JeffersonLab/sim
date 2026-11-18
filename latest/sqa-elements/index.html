@@ -703,7 +703,9 @@ elements, and so does the line above the table, so a change of level shows in th
 <p>Each element has the SQAP's short label, such as <strong>Dependency choices recorded</strong>; hover over it
 for the SQAP's full wording, such as "Choice recorded: purpose, source, license, maintenance
 status". Under the label are the element's phase and a link to the section of the SQAP that
-describes it.</p>
+describes it, in the revision SIM loaded the elements from. While that is a draft, the link opens
+the SQAP's source on code.jlab.org at that revision: the SQAP's website publishes only released
+revisions, and the latest of those may not have the draft's elements.</p>
 <p>The checklist holds the elements a product has or lacks as a whole, such as a Software
 Requirements Specification, a User Guide, version control and issue tracking. What the SQAP asks
 of each change, such as a code review or a deployment plan, is recorded in the change's merge
@@ -766,7 +768,7 @@ its level asks for two.</p>
 </tr>
 <tr>
 <td><strong>Link</strong></td>
-<td>For an element that is met, where it is: the document, the README, the guide's website. For a gap, the issue that tracks it. A web address that starts with <code>http://</code> or <code>https://</code>, up to 512 characters. Optional.</td>
+<td>For an element that is met, where it is: the line under the link says what the SQAP expects there, such as "The lock file; where the build tool has none, the build file or README that gives exact versions". For a gap, the issue that tracks it. A web address that starts with <code>http://</code> or <code>https://</code>, up to 512 characters. Optional.</td>
 </tr>
 <tr>
 <td><strong>Note</strong></td>
@@ -782,6 +784,10 @@ link and note.</p>
 change that for the elements you left as they were.</p>
 <p>Once an element has a link, <strong>Open</strong> beside it opens the link in a new window, for anyone reading
 the checklist, logged in or not.</p>
+<p>The line under each link comes from the SQAP with the elements, and says where to look, not what
+the element must contain: follow the element's section link for that. Several elements can have
+the same link, as the four about dependencies do when one section of the README covers them. The
+two elements SIM sets have no link, and no line.</p>
 <p><strong>Met</strong> means somebody says the software has the element, not that the element is good enough:
 SIM doesn't read the document behind the link.</p>
 <h2 id="not-recorded-is-not-a-gap">Not recorded is not a gap<a class="headerlink" href="#not-recorded-is-not-a-gap" title="Permanent link">&para;</a></h2>
