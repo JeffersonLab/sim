@@ -7,6 +7,7 @@ A [Jakarta EE 10](https://en.wikipedia.org/wiki/Jakarta_EE) web application for 
 - [Overview](https://github.com/JeffersonLab/sim#overview)
 - [User Guide](https://github.com/JeffersonLab/sim/blob/main/docs/user-guide/README.md)
 - [Quick Start with Compose](https://github.com/JeffersonLab/sim#quick-start-with-compose)
+- [Dependencies](https://github.com/JeffersonLab/sim#dependencies)
 - [Install](https://github.com/JeffersonLab/sim#install)
 - [Configure](https://github.com/JeffersonLab/sim#configure)
 - [Build](https://github.com/JeffersonLab/sim#build)
@@ -59,6 +60,42 @@ The containers publish these ports on the host, listening only on its local addr
 Keycloak's login redirects and the app's links follow `SIM_KEYCLOAK_PORT` and `SIM_HTTPS_PORT`, and Wildfly listens for HTTPS on `SIM_HTTPS_PORT` inside the container too, so its redirects from HTTP to HTTPS reach it.  Compose names the containers, network, and images after the project's directory, such as `sim-oracle-1`, so a copy in another directory, such as a git worktree, gets its own.
 
 See: [Docker Compose Strategy](https://gist.github.com/slominskir/a7da801e8259f5974c978f9c3091d52c)
+
+## Dependencies
+What sim depends on: what each is used for, where it comes from, its license, and how it is maintained, as of November 2026.  Library versions are pinned in [build.gradle](https://github.com/JeffersonLab/sim/blob/main/build.gradle), and container images in [deps.yaml](https://github.com/JeffersonLab/sim/blob/main/deps.yaml), [compose.yaml](https://github.com/JeffersonLab/sim/blob/main/compose.yaml) and the [Dockerfile](https://github.com/JeffersonLab/sim/blob/main/Dockerfile).
+
+### To run it
+
+| Dependency | Used for | Source | License | Maintenance |
+|---|---|---|---|---|
+| Java 17 or later | Runs the application server | [Eclipse Temurin](https://adoptium.net/) or another OpenJDK build | GPL-2.0 with Classpath Exception | Active (Eclipse Adoptium) |
+| [WildFly](https://www.wildfly.org/) 37.0.1 | Jakarta EE 10 application server; provides the Jakarta EE API, JSTL and Hibernate ORM to the app | [wildfly.org](https://www.wildfly.org/downloads/) | Apache-2.0; the Hibernate ORM 6.6 in it is LGPL-2.1 | Active; the project's latest is 42.0.0 (October 2026) |
+| Oracle Database 19 or later | Stores the inventory | Oracle | Commercial | Supported by Oracle |
+| Oracle JDBC driver | WildFly's datasource for the database | [Maven Central](https://central.sonatype.com/artifact/com.oracle.database.jdbc/ojdbc17) | Oracle Free Use Terms and Conditions | Active (Oracle) |
+| [Keycloak](https://www.keycloak.org/) | Login with OpenID Connect, and the user directory | [keycloak.org](https://www.keycloak.org/downloads); tested with 26.6 | Apache-2.0 | Active; latest is 26.8.2 (November 2026) |
+| [Puppet Show](https://github.com/JeffersonLab/puppet-show) | PDF and image export of pages | [Docker Hub](https://hub.docker.com/r/jeffersonlab/puppet-show) | MIT | JLab's own; last release 3.0.2 (December 2024) |
+| SMTP server | Sends email | Any | | |
+| [Smoothness weblib](https://github.com/JeffersonLab/smoothness) | Page layout, login, settings and setup pages; in the war | [Maven Central](https://central.sonatype.com/artifact/org.jlab/smoothness-weblib) | MIT | JLab's own; active, latest is 5.3.0 (October 2026) |
+| [jsoup](https://jsoup.org/) | Reads the web pages a sync takes software from; in the war | [Maven Central](https://central.sonatype.com/artifact/org.jsoup/jsoup) | MIT | Active; latest is 1.24.1 (November 2026) |
+| [UrlRewriteFilter](https://github.com/paultuckey/urlrewritefilter) | Rewrites versioned resource links and sync addresses; installed in WildFly | [Maven Central](https://central.sonatype.com/artifact/org.tuckey/urlrewritefilter) | BSD | Dormant: 5.1.3 (October 2023) is the latest release, and the repository last changed in February 2024 |
+
+The sync pages also read GitHub's and code.jlab.org's web APIs and three JLab web pages: see [Runtime](https://github.com/JeffersonLab/sim#runtime).
+
+### To build and test it
+
+| Dependency | Used for | Source | License | Maintenance |
+|---|---|---|---|---|
+| [Gradle](https://gradle.org/) 9 | Builds the war | The wrapper in this repository; the `gradle:9-jdk21` image for the Docker build | Apache-2.0 | Active |
+| [JUnit](https://junit.org/) 5 | Unit and integration tests | Maven Central | EPL-2.0 | Active; the project's current line is JUnit 6 |
+| [Eclipse Parsson](https://github.com/eclipse-ee4j/parsson) | JSON-P for the tests; WildFly provides it to the app | Maven Central | EPL-2.0 or GPL-2.0 with Classpath Exception | Active |
+| [Spotless](https://github.com/diffplug/spotless) with google-java-format | Checks formatting | Gradle Plugin Portal | Apache-2.0 | Active |
+| [PMD](https://pmd.github.io/) | Static analysis | Maven Central, through Gradle's `pmd` plugin | BSD-style | Active |
+| [SpotBugs](https://spotbugs.github.io/) | Static analysis | Gradle Plugin Portal | Plugin Apache-2.0; SpotBugs LGPL-2.1 | Active |
+| [gvenzl/oracle-xe](https://github.com/gvenzl/oci-oracle-xe) image | Oracle database for development and tests | Docker Hub | Image scripts Apache-2.0; Oracle Database XE under Oracle's terms | Repository last changed in December 2024 |
+| [jeffersonlab/wildfly](https://github.com/JeffersonLab/wildfly) and [jeffersonlab/keycloak](https://github.com/JeffersonLab/keycloak) images | WildFly and Keycloak, set up for development, tests and the demo image | Docker Hub | MIT | JLab's own; active, latest is 4.1.0 (November 2026) |
+| [MailHog](https://github.com/mailhog/MailHog) image | Catches email in development and tests | Docker Hub | MIT | Unmaintained: last release 1.0.1 (August 2020) |
+| [nginx](https://nginx.org/) image | Serves the sync stand-in's fixed data | Docker Hub | BSD-2-Clause | Active |
+| [Zensical](https://zensical.org/) | Builds the user guide website | PyPI, pinned by `uv.lock` | MIT | Active |
 
 ## Install
 This application requires a Java 17+ JVM and standard library to run, plus a Jakarta EE 10 application server (developed with Wildfly).
