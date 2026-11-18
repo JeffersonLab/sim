@@ -149,7 +149,7 @@ class PagesIT {
       assertFalse(versionOnly.contains("Read-only install"), name);
     }
 
-    assertFalse(page.text().contains("Versions pinned"), "no workflow provides it");
+    assertFalse(page.text().contains("Dependency versions pinned"), "no workflow provides it");
     assertEquals("", provided(page, "None"));
     assertTrue(page.select("#primary-nav a").eachText().contains("Workflows"), "the tab");
   }
@@ -160,17 +160,17 @@ class PagesIT {
    */
   @Test
   void elementsShowTheirShortLabelWithTheFullRowOnHover() throws Exception {
-    String full = "Design, purpose and use documented in source code, README file or similar";
+    String full = "Choice recorded: purpose, source, license, maintenance status";
     Document directory = Sim.page("/directory", null);
 
-    Element option = directory.selectFirst("#gap-select option[value=design-documented]");
-    assertEquals("Design documented", option.text());
+    Element option = directory.selectFirst("#gap-select option[value=acquired-choice-recorded]");
+    assertEquals("Dependency choices recorded", option.text());
     assertEquals(full, option.attr("title"));
 
     Element label =
         directory.selectFirst(
-            "#elements-table tr[data-element-id=design-documented] .element-short");
-    assertEquals("Design documented", label.text());
+            "#elements-table tr[data-element-id=acquired-choice-recorded] .element-short");
+    assertEquals("Dependency choices recorded", label.text());
     assertEquals(full, label.attr("title"));
 
     Element provided =

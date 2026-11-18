@@ -24,7 +24,13 @@ class ChecklistTest {
   private static final List<SqaElement> ELEMENTS =
       List.of(
           new SqaElement(
-              "design-documented", "Design documented", 1, REQUIRED, REQUIRED, REQUIRED, REQUIRED),
+              "design-documented",
+              "Purpose and use documented",
+              1,
+              REQUIRED,
+              REQUIRED,
+              REQUIRED,
+              REQUIRED),
           new SqaElement(
               "design-specification",
               "Design Specification",

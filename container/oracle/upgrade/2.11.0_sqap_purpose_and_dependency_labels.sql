@@ -1,0 +1,27 @@
+-- Load the SQAP's elements of revision draft 8905d54 after 1.0.0 (acc/iac/docs/sqap!21): "Design, purpose and use
+-- documented ..." now reads "Purpose and use documented ...", still required at every level, and the
+-- acquired-software elements' short labels start with "Dependency". Run once, as SIM_OWNER, on a database
+-- at 2.10.1. It sets each element's row by its id, which never changes, to what
+-- container/oracle/initdb.d/03_sqa_elements.sql loads; no element is added or removed.
+
+SET DEFINE OFF;
+
+update SIM_OWNER.SQA_ELEMENT set NAME = 'Ops Impact and Code Complexity recorded in the Software Directory', SHORT_NAME = 'Ratings recorded', LEVEL_0 = 'REQUIRED', LEVEL_1 = 'REQUIRED', LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'ratings-recorded';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'Software Requirements Specification', SHORT_NAME = 'Requirements specification', LEVEL_0 = null, LEVEL_1 = 'RECOMMENDED', LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'requirements-specification';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'Purpose and use documented in source code, README file or similar', SHORT_NAME = 'Purpose and use documented', LEVEL_0 = 'REQUIRED', LEVEL_1 = 'REQUIRED', LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'design-documented';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'Software Design Specification', SHORT_NAME = 'Design specification', LEVEL_0 = null, LEVEL_1 = 'RECOMMENDED', LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'design-specification';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'Dependencies on other ACS products recorded in the build files or README', SHORT_NAME = 'ACS dependencies recorded', LEVEL_0 = null, LEVEL_1 = 'REQUIRED', LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'acs-dependencies-recorded';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'Source code documentation', SHORT_NAME = 'Source code documentation', LEVEL_0 = 'RECOMMENDED', LEVEL_1 = 'REQUIRED', LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'source-documentation';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'Version control', SHORT_NAME = 'Version control', LEVEL_0 = 'RECOMMENDED', LEVEL_1 = 'REQUIRED', LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'version-control';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'Software Test Plan', SHORT_NAME = 'Test plan', LEVEL_0 = null, LEVEL_1 = null, LEVEL_2 = 'RECOMMENDED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'test-plan';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'User Guide', SHORT_NAME = 'User guide', LEVEL_0 = null, LEVEL_1 = null, LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'user-guide';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'Version number, found from the installed instance', SHORT_NAME = 'Installed version shown', LEVEL_0 = null, LEVEL_1 = 'REQUIRED', LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'installed-version';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'Installed software read-only to its users', SHORT_NAME = 'Read-only install', LEVEL_0 = null, LEVEL_1 = 'REQUIRED', LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'installed-read-only';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'Issue Tracking', SHORT_NAME = 'Issue tracking', LEVEL_0 = null, LEVEL_1 = 'RECOMMENDED', LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'issue-tracking';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'At least two maintainers listed in the Software Directory', SHORT_NAME = 'Two maintainers', LEVEL_0 = null, LEVEL_1 = null, LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'two-maintainers';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'Dependencies and their versions recorded in the build files or README', SHORT_NAME = 'Dependencies recorded', LEVEL_0 = 'RECOMMENDED', LEVEL_1 = 'REQUIRED', LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'dependencies-recorded';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'Versions pinned exactly, in a lock file where the build tool has one', SHORT_NAME = 'Dependency versions pinned', LEVEL_0 = null, LEVEL_1 = 'RECOMMENDED', LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'versions-pinned';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'Choice recorded: purpose, source, license, maintenance status', SHORT_NAME = 'Dependency choices recorded', LEVEL_0 = null, LEVEL_1 = 'RECOMMENDED', LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'acquired-choice-recorded';
+update SIM_OWNER.SQA_ELEMENT set NAME = 'Advisories and end of support watched by the maintainer', SHORT_NAME = 'Dependency advisories watched', LEVEL_0 = null, LEVEL_1 = 'RECOMMENDED', LEVEL_2 = 'REQUIRED', LEVEL_3 = 'REQUIRED', SQAP_VERSION = 'draft 8905d54 after 1.0.0' where ELEMENT_ID = 'advisories-watched';
+
+COMMIT;
