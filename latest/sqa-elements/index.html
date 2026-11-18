@@ -675,8 +675,12 @@ members of the <code>acg</code> and <code>sim-admin</code> <a href="../concepts/
 only <strong>Close</strong>.</p>
 <h2 id="what-is-on-the-checklist">What is on the checklist<a class="headerlink" href="#what-is-on-the-checklist" title="Permanent link">&para;</a></h2>
 <p>The dialog lists the elements the SQAP asks for at the software's control level, the override
-where there is one: first those it <strong>requires</strong>, then those it <strong>recommends</strong>, each in the SQAP's
-order. Under each element's name are its phase and a link to the section of the SQAP that
+where there is one: first those it <strong>requires</strong>, under a <strong>Required</strong> heading, then those it
+<strong>recommends</strong>, under <strong>Recommended</strong>, each in the SQAP's order. Each heading counts its
+elements, and so does the line above the table, so a change of level shows in the numbers.</p>
+<p>Each element has the SQAP's short label, such as <strong>Design documented</strong>; hover over it for the
+SQAP's full wording, such as "Design, purpose and use documented in source code, README file or
+similar". Under the label are the element's phase and a link to the section of the SQAP that
 describes it.</p>
 <p>The checklist holds the elements a product has or lacks as a whole, such as a Software
 Requirements Specification, a User Guide, version control and issue tracking. What the SQAP asks
@@ -704,8 +708,9 @@ back to the provider's, set the status to <strong>Met, by</strong> the provider 
 <p><strong>Met, by</strong> a workflow or a repository means it provides the element for all its software, on
 the basis shown. Nobody has looked at this software's.</p>
 <p>What a workflow doesn't provide is not a gap. CSUE and the EPICS build system install software
-under developers' usernames, so they don't provide <strong>Installed software read-only to its users</strong>:
-for software released with them the element stays <strong>Not recorded</strong> until somebody records it.</p>
+under developers' usernames, so they don't provide <strong>Read-only install</strong> (installed software
+read-only to its users): for software released with them the element stays <strong>Not recorded</strong> until
+somebody records it.</p>
 <p>Software gets what its workflow provides only once it has one: set it in the Directory's
 <a href="../directory/#editing">edit dialog</a>, unless its sync did.</p>
 <h2 id="recording-an-element">Recording an element<a class="headerlink" href="#recording-an-element" title="Permanent link">&para;</a></h2>
