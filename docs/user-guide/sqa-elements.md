@@ -23,7 +23,9 @@ elements, and so does the line above the table, so a change of level shows in th
 Each element has the SQAP's short label, such as **Dependency choices recorded**; hover over it
 for the SQAP's full wording, such as "Choice recorded: purpose, source, license, maintenance
 status". Under the label are the element's phase and a link to the section of the SQAP that
-describes it.
+describes it, in the revision SIM loaded the elements from. While that is a draft, the link opens
+the SQAP's source on code.jlab.org at that revision: the SQAP's website publishes only released
+revisions, and the latest of those may not have the draft's elements.
 
 The checklist holds the elements a product has or lacks as a whole, such as a Software
 Requirements Specification, a User Guide, version control and issue tracking. What the SQAP asks

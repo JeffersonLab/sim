@@ -60,6 +60,10 @@ public class Directory extends HttpServlet {
   /** The workflow filter's value for software that has no workflow, where an id names one */
   private static final String NO_WORKFLOW = "NONE";
 
+  // Section 4.4 when no element says which revision of the SQAP it is from
+  private static final String SQAP_STAGES_URL =
+      "https://pages.jlab.org/acc/iac/docs/sqap/latest/04-software-development-life-cycle/#44-life-cycle-stages";
+
   @EJB SoftwareService softwareService;
   @EJB RepositoryService repositoryService;
   @EJB TopicService topicService;
@@ -271,12 +275,29 @@ public class Directory extends HttpServlet {
     request.setAttribute("checklistJson", checklistJson);
     request.setAttribute(
         "sqapVersion", elementList.isEmpty() ? null : elementList.get(0).getSqapVersion());
+    request.setAttribute("sqapStagesUrl", stagesUrl(elementList));
 
     if (isLooseModeRequested(request)) {
       request.getRequestDispatcher("/WEB-INF/views/directory-loose.jsp").forward(request, response);
     } else {
       request.getRequestDispatcher("/WEB-INF/views/directory.jsp").forward(request, response);
     }
+  }
+
+  /**
+   * The SQAP's section 4.4, Life Cycle Stages, in the revision the elements were loaded from: on
+   * the page of an element of one of its subsections, which links to the website's folder for a
+   * released revision and to the source at its commit for a draft.
+   */
+  static String stagesUrl(List<SqaElement> elements) {
+    for (SqaElement element : elements) {
+      if (element.getSectionNumber() != null && element.getSectionNumber().startsWith("4.4.")) {
+        String url = element.getSectionUrl();
+        int anchor = url.indexOf('#');
+        return (anchor < 0 ? url : url.substring(0, anchor)) + "#44-life-cycle-stages";
+      }
+    }
+    return SQAP_STAGES_URL;
   }
 
   /**
