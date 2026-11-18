@@ -251,6 +251,16 @@ td.risk .gap-count {
 #elements-table .element-row.computed .element-note {
     visibility: hidden;
 }
+/* The SQAP's note on what to link, under the link; what SIM computes says so under its status.
+   It runs on under the note, whose cell is as wide and holds only its input, to stay on a line or
+   two: the two cells' widths and the 8px paddings between them */
+#elements-table .element-evidence {
+    margin-top: 2px;
+    width: calc(200% + 16px);
+}
+#elements-table .element-row.computed .element-evidence {
+    display: none;
+}
 /* The short name; its title is the SQAP's full row */
 #elements-table .element-short {
     font-weight: bold;
@@ -287,6 +297,7 @@ td.risk .gap-count {
     border-bottom: 1px solid #ddd;
 }
 #elements-table .element-meta,
+#elements-table .element-evidence,
 #elements-table .element-recorded,
 #elements-table .element-provided,
 #elements-footer {

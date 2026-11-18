@@ -93,7 +93,7 @@ For each element, set:
 | Field | Means |
 |---|---|
 | **Status** | **Met**: the software has the element. **Gap**: it should have it, and doesn't. **Not applicable**: the element doesn't apply to this software. **Not recorded**: nobody has said. |
-| **Link** | For an element that is met, where it is: the document, the README, the guide's website. For a gap, the issue that tracks it. A web address that starts with `http://` or `https://`, up to 512 characters. Optional. |
+| **Link** | For an element that is met, where it is: the line under the link says what the SQAP expects there, such as "The lock file; where the build tool has none, the build file or README that gives exact versions". For a gap, the issue that tracks it. A web address that starts with `http://` or `https://`, up to 512 characters. Optional. |
 | **Note** | Anything else, up to 512 characters. **Not applicable** needs a note that says why. |
 
 Then select **Save**. SIM saves the checklist and reloads the page. **Cancel**, the × in the
@@ -106,6 +106,11 @@ change that for the elements you left as they were.
 
 Once an element has a link, **Open** beside it opens the link in a new window, for anyone reading
 the checklist, logged in or not.
+
+The line under each link comes from the SQAP with the elements, and says where to look, not what
+the element must contain: follow the element's section link for that. Several elements can have
+the same link, as the four about dependencies do when one section of the README covers them. The
+two elements SIM sets have no link, and no line.
 
 **Met** means somebody says the software has the element, not that the element is good enough:
 SIM doesn't read the document behind the link.

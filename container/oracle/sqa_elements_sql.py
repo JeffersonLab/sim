@@ -7,8 +7,9 @@ elements as data"). Never type the elements into SQL by hand: run this on the re
     python3 container/oracle/sqa_elements_sql.py elements.json > container/oracle/initdb.d/03_sqa_elements.sql
 
 Only the elements whose scope is "product" are loaded: those a product has or lacks as a whole,
-which SIM records for each product, each with its short label for lists (a file without the labels,
-from before the SQAP gave them, is refused). A file whose "draft" is true is not a released revision of
+which SIM records for each product, each with its short label for lists and its evidence, the SQAP's
+note on what the product's record links to (a file without either, from before the SQAP gave them, is
+refused). A file whose "draft" is true is not a released revision of
 the plan: it is refused unless --draft is given, and then the version says that it is a draft.
 
 Each element links to the section of the plan that holds its table: on the plan's website, in the
@@ -67,11 +68,14 @@ def sql(data: dict, allow_draft: bool) -> str:
             continue
         if not element.get("short"):
             raise SystemExit(f"The element {element['id']!r} has no short label: the file is older than SIM needs")
+        if not element.get("evidence"):
+            raise SystemExit(f"The element {element['id']!r} has no evidence: the file is older than SIM needs")
         weight += 1
         values = [
             literal(element["id"]),
             literal(element["name"]),
             literal(element["short"]),
+            literal(element["evidence"]),
             literal(element["phase"]),
             literal(element["section"]["number"]),
             literal(section_url(data, element["section"]["url"])),
@@ -80,8 +84,8 @@ def sql(data: dict, allow_draft: bool) -> str:
             literal(version),
         ]
         lines.append(
-            "insert into SIM_OWNER.SQA_ELEMENT (ELEMENT_ID, NAME, SHORT_NAME, PHASE, SECTION_NUMBER, SECTION_URL,"
-            " WEIGHT, LEVEL_0, LEVEL_1, LEVEL_2, LEVEL_3, SQAP_VERSION) values (" + ", ".join(values) + ");"
+            "insert into SIM_OWNER.SQA_ELEMENT (ELEMENT_ID, NAME, SHORT_NAME, EVIDENCE, PHASE, SECTION_NUMBER,"
+            " SECTION_URL, WEIGHT, LEVEL_0, LEVEL_1, LEVEL_2, LEVEL_3, SQAP_VERSION) values (" + ", ".join(values) + ");"
         )
     lines += ["", "commit;", ""]
     return "\n".join(lines)
