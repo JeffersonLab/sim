@@ -36,6 +36,7 @@ import org.jlab.sim.persistence.entity.Workflow;
 import org.jlab.sim.persistence.entity.WorkflowElement;
 import org.jlab.sim.persistence.enumeration.*;
 import org.jlab.sim.persistence.view.Checklist;
+import org.jlab.sim.persistence.view.ComputedElements;
 import org.jlab.sim.presentation.util.Parameter;
 import org.jlab.smoothness.business.service.JPAService;
 import org.jlab.smoothness.presentation.util.Paginator;
@@ -238,7 +239,8 @@ public class Directory extends HttpServlet {
                 elementList,
                 software.getEffectiveControlLevel(),
                 recorded.getOrDefault(software.getSoftwareId(), List.of()),
-                provisions(software, providedByWorkflow, provided));
+                provisions(software, providedByWorkflow, provided),
+                ComputedElements.of(software));
         checklists.put(software.getSoftwareId(), checklist);
         checklistJson.put(software.getSoftwareId(), toJson(checklist));
       }
@@ -332,6 +334,10 @@ public class Directory extends HttpServlet {
             .add("note", item.getNote() == null ? "" : item.getNote())
             .add("by", item.getRecordedBy())
             .add("date", dateFormat.format(item.getRecordedDate()));
+      }
+      Checklist.Finding finding = item.getFinding();
+      if (finding != null) {
+        json.add("computed", finding.getStatus().name()).add("computedNote", finding.getNote());
       }
       Checklist.Provision provision = item.getProvision();
       if (provision != null) {

@@ -480,7 +480,9 @@ class SoftwareIT {
 
     // Not applicable leaves one fewer required element, and a recommended one is outside the count
     assertEquals(
-        "1 of " + (required - 1) + " (1 gap)", elementsCell(row(name)).text(), "required met");
+        (1 + computedMet(row(name))) + " of " + (required - 1) + " (1 gap)",
+        elementsCell(row(name)).text(),
+        "required met");
     checklist = checklist(row(name));
     JsonObject versionControl = checklist.get("version-control");
     assertEquals("MET", versionControl.getString("status"));
@@ -499,7 +501,7 @@ class SoftwareIT {
             new String[] {"user-guide", "MET", "https://example.com/guide", ""},
             new String[] {"requirements-specification", "", "", ""}));
 
-    assertEquals("2 of " + required, elementsCell(row(name)).text());
+    assertEquals((2 + computedMet(row(name))) + " of " + required, elementsCell(row(name)).text());
     checklist = checklist(row(name));
     assertEquals(Sim.EDITOR, checklist.get("version-control").getString("by"));
     assertEquals(Sim.ADMIN, checklist.get("user-guide").getString("by"));
@@ -636,6 +638,69 @@ class SoftwareIT {
   }
 
   /**
+   * SIM computes two elements from its own records, and nobody records them: the ratings, recorded
+   * by the assessment that gives the checklist, and two maintainers, from the Maintainers column. A
+   * product with one maintainer has a gap, which the gap filter finds where its level asks for two.
+   */
+  @Test
+  void simComputesTheRatingsAndMaintainersElements() throws Exception {
+    String token = Sim.token(Sim.EDITOR);
+    String two = newName();
+    String one = newName();
+    assertOk(add(token, two, "APP", "N"));
+    assertOk(
+        addIn(
+            repositoryId,
+            token,
+            one,
+            "APP",
+            "N",
+            List.of(Map.entry("maintainerUsernameCsv", "jdoe"))));
+    // Impact 4 and Complexity 1: level 2 Significant, which asks for two maintainers
+    scoreNamed(token, two, 4, 3);
+    scoreNamed(token, one, 4, 3);
+
+    Map<String, JsonObject> checklist = checklist(row(two));
+    assertEquals("MET", checklist.get("ratings-recorded").getString("computed"));
+    String assessed = checklist.get("ratings-recorded").getString("computedNote");
+    assertTrue(assessed.startsWith("Assessed by " + Sim.EDITOR + " on "), assessed);
+    assertEquals("MET", checklist.get("two-maintainers").getString("computed"));
+    assertEquals(
+        "Maintainers: jdoe, tbrown", checklist.get("two-maintainers").getString("computedNote"));
+
+    checklist = checklist(row(one));
+    assertEquals("GAP", checklist.get("two-maintainers").getString("computed"));
+    assertEquals("Only jdoe listed", checklist.get("two-maintainers").getString("computedNote"));
+    assertEquals("Not recorded", elementsCell(row(one)).text(), "computed is not recorded");
+
+    assertNotNull(row(one, "&gap=two-maintainers"));
+    assertNotNull(row(one, "&gap=ANY"));
+    assertNull(row(two, "&gap=two-maintainers"));
+    assertNull(row(two, "&gap=ANY"));
+    assertNull(row(two, "&gap=ratings-recorded"));
+
+    String oneId = row(one).attr("data-id");
+    assertFail(
+        record(token, oneId, new String[] {"two-maintainers", "MET", "", ""}),
+        "\"Two maintainers\" is set by SIM from its own records");
+    assertFail(
+        record(token, oneId, new String[] {"ratings-recorded", "GAP", "", ""}),
+        "\"Ratings recorded\" is set by SIM from its own records");
+
+    // 0 Minimal doesn't ask for two maintainers, so one is no gap there
+    assertOk(
+        score(
+            token,
+            oneId,
+            4,
+            1,
+            3,
+            List.of(Map.entry("levelOverride", "0"), Map.entry("levelNote", "An exception"))));
+    assertNull(row(one, "&gap=two-maintainers"));
+    assertFalse(checklist(row(one)).containsKey("two-maintainers"));
+  }
+
+  /**
    * An SQA element a repository provides for all its software is met on each product's checklist
    * without a record, and a status recorded for the product replaces it. GITHUB provides version
    * control and issue tracking; HOME_DIR, where the other tests add software, provides nothing.
@@ -683,18 +748,23 @@ class SoftwareIT {
 
       // Once something is recorded, the count includes what the repository provides
       assertOk(record(token, softwareId, new String[] {"user-guide", "MET", "", ""}));
-      assertEquals("3 of " + required, elementsCell(Sim.page(filter, null)).text());
+      assertEquals(
+          (3 + computedMet(Sim.page(filter, null))) + " of " + required,
+          elementsCell(Sim.page(filter, null)).text());
 
       // A status recorded for the product replaces the repository's, and clearing it returns it
       assertOk(record(token, softwareId, new String[] {"version-control", "GAP", "", ""}));
       row = Sim.page(filter, null).selectFirst("tr[data-name]");
-      assertEquals("2 of " + required + " (1 gap)", elementsCell(row).text());
+      assertEquals(
+          (2 + computedMet(row)) + " of " + required + " (1 gap)", elementsCell(row).text());
       assertEquals("GAP", checklist(row).get("version-control").getString("status"));
       assertEquals("GITHUB", checklist(row).get("version-control").getString("provider"));
       assertNotNull(Sim.page(filter + "&gap=version-control", null).selectFirst("tr[data-name]"));
 
       assertOk(record(token, softwareId, new String[] {"version-control", "", "", ""}));
-      assertEquals("3 of " + required, elementsCell(Sim.page(filter, null)).text());
+      assertEquals(
+          (3 + computedMet(Sim.page(filter, null))) + " of " + required,
+          elementsCell(Sim.page(filter, null)).text());
       assertNull(Sim.page(filter + "&gap=ANY", null).selectFirst("tr[data-name]"));
     } finally {
       assertOk(
@@ -823,19 +893,19 @@ class SoftwareIT {
 
     // Once something is recorded, the count includes what the workflow provides
     assertOk(record(token, softwareId, new String[] {"user-guide", "MET", "", ""}));
-    assertEquals("3 of " + required, elementsCell(row(name)).text());
+    assertEquals((3 + computedMet(row(name))) + " of " + required, elementsCell(row(name)).text());
 
     // A status recorded for the product replaces the workflow's, and clearing it returns it
     assertOk(record(token, softwareId, new String[] {"installed-read-only", "GAP", "", ""}));
     row = row(name);
-    assertEquals("2 of " + required + " (1 gap)", elementsCell(row).text());
+    assertEquals((2 + computedMet(row)) + " of " + required + " (1 gap)", elementsCell(row).text());
     assertEquals("GAP", checklist(row).get("installed-read-only").getString("status"));
     assertEquals(
         "the Certified workflow", checklist(row).get("installed-read-only").getString("provider"));
     assertNotNull(row(name, "&gap=installed-read-only"));
 
     assertOk(record(token, softwareId, new String[] {"installed-read-only", "", "", ""}));
-    assertEquals("3 of " + required, elementsCell(row(name)).text());
+    assertEquals((3 + computedMet(row(name))) + " of " + required, elementsCell(row(name)).text());
     assertNull(row(name, "&gap=ANY"));
 
     // CSUE installs under developers' usernames: a product there stays not recorded for read-only
@@ -845,13 +915,13 @@ class SoftwareIT {
         "the CSUE workflow", checklist(row).get("installed-version").getString("provider"));
     assertFalse(checklist(row).get("installed-read-only").containsKey("provider"));
     assertFalse(checklist(row).get("installed-read-only").containsKey("status"), "not a gap");
-    assertEquals("2 of " + required, elementsCell(row).text());
+    assertEquals((2 + computedMet(row)) + " of " + required, elementsCell(row).text());
     assertNull(row(name, "&gap=ANY"));
 
     // No workflow, nothing provided
     assertOk(edit(token, softwareId, ""));
     assertFalse(checklist(row(name)).get("installed-version").containsKey("provider"));
-    assertEquals("1 of " + required, elementsCell(row(name)).text());
+    assertEquals((1 + computedMet(row(name))) + " of " + required, elementsCell(row(name)).text());
   }
 
   /** A product gets what its workflow provides and what its repository provides, each named. */
@@ -901,7 +971,9 @@ class SoftwareIT {
               .filter(item -> "REQUIRED".equals(item.getString("requirement")))
               .count();
       assertOk(record(token, softwareId, new String[] {"user-guide", "MET", "", ""}));
-      assertEquals("5 of " + required, elementsCell(Sim.page(filter, null)).text());
+      assertEquals(
+          (5 + computedMet(Sim.page(filter, null))) + " of " + required,
+          elementsCell(Sim.page(filter, null)).text());
     } finally {
       assertOk(
           Sim.post(
@@ -973,7 +1045,9 @@ class SoftwareIT {
       form.add(Map.entry("topicArray[]", topic));
     }
     form.add(Map.entry("description", "Added by an integration test"));
-    form.add(Map.entry("maintainerUsernameCsv", "jdoe,tbrown"));
+    if (more.stream().noneMatch(entry -> entry.getKey().equals("maintainerUsernameCsv"))) {
+      form.add(Map.entry("maintainerUsernameCsv", "jdoe,tbrown"));
+    }
     form.add(Map.entry("homeUrl", "https://example.com/" + name));
     form.add(Map.entry("archived", archived));
     form.add(Map.entry("note", ""));
@@ -1062,6 +1136,18 @@ class SoftwareIT {
   }
 
   /** The count of required SQA elements met; null for software that has no checklist. */
+  /**
+   * The required elements SIM computes as met for this row, or the first row of this page: its
+   * ratings, and two maintainers where the level asks for them, which the tests' software has.
+   */
+  private static long computedMet(Element rowOrPage) {
+    Element row = rowOrPage.is("tr") ? rowOrPage : rowOrPage.selectFirst("tr[data-checklist]");
+    return checklist(row).values().stream()
+        .filter(item -> "REQUIRED".equals(item.getString("requirement")))
+        .filter(item -> "MET".equals(item.getString("computed", "")))
+        .count();
+  }
+
   private static Element elementsCell(Element row) {
     return row.selectFirst("td.risk .sqa-elements");
   }

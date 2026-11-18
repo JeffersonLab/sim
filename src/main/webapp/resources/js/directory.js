@@ -407,6 +407,13 @@ $(document).on("click", ".risk-dialog-opener", function () {
     $("#risk-dialog").dialog("open");
     return false;
 });
+/* Beside an element's link, once it is a web address: opens it, for those who read the checklist as
+ * well as those who edit it, whose disabled input can't be clicked */
+function refreshElementLink($row) {
+    let url = $row.find(".element-link").val().trim(),
+        valid = /^https?:\/\/\S+$/.test(url);
+    $row.find(".element-link-open").attr("href", valid ? url : null).prop("hidden", !valid);
+}
 /* The checklist dialog: the row's data-checklist lists its elements in order, each with its
  * requirement and what was recorded (Directory.java); the dialog has a row for every element */
 $(document).on("click", ".elements-dialog-opener", function () {
@@ -432,6 +439,8 @@ $(document).on("click", ".elements-dialog-opener", function () {
         $row.find(".element-link").val(item.link || "");
         $row.find(".element-note").val(item.note || "");
         $row.find(".element-recorded").text(item.status ? "by " + item.by + " on " + item.date : "");
+        $row.attr("data-provider", item.provider || "");
+        refreshElementLink($row);
 
         /* An element the workflow or the repository provides for all its software is met without
          * a record: it takes the place of Not recorded, and a status recorded for this software
@@ -445,6 +454,13 @@ $(document).on("click", ".elements-dialog-opener", function () {
             if (/^https?:\/\//.test(item.providerLink || "")) {
                 $provided.append(" ").append($("<a target=\"_blank\"></a>").attr("href", item.providerLink).text("Link"));
             }
+        }
+        /* An element SIM computes from its own records, such as the maintainers: nobody records it */
+        $row.toggleClass("computed", !!item.computed);
+        if (item.computed) {
+            $row.find(".element-status").val(item.computed);
+            $row.find(".element-recorded").text("");
+            $provided.text("Set by SIM: " + item.computedNote);
         }
         $row.toggleClass("recommended", item.requirement !== "REQUIRED");
         /* In the checklist's order: required elements first */
@@ -475,6 +491,7 @@ $(document).on("click", ".elements-dialog-opener", function () {
 
     if (editable) {
         $controls.removeAttr("disabled");
+        $tbody.find(".element-row.computed").find("select, input").attr("disabled", "disabled");
     } else {
         $controls.attr("disabled", "disabled");
     }
@@ -483,6 +500,19 @@ $(document).on("click", ".elements-dialog-opener", function () {
     $("#elements-dialog").dialog("option", "width", Math.max(700, Math.min(1100, $(window).width() - 40)))
         .dialog("open");
     return false;
+});
+/* A link or a note is kept with a status recorded for the product. On a row met by its workflow or
+ * repository, which has none, typing one records the element as Met, the provider's as a fallback */
+$(document).on("input", "#elements-table .element-link, #elements-table .element-note", function () {
+    let $row = $(this).closest(".element-row"),
+        $status = $row.find(".element-status"),
+        provider = $row.attr("data-provider");
+
+    if ($status.val() === "" && provider && $(this).val().trim() !== "") {
+        $status.val("MET");
+        $row.find(".element-provided").text("Otherwise met by " + provider);
+    }
+    refreshElementLink($row);
 });
 $(document).on("click", "#elements-save-button", function () {
     var softwareId = $("#elements-software-id").val(),
@@ -494,7 +524,8 @@ $(document).on("click", "#elements-save-button", function () {
         $saveButton = $("#elements-save-button"),
         reloading = false;
 
-    $("#elements-table .element-row.on-checklist").each(function () {
+    /* Not what SIM computes: nobody records it */
+    $("#elements-table .element-row.on-checklist").not(".computed").each(function () {
         let $row = $(this),
             rowStatus = $row.find(".element-status").val(),
             rowLink = $row.find(".element-link").val().trim(),

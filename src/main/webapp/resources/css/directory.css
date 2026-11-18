@@ -233,6 +233,24 @@ td.risk .gap-count {
 #elements-table td {
     overflow-wrap: anywhere;
 }
+/* The link's input, and beside it Open once it holds a web address */
+#elements-table .element-link-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+#elements-table .element-link-cell .element-link {
+    flex: 1;
+    min-width: 0;
+}
+#elements-table .element-link-open[hidden] {
+    display: none;
+}
+/* What SIM computes has no link or note to give */
+#elements-table .element-row.computed .element-link-cell,
+#elements-table .element-row.computed .element-note {
+    visibility: hidden;
+}
 /* The short name; its title is the SQAP's full row */
 #elements-table .element-short {
     font-weight: bold;
