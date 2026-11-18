@@ -20,9 +20,9 @@ where there is one: first those it **requires**, under a **Required** heading, t
 **recommends**, under **Recommended**, each in the SQAP's order. Each heading counts its
 elements, and so does the line above the table, so a change of level shows in the numbers.
 
-Each element has the SQAP's short label, such as **Design documented**; hover over it for the
-SQAP's full wording, such as "Design, purpose and use documented in source code, README file or
-similar". Under the label are the element's phase and a link to the section of the SQAP that
+Each element has the SQAP's short label, such as **Dependency choices recorded**; hover over it
+for the SQAP's full wording, such as "Choice recorded: purpose, source, license, maintenance
+status". Under the label are the element's phase and a link to the section of the SQAP that
 describes it.
 
 The checklist holds the elements a product has or lacks as a whole, such as a Software

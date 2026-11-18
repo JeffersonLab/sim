@@ -24,7 +24,10 @@ public class SqaElement implements Serializable {
   @Column(name = "NAME", nullable = false, length = 256)
   private String name;
 
-  /** The SQAP's label for lists, such as "Design documented"; the name is the plan's full row. */
+  /**
+   * The SQAP's label for lists, such as "Dependency choices recorded"; the name is the plan's full
+   * row.
+   */
   @Column(name = "SHORT_NAME", nullable = false, length = 64)
   private String shortName;
 
