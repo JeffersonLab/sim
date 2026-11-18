@@ -181,6 +181,31 @@ class PagesIT {
   }
 
   /**
+   * Under each element's link is the SQAP's note on what to link, so that nobody has to guess
+   * whether, say, the test plan is the pipeline, the tests or a document.
+   */
+  @Test
+  void elementsSayWhatTheirLinkPointsTo() throws Exception {
+    Document directory = Sim.page("/directory", null);
+
+    assertEquals(
+        "The lock file; where the build tool has none, the build file or README that gives exact"
+            + " versions",
+        directory
+            .selectFirst("#elements-table tr[data-element-id=versions-pinned] .element-evidence")
+            .text());
+    for (Element row : directory.select("#elements-table tr.element-row")) {
+      Element evidence = row.selectFirst("td:has(.element-link) .element-evidence");
+      assertTrue(
+          evidence != null && !evidence.text().isBlank(),
+          row.attr("data-element-id") + " says what to link, in the Link column");
+    }
+    assertTrue(
+        directory.selectFirst("#elements-footer").text().contains("the SQAP names in the line"),
+        "the footer says where the line comes from");
+  }
+
+  /**
    * Each SQA element links to its section in the revision of the SQAP it was loaded from, as do the
    * dialogs' links to sections 4.4 and 4.3: for a draft, the plan's source at the draft's commit,
    * since the website's latest is the last released revision, whose tables may lack the draft's

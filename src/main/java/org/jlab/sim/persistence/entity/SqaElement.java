@@ -31,6 +31,13 @@ public class SqaElement implements Serializable {
   @Column(name = "SHORT_NAME", nullable = false, length = 64)
   private String shortName;
 
+  /**
+   * The SQAP's note on what a product's record of the element links to, such as "The lock file;
+   * where the build tool has none, the build file or README that gives exact versions".
+   */
+  @Column(name = "EVIDENCE", nullable = false, length = 128)
+  private String evidence;
+
   @Column(name = "PHASE", nullable = false, length = 64)
   private String phase;
 
@@ -89,6 +96,10 @@ public class SqaElement implements Serializable {
 
   public String getShortName() {
     return shortName;
+  }
+
+  public String getEvidence() {
+    return evidence;
   }
 
   public String getPhase() {
